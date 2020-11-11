@@ -458,13 +458,16 @@ export default function VodPlayer(props) {
         <Box className={classes.player}>
           <Youtube
             videoId={vodData.youtube_id}
-            containerClassName={classes.vertPlayer}
+            containerClassName={classes.horizPlayer}
             id="player"
             opts={{
               height: "100%",
               width: "100%",
               playerVars: {
                 autoplay: 1,
+                playsinline: 1,
+                rel: 0,
+                modestbranding: 1,
               },
             }}
             onReady={onReady}
