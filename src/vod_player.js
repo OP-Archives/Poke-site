@@ -9,6 +9,7 @@ import {
 import Loader from "react-loader-spinner";
 import Youtube from "react-youtube";
 import SimpleBar from "simplebar-react";
+import canAutoPlay from 'can-autoplay';
 
 const BADGES_TWITCH_URL =
   "https://badges.twitch.tv/v1/badges/global/display?language=en";
@@ -37,7 +38,7 @@ export default function VodPlayer(props) {
   const [vodData, setVodData] = React.useState(null);
   const [player, setPlayer] = React.useState(null);
   const [chatInterval, setChatInterval] = React.useState(null);
-  const [chatLoading, setChatLoading] = React.useState(true);
+  const [chatLoading, setChatLoading] = React.useState(null);
   const [replayMessages, setReplayMessages] = React.useState([]);
   const chatRef = useRef();
 
@@ -140,6 +141,11 @@ export default function VodPlayer(props) {
 
   const onReady = (evt) => {
     setPlayer(evt.target);
+    canAutoPlay.video().then(({result}) => {
+      if (!result) {
+        evt.target.mute();
+      }
+    })
   };
 
   const onPlay = async (evt) => {
@@ -510,6 +516,9 @@ export default function VodPlayer(props) {
               width: "100%",
               playerVars: {
                 autoplay: 1,
+                playsinline: 1,
+                rel: 0,
+                modestbranding: 1,
               },
             }}
             onReady={onReady}
