@@ -9,7 +9,7 @@ import {
 import Loader from "react-loader-spinner";
 import Youtube from "react-youtube";
 import SimpleBar from "simplebar-react";
-import canAutoPlay from 'can-autoplay';
+import canAutoPlay from "can-autoplay";
 
 const BADGES_TWITCH_URL =
   "https://badges.twitch.tv/v1/badges/global/display?language=en";
@@ -141,11 +141,11 @@ export default function VodPlayer(props) {
 
   const onReady = (evt) => {
     setPlayer(evt.target);
-    canAutoPlay.video().then(({result}) => {
+    canAutoPlay.video().then(({ result }) => {
       if (!result) {
         evt.target.mute();
       }
-    })
+    });
   };
 
   const onPlay = async (evt) => {
@@ -454,115 +454,61 @@ export default function VodPlayer(props) {
     </div>
   ) : (
     <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
-      {isMobile ? (
-        <Box className={classes.player}>
-          <Youtube
-            videoId={vodData.youtube_id}
-            containerClassName={classes.horizPlayer}
-            id="player"
-            opts={{
-              height: "100%",
-              width: "100%",
-              playerVars: {
-                autoplay: 1,
-                playsinline: 1,
-                rel: 0,
-                modestbranding: 1,
-              },
-            }}
-            onReady={onReady}
-            onPlay={onPlay}
-            onPause={clearChatInterval}
-            onEnd={clearChatInterval}
-            onError={playerError}
-          />
-          <div className={classes.vertChat}>
-            {chatLoading ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  marginTop: "3rem",
-                }}
+      <Box className={classes.player}>
+        <Youtube
+          videoId={vodData.youtube_id}
+          containerClassName={
+            isMobile ? classes.horizPlayer : classes.vertPlayer
+          }
+          id="player"
+          opts={{
+            height: "100%",
+            width: "100%",
+            playerVars: {
+              autoplay: 1,
+              playsinline: 1,
+              rel: 0,
+              modestbranding: 1,
+            },
+          }}
+          onReady={onReady}
+          onPlay={onPlay}
+          onPause={clearChatInterval}
+          onEnd={clearChatInterval}
+          onError={playerError}
+        />
+        <div className={isMobile ? classes.horizChat : classes.vertPlayer}>
+          {chatLoading ? (
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: "3rem",
+              }}
+            >
+              <Loader type="Oval" color="#00BFFF" height={125} width={125} />
+              <Typography variant="h5" className={classes.text}>
+                Loading Chat...
+              </Typography>
+            </div>
+          ) : (
+            <div className={classes.chat}>
+              <SimpleBar
+                scrollableNodeProps={{ ref: chatRef }}
+                className={classes.scroll}
               >
-                <Loader type="Oval" color="#00BFFF" height={125} width={125} />
-                <Typography variant="h5" className={classes.text}>
-                  Loading Chat...
-                </Typography>
-              </div>
-            ) : (
-              <div className={classes.chat}>
-                <SimpleBar
-                  scrollableNodeProps={{ ref: chatRef }}
-                  className={classes.scroll}
+                <Box
+                  display="flex"
+                  height="100%"
+                  justifyContent="flex-end"
+                  flexDirection="column"
                 >
-                  <Box
-                    display="flex"
-                    height="100%"
-                    justifyContent="flex-end"
-                    flexDirection="column"
-                  >
-                    <ul className={classes.ul}>{replayMessages}</ul>
-                  </Box>
-                </SimpleBar>
-              </div>
-            )}
-          </div>
-        </Box>
-      ) : (
-        <Box display="flex" className={classes.player}>
-          <Youtube
-            videoId={vodData.youtube_id}
-            containerClassName={classes.horizPlayer}
-            id="player"
-            opts={{
-              height: "100%",
-              width: "100%",
-              playerVars: {
-                autoplay: 1,
-                playsinline: 1,
-                rel: 0,
-                modestbranding: 1,
-              },
-            }}
-            onReady={onReady}
-            onPlay={onPlay}
-            onPause={clearChatInterval}
-            onEnd={clearChatInterval}
-            onError={playerError}
-          />
-          <div className={classes.horizChat}>
-            {chatLoading ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  marginTop: "20vh",
-                }}
-              >
-                <Loader type="Oval" color="#00BFFF" height={125} width={125} />
-                <Typography variant="h5" className={classes.text}>
-                  Loading Chat...
-                </Typography>
-              </div>
-            ) : (
-              <div className={classes.chat}>
-                <SimpleBar
-                  scrollableNodeProps={{ ref: chatRef }}
-                  className={classes.scroll}
-                >
-                  <Box
-                    display="flex"
-                    height="100%"
-                    justifyContent="flex-end"
-                    flexDirection="column"
-                  >
-                    <ul className={classes.ul}>{replayMessages}</ul>
-                  </Box>
-                </SimpleBar>
-              </div>
-            )}
-          </div>
-        </Box>
-      )}
+                  <ul className={classes.ul}>{replayMessages}</ul>
+                </Box>
+              </SimpleBar>
+            </div>
+          )}
+        </div>
+      </Box>
     </Container>
   );
 }
