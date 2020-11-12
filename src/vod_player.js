@@ -458,7 +458,7 @@ export default function VodPlayer(props) {
         <Youtube
           videoId={vodData.youtube_id}
           containerClassName={
-            isMobile ? classes.horizPlayer : classes.vertPlayer
+            !isMobile ? classes.horizPlayer : classes.vertPlayer
           }
           id="player"
           opts={{
@@ -477,7 +477,7 @@ export default function VodPlayer(props) {
           onEnd={clearChatInterval}
           onError={playerError}
         />
-        <div className={isMobile ? classes.horizChat : classes.vertPlayer}>
+        <div className={!isMobile ? classes.horizChat : classes.vertPlayer}>
           {chatLoading ? (
             <div
               style={{
