@@ -20,7 +20,7 @@ export default function Vods(props) {
   useEffect(() => {
     document.title = "VODS - Poke";
     const fetchVods = async () => {
-      await fetch("https://poke.gg:2053/vods?$limit=50$sort[createdAt]=1", {
+      await fetch("https://poke.gg:2053/vods?$limit=50&$sort[createdAt]=1", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export default function Vods(props) {
     if(!vodList.length < total) return;
     let next = skip + 50;
     await fetch(
-      `https://poke.gg:2053/vods?$limit=50&$skip=${next}$sort[createdAt]=1`,
+      `https://poke.gg:2053/vods?$limit=50&$skip=${next}&$sort[createdAt]=1`,
       {
         method: "GET",
         headers: {
