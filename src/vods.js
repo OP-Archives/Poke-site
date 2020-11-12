@@ -15,7 +15,7 @@ export default function Vods(props) {
   const [skip, setSkip] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   const [vodList, setVodList] = React.useState([]);
-  const [total, setTotal] = React.useState(null);
+  const [allVodsLoaded, setAllVodsLoaded] = React.useState(false);
 
   useEffect(() => {
     document.title = "VODS - Poke";
@@ -35,24 +35,7 @@ export default function Vods(props) {
           console.error(e);
         });
     };
-
-    const getTotalVods = async () => {
-      await fetch("https://poke.gg:2053/vods?$limit=0", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setTotal(data.total);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    };
     fetchVods();
-    getTotalVods();
     return;
   }, [classes]);
 
@@ -105,7 +88,7 @@ export default function Vods(props) {
   }, [vodList, classes]);
 
   const fetchNextVods = async () => {
-    if(!vodList.length < total) return;
+    if(allVodsLoaded) return;
     let next = skip + 50;
     await fetch(
       `https://poke.gg:2053/vods?$limit=50&$skip=${next}&$sort[createdAt]=1`,
@@ -118,6 +101,10 @@ export default function Vods(props) {
     )
       .then((response) => response.json())
       .then((data) => {
+        if(data.data.length === 0) {
+          setAllVodsLoaded(true);
+          return;
+        }
         //don't display vods without a video link
         setVodList(vodList.concat(data.data.filter((vod) => vod.video_link)));
       })
@@ -141,7 +128,7 @@ export default function Vods(props) {
           {`Vods`}
         </Typography>
         <div className={classes.root}>{vods}</div>
-        {vodList.length < total ? (
+        {!allVodsLoaded ? (
           <div className={classes.center}>
             <Button
               onClick={fetchNextVods}
