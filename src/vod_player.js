@@ -454,7 +454,7 @@ export default function VodPlayer(props) {
     </div>
   ) : (
     <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
-      <Box className={classes.player}>
+      <Box display={isMobile ? "block" : "flex"} className={classes.player}>
         <Youtube
           videoId={vodData.youtube_id}
           containerClassName={
@@ -477,12 +477,12 @@ export default function VodPlayer(props) {
           onEnd={clearChatInterval}
           onError={playerError}
         />
-        <div className={!isMobile ? classes.horizChat : classes.vertPlayer}>
+        <div className={!isMobile ? classes.horizChat : classes.vertChat}>
           {chatLoading ? (
             <div
               style={{
                 textAlign: "center",
-                marginTop: "3rem",
+                marginTop: isMobile ? "3rem" : "20vh",
               }}
             >
               <Loader type="Oval" color="#00BFFF" height={125} width={125} />
