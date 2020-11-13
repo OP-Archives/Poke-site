@@ -43,7 +43,12 @@ export default function NavBar(props) {
       <Divider classes={{ root: classes.divider }} />
       <List>
         {mainLinks.map(({ title, path }) => (
-          <ListItem key={title} component="a" href={path} className={classes.linkText}>
+          <ListItem
+            key={title}
+            component="a"
+            href={path}
+            className={classes.linkText}
+          >
             <ListItemText primary={title} />
           </ListItem>
         ))}
@@ -51,12 +56,35 @@ export default function NavBar(props) {
       <Divider classes={{ root: classes.divider }} />
       <List>
         {socialLinks.map(({ title, path }) => (
-          <ListItem key={title} component="a" href={path} target="_blank" rel="noreferrer noopener" className={classes.linkText}>
+          <ListItem
+            key={title}
+            component="a"
+            href={path}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={classes.linkText}
+          >
             <ListItemText primary={title} />
           </ListItem>
         ))}
       </List>
-      <Divider />
+      <Divider classes={{ root: classes.divider }} />
+      <div style={{marginTop: "1rem"}}>
+        <Typography
+          variant="caption"
+          className={classes.content}
+          style={{ padding: "14px" }}
+        >
+          <a
+            href="https://twitter.com/overpowered"
+            target="_blank"
+            rel="noreferrer noopener"
+            className={classes.linkText}
+          >
+            Made by OP with 💜
+          </a>
+        </Typography>
+      </div>
     </div>
   );
 
