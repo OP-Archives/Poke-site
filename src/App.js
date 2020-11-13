@@ -1,11 +1,11 @@
-import { Redirect, BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Frontpage from "./frontpage";
 import Vods from "./vods";
 import VodPlayer from "./vod_player";
 import Navbar from "./navbar";
 import background from "./assets/background.png";
 
-export default function () {
+export default function App() {
   return (
     <BrowserRouter>
       <Switch>
