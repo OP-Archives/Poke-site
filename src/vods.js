@@ -78,6 +78,13 @@ export default function Vods(props) {
                   </Typography>
                 </div>
               </div>
+              <div className={classes.corners}>
+                <div className={classes.bottomRight}>
+                  <Typography variant="caption" className={classes.cornerText}>
+                    {`${vod.duration}`}
+                  </Typography>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -229,6 +236,12 @@ const useStyles = makeStyles(() => ({
     bottom: 0,
     left: 0,
     marginLeft: "5px",
+  },
+  bottomRight: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    marginRight: "5px",
   },
   cornerText: {
     color: "#fff",
