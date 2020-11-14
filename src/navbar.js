@@ -21,6 +21,7 @@ const mainLinks = [
 const socialLinks = [
   { title: `Twitch`, path: `https://twitch.tv/pokelawls` },
   { title: `Twitter`, path: `https://twitter.com/pokelawls` },
+  { title: `Reddit`, path: `https://reddit.com/r/pokelawls`},
   { title: `Discord`, path: `https://discord.gg/pokelawls` },
   { title: `Youtube`, path: `https://youtube.com/c/pokelawls` },
 ];
