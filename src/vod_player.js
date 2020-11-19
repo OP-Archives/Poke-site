@@ -45,7 +45,7 @@ export default function VodPlayer(props) {
   useEffect(() => {
     document.title = `${props.match.params.vodId} Vod - Poke`;
     const fetchVodData = async () => {
-      fetch(`https://poke.gg:2053/vods/${props.match.params.vodId}`, {
+      fetch(`https://archive.overpowered.tv/poke/vods/${props.match.params.vodId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +163,7 @@ export default function VodPlayer(props) {
     if (!player) return;
     const fetchNextComments = async (next) => {
       await fetch(
-        `https://poke.gg:2053/logs?vod_id=${props.match.params.vodId}&$limit=100&content_offset_seconds[$gte]=${player_offset}&$skip=${next}&$sort[content_offset_seconds]=1`,
+        `https://archive.overpowered.tv/poke/logs?vod_id=${props.match.params.vodId}&$limit=100&content_offset_seconds[$gte]=${player_offset}&$skip=${next}&$sort[content_offset_seconds]=1`,
         {
           method: "GET",
           headers: {
@@ -421,7 +421,7 @@ export default function VodPlayer(props) {
 
   const fetchComments = async (offset) => {
     await fetch(
-      `https://poke.gg:2053/logs?vod_id=${props.match.params.vodId}&$limit=100&content_offset_seconds[$gte]=${offset}&$sort[content_offset_seconds]=1`,
+      `https://archive.overpowered.tv/poke/logs?vod_id=${props.match.params.vodId}&$limit=100&content_offset_seconds[$gte]=${offset}&$sort[content_offset_seconds]=1`,
       {
         method: "GET",
         headers: {
