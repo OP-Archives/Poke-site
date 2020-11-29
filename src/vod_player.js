@@ -40,6 +40,7 @@ export default function VodPlayer(props) {
   const [chatInterval, setChatInterval] = React.useState(null);
   const [chatLoading, setChatLoading] = React.useState(null);
   const [replayMessages, setReplayMessages] = React.useState([]);
+  const [youtubeIndex, setYoutubeIndex] = React.useState(0);
   const chatRef = useRef();
 
   useEffect(() => {
@@ -154,7 +155,7 @@ export default function VodPlayer(props) {
     setReplayMessages([]);
     stoppedAtIndex = 0;
 
-    player_offset = player.getCurrentTime();
+    player_offset = player.getCurrentTime() + (youtubeIndex * 43200);
     skip = 0;
     fetchComments(player_offset);
   };
@@ -329,7 +330,7 @@ export default function VodPlayer(props) {
     };
     const buildChat = () => {
       if (comments.length === 0 || player.getPlayerState() === 2) return;
-      const playerCurrentTime = player.getCurrentTime();
+      const playerCurrentTime = player.getCurrentTime() + (youtubeIndex * 43200);
 
       let pastIndex = comments.length - 1;
       for (let i = stoppedAtIndex.valueOf(); i < comments.length; i++) {
@@ -415,6 +416,15 @@ export default function VodPlayer(props) {
     clearInterval(chatInterval);
   };
 
+  const onEnd = (evt) => {
+    clearInterval(chatInterval)
+    if(youtubeIndex !== vodData.youtube_id.length) {
+      const newIndex = youtubeIndex + 1;
+      setYoutubeIndex(newIndex)
+      player.loadVideoById(vodData.youtube_id[newIndex]);
+    }
+  }
+
   const playerError = (evt) => {
     console.error(evt.data);
   };
@@ -456,7 +466,7 @@ export default function VodPlayer(props) {
     <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
       <Box display={isMobile ? "block" : "flex"} className={classes.player}>
         <Youtube
-          videoId={vodData.youtube_id}
+          videoId={vodData.youtube_id[0]}
           containerClassName={
             !isMobile ? classes.horizPlayer : classes.vertPlayer
           }
@@ -474,7 +484,7 @@ export default function VodPlayer(props) {
           onReady={onReady}
           onPlay={onPlay}
           onPause={clearChatInterval}
-          onEnd={clearChatInterval}
+          onEnd={onEnd}
           onError={playerError}
         />
         <div className={!isMobile ? classes.horizChat : classes.vertChat}>

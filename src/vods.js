@@ -29,7 +29,9 @@ export default function Vods(props) {
         .then((response) => response.json())
         .then((data) => {
           //don't display vods without a video link
-          setVodList(data.data.filter((vod) => vod.video_link));
+          setVodList(data.data.filter((vod) =>  {
+            return vod.youtube_id.length != 0;
+          }));
         })
         .catch((e) => {
           console.error(e);
