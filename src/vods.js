@@ -16,11 +16,12 @@ export default function Vods(props) {
   const [loading, setLoading] = React.useState(true);
   const [vodList, setVodList] = React.useState([]);
   const [allVodsLoaded, setAllVodsLoaded] = React.useState(false);
+  const channel = props.channel;
 
   useEffect(() => {
     document.title = "VODS - Poke";
     const fetchVods = async () => {
-      await fetch("https://archive.overpowered.tv/poke/vods?$limit=50&$sort[createdAt]=-1", {
+      await fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=50&$sort[createdAt]=-1`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export default function Vods(props) {
     if(allVodsLoaded) return;
     let next = skip + 50;
     await fetch(
-      `https://archive.overpowered.tv/poke/vods?$limit=50&$skip=${next}&$sort[createdAt]=-1`,
+      `https://archive.overpowered.tv/${channel}/vods?$limit=50&$skip=${next}&$sort[createdAt]=-1`,
       {
         method: "GET",
         headers: {

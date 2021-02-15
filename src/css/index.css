@@ -18,3 +18,10 @@ ul {
   padding: 0;
   vertical-align: baseline;
 }
+
+.background {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}

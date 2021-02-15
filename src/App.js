@@ -6,6 +6,7 @@ import Navbar from "./navbar";
 import background from "./assets/background.png";
 
 export default function App() {
+  const channel = "poke";
   return (
     <BrowserRouter>
       <Switch>
@@ -14,11 +15,9 @@ export default function App() {
           path="/"
           render={(props) => (
             <div
-              className="root"
+              className="root background"
               style={{
                 backgroundImage: `url(${background})`,
-                height: "100%",
-                width: "100%",
               }}
             >
               <Navbar {...props} />
@@ -31,15 +30,13 @@ export default function App() {
           path="/vods"
           render={(props) => (
             <div
-              className="root"
+              className="root background"
               style={{
                 backgroundImage: `url(${background})`,
-                height: "100%",
-                width: "100%",
               }}
             >
               <Navbar {...props} />
-              <Vods {...props} />
+              <Vods {...props} channel={channel} />
             </div>
           )}
         />
@@ -47,10 +44,8 @@ export default function App() {
           exact
           path="/vods/:vodId"
           render={(props) => (
-            <div
-              className="root"
-            >
-              <VodPlayer {...props} />
+            <div className="root">
+              <VodPlayer {...props} channel={channel} />
             </div>
           )}
         />
