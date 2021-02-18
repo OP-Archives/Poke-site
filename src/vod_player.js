@@ -26,10 +26,10 @@ let badgesCount = 0,
   BTTVGlobalEmotes,
   BTTVEmotes,
   messageCount = 0,
-  skip = 0,
   player_offset = 0,
   comments = [],
-  stoppedAtIndex = 0;
+  stoppedAtIndex = 0,
+  cursor;
 
 export default function VodPlayer(props) {
   const classes = useStyles();
@@ -157,15 +157,15 @@ export default function VodPlayer(props) {
     stoppedAtIndex = 0;
 
     player_offset = player.getCurrentTime() + (youtubeIndex * 43200);
-    skip = 0;
+    cursor = null;
     fetchComments(player_offset);
   };
 
   useEffect(() => {
     if (!player) return;
-    const fetchNextComments = async (next) => {
+    const fetchNextComments = async () => {
       await fetch(
-        `https://archive.overpowered.tv/${channel}/logs?vod_id=${props.match.params.vodId}&$limit=100&content_offset_seconds[$gte]=${player_offset}&$skip=${next}&$sort[content_offset_seconds]=1`,
+        `https://archive.overpowered.tv/${channel}/v1/vods/${props.match.params.vodId}/comments?cursor=${cursor}`,
         {
           method: "GET",
           headers: {
@@ -175,7 +175,8 @@ export default function VodPlayer(props) {
       )
         .then((response) => response.json())
         .then((data) => {
-          comments = comments.concat(data.data);
+          comments = comments.concat(data.comments);
+          cursor = data.cursor;
         })
         .catch((e) => {
           console.error(e);
@@ -396,8 +397,7 @@ export default function VodPlayer(props) {
       }
 
       if (comments.length - 1 === pastIndex) {
-        skip += 100;
-        fetchNextComments(skip);
+        fetchNextComments();
       }
 
       setReplayMessages(messages);
@@ -432,7 +432,7 @@ export default function VodPlayer(props) {
 
   const fetchComments = async (offset) => {
     await fetch(
-      `https://archive.overpowered.tv/${channel}/logs?vod_id=${props.match.params.vodId}&$limit=100&content_offset_seconds[$gte]=${offset}&$sort[content_offset_seconds]=1`,
+      `https://archive.overpowered.tv/poke/v1/vods/${props.match.params.vodId}/comments?content_offset_seconds=${offset}`,
       {
         method: "GET",
         headers: {
@@ -442,7 +442,8 @@ export default function VodPlayer(props) {
     )
       .then((response) => response.json())
       .then((data) => {
-        comments = data.data;
+        comments = data.comments;
+        cursor = data.cursor;
       })
       .catch((e) => {
         console.error(e);
