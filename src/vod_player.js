@@ -156,7 +156,7 @@ export default function VodPlayer(props) {
     setReplayMessages([]);
     stoppedAtIndex = 0;
 
-    player_offset = player.getCurrentTime() + (youtubeIndex * 43200);
+    player_offset = player.getCurrentTime() + (youtubeIndex * 43199);
     cursor = null;
     fetchComments(player_offset);
   };
@@ -332,7 +332,7 @@ export default function VodPlayer(props) {
     };
     const buildChat = () => {
       if (comments.length === 0 || player.getPlayerState() === 2) return;
-      const playerCurrentTime = player.getCurrentTime() + (youtubeIndex * 43200);
+      const playerCurrentTime = player.getCurrentTime() + (youtubeIndex * 43199);
 
       let pastIndex = comments.length - 1;
       for (let i = stoppedAtIndex.valueOf(); i < comments.length; i++) {
@@ -396,7 +396,7 @@ export default function VodPlayer(props) {
         );
       }
 
-      if (comments.length - 1 === pastIndex) {
+      if (comments.length - 1 === pastIndex && cursor) {
         fetchNextComments();
       }
 
@@ -569,7 +569,7 @@ const useStyles = makeStyles(() => ({
   },
   ul: {
     minHeight: "0px",
-    width: "100%",
+    width: "calc(100% - 10px)",
     display: "flex",
     alignItems: "flex-end",
     flexWrap: "wrap",

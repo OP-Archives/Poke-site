@@ -21,18 +21,23 @@ export default function Vods(props) {
   useEffect(() => {
     document.title = "VODS - Poke";
     const fetchVods = async () => {
-      await fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=50&$sort[createdAt]=-1`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      await fetch(
+        `https://archive.overpowered.tv/${channel}/vods?$limit=50&$sort[createdAt]=-1`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           //don't display vods without a video link
-          setVodList(data.data.filter((vod) =>  {
-            return vod.youtube_id.length != 0;
-          }));
+          setVodList(
+            data.data.filter((vod) => {
+              return vod.youtube_id.length != 0;
+            })
+          );
         })
         .catch((e) => {
           console.error(e);
@@ -98,7 +103,7 @@ export default function Vods(props) {
   }, [vodList, classes]);
 
   const fetchNextVods = async () => {
-    if(allVodsLoaded) return;
+    if (allVodsLoaded) return;
     let next = skip + 50;
     await fetch(
       `https://archive.overpowered.tv/${channel}/vods?$limit=50&$skip=${next}&$sort[createdAt]=-1`,
@@ -111,12 +116,18 @@ export default function Vods(props) {
     )
       .then((response) => response.json())
       .then((data) => {
-        if(data.data.length === 0) {
+        if (data.data.length === 0) {
           setAllVodsLoaded(true);
           return;
         }
         //don't display vods without a video link
-        setVodList(vodList.concat(data.data.filter((vod) => vod.video_link)));
+        setVodList(
+          vodList.concat(
+            data.data.filter((vod) => {
+              return vod.youtube_id.length != 0;
+            })
+          )
+        );
       })
       .catch((e) => {
         console.error(e);
