@@ -29,7 +29,8 @@ let badgesCount = 0,
   player_offset = 0,
   comments = [],
   stoppedAtIndex = 0,
-  cursor;
+  cursor,
+  durations = [];
 
 export default function VodPlayer(props) {
   const classes = useStyles();
@@ -156,7 +157,10 @@ export default function VodPlayer(props) {
     setReplayMessages([]);
     stoppedAtIndex = 0;
 
-    player_offset = player.getCurrentTime() + (youtubeIndex * 43199);
+    player_offset = Math.round(player.getCurrentTime());
+    for (let duration of durations) {
+      player_offset += duration;
+    }
     cursor = null;
     fetchComments(player_offset);
   };
@@ -332,7 +336,10 @@ export default function VodPlayer(props) {
     };
     const buildChat = () => {
       if (comments.length === 0 || player.getPlayerState() === 2) return;
-      const playerCurrentTime = player.getCurrentTime() + (youtubeIndex * 43199);
+      let playerCurrentTime = Math.round(player.getCurrentTime());
+      for (let duration of durations) {
+        playerCurrentTime += duration;
+      }
 
       let pastIndex = comments.length - 1;
       for (let i = stoppedAtIndex.valueOf(); i < comments.length; i++) {
@@ -418,13 +425,16 @@ export default function VodPlayer(props) {
   };
 
   const onEnd = (evt) => {
-    clearInterval(chatInterval)
-    if(youtubeIndex !== vodData.youtube_id.length) {
+    clearInterval(chatInterval);
+    if (youtubeIndex !== vodData.youtube_id.length) {
+      if (!durations[youtubeIndex]) {
+        durations.push(Math.round(player.getDuration()));
+      }
       const newIndex = youtubeIndex + 1;
-      setYoutubeIndex(newIndex)
+      setYoutubeIndex(newIndex);
       player.loadVideoById(vodData.youtube_id[newIndex]);
     }
-  }
+  };
 
   const playerError = (evt) => {
     console.error(evt.data);
