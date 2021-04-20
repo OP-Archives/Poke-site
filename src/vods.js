@@ -45,7 +45,7 @@ export default function Vods(props) {
     };
     fetchVods();
     return;
-  }, [classes]);
+  }, [classes, channel]);
 
   useEffect(() => {
     setVods(
@@ -218,6 +218,9 @@ const useStyles = makeStyles(() => ({
     paddingTop: "56.25%",
     position: "relative",
     order: 1,
+    "&:hover": {
+      boxShadow: "0 0 8px #fff",
+    },
   },
   image: {
     verticalAlign: "top",

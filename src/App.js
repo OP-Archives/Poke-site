@@ -3,7 +3,6 @@ import Frontpage from "./frontpage";
 import Vods from "./vods";
 import VodPlayer from "./vod_player";
 import Navbar from "./navbar";
-import background from "./assets/background.png";
 
 export default function App() {
   const channel = "poke", twitchId = "12943173";;
@@ -16,9 +15,6 @@ export default function App() {
           render={(props) => (
             <div
               className="root background"
-              style={{
-                backgroundImage: `url(${background})`,
-              }}
             >
               <Navbar {...props} />
               <Frontpage {...props} />
@@ -31,9 +27,6 @@ export default function App() {
           render={(props) => (
             <div
               className="root background"
-              style={{
-                backgroundImage: `url(${background})`,
-              }}
             >
               <Navbar {...props} />
               <Vods {...props} channel={channel} twitchId={twitchId} />
