@@ -6,7 +6,7 @@ import Navbar from "./navbar";
 import background from "./assets/background.png";
 
 export default function App() {
-  const channel = "poke";
+  const channel = "poke", twitchId = "12943173";;
   return (
     <BrowserRouter>
       <Switch>
@@ -36,7 +36,7 @@ export default function App() {
               }}
             >
               <Navbar {...props} />
-              <Vods {...props} channel={channel} />
+              <Vods {...props} channel={channel} twitchId={twitchId} />
             </div>
           )}
         />
@@ -45,7 +45,7 @@ export default function App() {
           path="/vods/:vodId"
           render={(props) => (
             <div className="root">
-              <VodPlayer {...props} channel={channel} />
+              <VodPlayer {...props} channel={channel} twitchId={twitchId} />
             </div>
           )}
         />
