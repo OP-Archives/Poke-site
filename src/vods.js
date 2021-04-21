@@ -7,12 +7,15 @@ import {
   Button,
   Menu,
   MenuItem,
+  CircularProgress,
+  useMediaQuery,
 } from "@material-ui/core";
 import SimpleBar from "simplebar-react";
-import Loader from "react-loader-spinner";
 import ListIcon from "@material-ui/icons/List";
+import Logo from "./assets/jammin.gif";
 
 export default function Vods(props) {
+  const isMobile = useMediaQuery("(max-width: 800px)");
   const classes = useStyles();
   const [vods, setVods] = React.useState([]);
   const [skip, setSkip] = React.useState(0);
@@ -96,7 +99,11 @@ export default function Vods(props) {
     setVods(
       vodList.map((vod, i) => {
         return (
-          <div key={vod.id} className={classes.paper}>
+          <div
+            key={vod.id}
+            style={{ width: isMobile ? "6rem" : "18rem" }}
+            className={classes.paper}
+          >
             <div className={classes.lower}>
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <div
@@ -182,11 +189,13 @@ export default function Vods(props) {
   };
 
   return loading ? (
-    <div style={{ padding: "30vh 0", textAlign: "center" }}>
-      <Loader type="Oval" color="#00BFFF" height={150} width={150} />
-      <h2 style={{ color: "#fff", marginTop: "2rem", fontSize: "2rem" }}>
-        Loading...
-      </h2>
+    <div className={classes.parent}>
+      <div style={{ textAlign: "center" }}>
+        <div>
+          <img alt="" src={Logo} height="auto" width="75%" />
+        </div>
+        <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
+      </div>
     </div>
   ) : (
     <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
@@ -215,6 +224,12 @@ export default function Vods(props) {
 }
 
 const useStyles = makeStyles(() => ({
+  parent: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+  },
   root: {
     marginLeft: "2rem",
     marginTop: "2rem",
@@ -245,7 +260,6 @@ const useStyles = makeStyles(() => ({
   },
   paper: {
     maxWidth: "30%",
-    width: "18rem",
     flex: "0 0 auto",
     padding: "0 .5rem",
     display: "flex",
