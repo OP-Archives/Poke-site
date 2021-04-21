@@ -5,9 +5,12 @@ import {
   Link,
   Container,
   Button,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import SimpleBar from "simplebar-react";
 import Loader from "react-loader-spinner";
+import ListIcon from "@material-ui/icons/List";
 
 export default function Vods(props) {
   const classes = useStyles();
@@ -17,6 +20,15 @@ export default function Vods(props) {
   const [vodList, setVodList] = React.useState([]);
   const [allVodsLoaded, setAllVodsLoaded] = React.useState(false);
   const channel = props.channel;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     document.title = "VODS - Poke";
@@ -74,6 +86,40 @@ export default function Vods(props) {
                   </div>
                 </div>
               </div>
+              {vod.youtube.length > 1 ? (
+                <>
+                  <Button className={classes.partButton} onClick={handleClick}>
+                    <ListIcon />
+                    Parts
+                  </Button>
+                  <Menu
+                    id={i}
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    classes={{
+                      paper: classes.menuPaper,
+                    }}
+                    onClose={handleClose}
+                  >
+                    {vod.youtube.map((data, index) => {
+                      return (
+                        <Link
+                          key={index}
+                          href={`/vods/${vod.id}?part=${index+1}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <MenuItem className={classes.item}>
+                            Part {index + 1}
+                          </MenuItem>
+                        </Link>
+                      );
+                    })}
+                  </Menu>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
             <div className={classes.imageBox}>
               <Link href={`/vods/${vod.id}`}>
@@ -100,7 +146,7 @@ export default function Vods(props) {
     );
     setLoading(false);
     return;
-  }, [vodList, classes]);
+  }, [vodList, classes, anchorEl]);
 
   const fetchNextVods = async () => {
     if (allVodsLoaded) return;
@@ -234,7 +280,7 @@ const useStyles = makeStyles(() => ({
   lower: {
     order: 2,
     marginTop: "1rem",
-    marginBottom: "2rem",
+    marginBottom: "1rem",
   },
   scroll: {
     height: "calc(100% - 4rem)",
@@ -264,5 +310,25 @@ const useStyles = makeStyles(() => ({
     color: "#fff",
     backgroundColor: "rgba(0,0,0,.6)",
     padding: "0 .2rem",
+  },
+  partButton: {
+    paddingRight: "1rem",
+    marginTop: "0.3rem",
+    color: "#fff",
+    backgroundColor: "rgba(0,0,0,.6)",
+    "&:hover": {
+      opacity: "50%",
+    },
+  },
+  menuPaper: {
+    backgroundColor: "#0e0e10",
+    color: "#fff",
+  },
+  item: {
+    color: "#fff",
+    "&:hover": {
+      opacity: "50%",
+      color: "#fff",
+    },
   },
 }));
