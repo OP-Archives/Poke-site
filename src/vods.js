@@ -20,15 +20,6 @@ export default function Vods(props) {
   const [vodList, setVodList] = React.useState([]);
   const [allVodsLoaded, setAllVodsLoaded] = React.useState(false);
   const channel = props.channel;
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   useEffect(() => {
     document.title = "VODS - Poke";
@@ -59,6 +50,48 @@ export default function Vods(props) {
     return;
   }, [classes, channel]);
 
+  const IsolatedMenu = (props) => {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    return (
+      <React.Fragment>
+        <Button className={classes.partButton} onClick={handleClick}>
+          <ListIcon />
+          Parts
+        </Button>
+        <Menu
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          classes={{
+            paper: classes.menuPaper,
+          }}
+          onClose={handleClose}
+        >
+          {props.vod.youtube.map((data, index) => {
+            return (
+              <Link
+                key={data.id}
+                href={`/vods/${props.vod.id}?part=${index + 1}`}
+                style={{ textDecoration: "none" }}
+              >
+                <MenuItem className={classes.item}>Part {index + 1}</MenuItem>
+              </Link>
+            );
+          })}
+        </Menu>
+      </React.Fragment>
+    );
+  };
+
   useEffect(() => {
     setVods(
       vodList.map((vod, i) => {
@@ -86,40 +119,7 @@ export default function Vods(props) {
                   </div>
                 </div>
               </div>
-              {vod.youtube.length > 1 ? (
-                <>
-                  <Button className={classes.partButton} onClick={handleClick}>
-                    <ListIcon />
-                    Parts
-                  </Button>
-                  <Menu
-                    id={i}
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={Boolean(anchorEl)}
-                    classes={{
-                      paper: classes.menuPaper,
-                    }}
-                    onClose={handleClose}
-                  >
-                    {vod.youtube.map((data, index) => {
-                      return (
-                        <Link
-                          key={index}
-                          href={`/vods/${vod.id}?part=${index+1}`}
-                          style={{ textDecoration: "none" }}
-                        >
-                          <MenuItem className={classes.item}>
-                            Part {index + 1}
-                          </MenuItem>
-                        </Link>
-                      );
-                    })}
-                  </Menu>
-                </>
-              ) : (
-                <></>
-              )}
+              {vod.youtube.length > 1 ? <IsolatedMenu vod={vod} /> : <></>}
             </div>
             <div className={classes.imageBox}>
               <Link href={`/vods/${vod.id}`}>
@@ -146,7 +146,7 @@ export default function Vods(props) {
     );
     setLoading(false);
     return;
-  }, [vodList, classes, anchorEl]);
+  }, [vodList, classes]);
 
   const fetchNextVods = async () => {
     if (allVodsLoaded) return;
