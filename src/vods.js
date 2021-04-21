@@ -153,7 +153,7 @@ export default function Vods(props) {
     );
     setLoading(false);
     return;
-  }, [vodList, classes]);
+  }, [vodList, classes, isMobile]);
 
   const fetchNextVods = async () => {
     if (allVodsLoaded) return;

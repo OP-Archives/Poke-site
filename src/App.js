@@ -3,9 +3,11 @@ import Frontpage from "./frontpage";
 import Vods from "./vods";
 import VodPlayer from "./vod_player";
 import Navbar from "./navbar";
+import Contest from "./contest";
 
 export default function App() {
-  const channel = "poke", twitchId = "12943173";;
+  const channel = "poke",
+    twitchId = "12943173";
   return (
     <BrowserRouter>
       <Switch>
@@ -13,9 +15,7 @@ export default function App() {
           exact
           path="/"
           render={(props) => (
-            <div
-              className="root background"
-            >
+            <div className="root background">
               <Navbar {...props} />
               <Frontpage {...props} />
             </div>
@@ -25,9 +25,7 @@ export default function App() {
           exact
           path="/vods"
           render={(props) => (
-            <div
-              className="root background"
-            >
+            <div className="root background">
               <Navbar {...props} />
               <Vods {...props} channel={channel} twitchId={twitchId} />
             </div>
@@ -39,6 +37,16 @@ export default function App() {
           render={(props) => (
             <div className="root">
               <VodPlayer {...props} channel={channel} twitchId={twitchId} />
+            </div>
+          )}
+        />
+        <Route
+          exact
+          path="/contest"
+          render={(props) => (
+            <div className="root">
+              <Navbar {...props} />
+              <Contest {...props} />
             </div>
           )}
         />
