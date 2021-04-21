@@ -269,14 +269,22 @@ class VodPlayer extends Component {
             crossOrigin="anonymous"
             className={this.props.classes.badges}
             src={`${this.BASE_TWITCH_CDN}badges/v1/${
-              twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_1x : twitchBadge.versions[0].image_url_1x
+              twitchBadge.versions[badge.version]
+                ? twitchBadge.versions[badge.version].image_url_1x
+                : twitchBadge.versions[0].image_url_1x
             }`}
             srcSet={`${this.BASE_TWITCH_CDN}badges/v1/${
-              twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_1x : twitchBadge.versions[0].image_url_1x
+              twitchBadge.versions[badge.version]
+                ? twitchBadge.versions[badge.version].image_url_1x
+                : twitchBadge.versions[0].image_url_1x
             } 1x, ${this.BASE_TWITCH_CDN}badges/v1/${
-              twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_2x : twitchBadge.versions[0].image_url_2x
+              twitchBadge.versions[badge.version]
+                ? twitchBadge.versions[badge.version].image_url_2x
+                : twitchBadge.versions[0].image_url_2x
             } 2x, ${this.BASE_TWITCH_CDN}badges/v1/${
-              twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_4x : twitchBadge.versions[0].image_url_4x
+              twitchBadge.versions[badge.version]
+                ? twitchBadge.versions[badge.version].image_url_4x
+                : twitchBadge.versions[0].image_url_4x
             } 4x`}
             alt=""
           />
@@ -412,6 +420,9 @@ class VodPlayer extends Component {
       }
     }
 
+    if (this.state.comments.length - 1 === pastIndex) {
+      await this.fetchNextComments();
+    }
     if (
       this.state.stoppedAtIndex === pastIndex &&
       this.state.stoppedAtIndex !== 0
@@ -468,10 +479,6 @@ class VodPlayer extends Component {
           </Box>
         </li>
       );
-    }
-
-    if (this.state.comments.length - 1 === pastIndex) {
-      await this.fetchNextComments();
     }
 
     this.setState(
