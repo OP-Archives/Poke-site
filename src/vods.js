@@ -35,7 +35,7 @@ export default function Vods(props) {
           //don't display vods without a video link
           setVodList(
             data.data.filter((vod) => {
-              return vod.youtube_id.length !== 0;
+              return vod.youtube.length !== 0;
             })
           );
         })
@@ -124,7 +124,7 @@ export default function Vods(props) {
         setVodList(
           vodList.concat(
             data.data.filter((vod) => {
-              return vod.youtube_id.length !== 0;
+              return vod.youtube.length !== 0;
             })
           )
         );

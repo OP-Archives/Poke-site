@@ -145,6 +145,13 @@ class VodPlayer extends Component {
 
   onReady = (evt) => {
     this.player = evt.target;
+    if (this.state.vodData.youtube[this.state.part]) {
+      this.player.loadVideoById(this.state.vodData.youtube[this.state.part].id);
+    } else {
+      this.setState({ part: 0 }, () => {
+        this.player.loadVideoById(this.state.vodData.youtube[this.state.part].id);
+      });
+    }
     canAutoPlay.video().then(({ result }) => {
       if (!result) {
         evt.target.mute();
@@ -154,8 +161,8 @@ class VodPlayer extends Component {
 
   onPlay = async (evt) => {
     let offset = Math.round(this.player.getCurrentTime());
-    for (let duration of this.durations) {
-      offset += duration;
+    for (let i = 0; i < this.state.part; i++) {
+      offset += this.state.vodData.youtube[i].duration;
     }
     this.setState(
       {
@@ -174,12 +181,9 @@ class VodPlayer extends Component {
   onEnd = (evt) => {
     this.clearLoopTimeout();
     const nextPart = this.state.part + 1;
-    if (this.state.vodData.youtube_id[nextPart]) {
-      if (!this.durations[this.state.part]) {
-        this.durations.push(Math.round(this.player.getDuration()));
-      }
+    if (this.state.vodData.youtube[nextPart].id) {
       this.setState({ part: nextPart });
-      this.player.loadVideoById(this.state.vodData.youtube_id[nextPart]);
+      this.player.loadVideoById(this.state.vodData.youtube[nextPart].id);
     }
   };
 
@@ -403,8 +407,8 @@ class VodPlayer extends Component {
       return;
 
     let playerCurrentTime = Math.round(this.player.getCurrentTime());
-    for (let duration of this.durations) {
-      playerCurrentTime += duration;
+    for (let i = 0; i < this.state.part; i++) {
+      playerCurrentTime += this.state.vodData.youtube[i].duration;
     }
 
     let pastIndex = this.state.comments.length - 1;
@@ -501,7 +505,7 @@ class VodPlayer extends Component {
 
   render() {
     const { classes, isMobile } = this.props;
-    const { vodData, chatLoading, messages, part } = this.state;
+    const { vodData, chatLoading, messages } = this.state;
     return !vodData ? (
       <div className={classes.parent}>
         <div style={{ textAlign: "center" }}>
@@ -515,11 +519,6 @@ class VodPlayer extends Component {
       <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
         <Box display={isMobile ? "block" : "flex"} className={classes.player}>
           <Youtube
-            videoId={
-              vodData.youtube_id[part]
-                ? vodData.youtube_id[part]
-                : vodData.youtube_id[0]
-            }
             containerClassName={
               !isMobile ? classes.horizPlayer : classes.vertPlayer
             }
