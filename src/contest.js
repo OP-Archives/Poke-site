@@ -22,8 +22,8 @@ export default function Contest(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
   const classes = useStyles();
   const [contests, setContests] = useState(undefined);
-  const [prevContests, setPrevContests] = useState(undefined);
-  const [ongoingContests, setOngoingContests] = useState(undefined);
+  const [prevContests, setPrevContests] = useState([]);
+  const [ongoingContests, setOngoingContests] = useState([]);
   const [createModal, setCreateModal] = React.useState(false);
 
   useEffect(() => {
@@ -339,36 +339,30 @@ export default function Contest(props) {
               </div>
             </div>
           </div>
-          {contests ? (
+          {ongoingContests.length > 0 ? (
             <>
-              {ongoingContests ? (
-                <>
-                  <Typography
-                    variant="h3"
-                    className={classes.title}
-                    style={{ marginBottom: "1rem", color: "green" }}
-                  >
-                    CONTESTS
-                  </Typography>
-                  {ongoingContests}
-                </>
-              ) : (
-                <></>
-              )}
-              {prevContests ? (
-                <>
-                  <Typography
-                    variant="h3"
-                    className={classes.title}
-                    style={{ marginBottom: "1rem", color: "#ff0000" }}
-                  >
-                    PREVIOUS CONTESTS
-                  </Typography>
-                  {prevContests}
-                </>
-              ) : (
-                <></>
-              )}
+              <Typography
+                variant="h3"
+                className={classes.title}
+                style={{ marginBottom: "1rem", color: "green" }}
+              >
+                CONTESTS
+              </Typography>
+              {ongoingContests}
+            </>
+          ) : (
+            <></>
+          )}
+          {prevContests.length > 0 ? (
+            <>
+              <Typography
+                variant="h3"
+                className={classes.title}
+                style={{ marginBottom: "1rem", color: "#ff0000" }}
+              >
+                PREVIOUS CONTESTS
+              </Typography>
+              {prevContests}
             </>
           ) : (
             <></>
