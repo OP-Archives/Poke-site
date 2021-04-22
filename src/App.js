@@ -4,10 +4,31 @@ import Vods from "./vods";
 import VodPlayer from "./vod_player";
 import Navbar from "./navbar";
 import Contest from "./contest";
+import Manage from "./manage";
+import Winners from "./winners";
+import client from "./client";
+import { useState, useEffect } from "react";
 
 export default function App() {
   const channel = "poke",
     twitchId = "12943173";
+  const [user, setUser] = useState(undefined);
+
+  useEffect(() => {
+    client.authenticate().catch(() => setUser(null));
+
+    client.on("authenticated", (paramUser) => {
+      setUser(paramUser.user);
+    });
+
+    client.on("logout", () => {
+      setUser(null);
+      window.location.href = "/";
+    });
+
+    return;
+  }, [user]);
+
   return (
     <BrowserRouter>
       <Switch>
@@ -46,7 +67,27 @@ export default function App() {
           render={(props) => (
             <div className="root">
               <Navbar {...props} />
-              <Contest {...props} />
+              <Contest {...props} user={user} />
+            </div>
+          )}
+        />
+        <Route
+          exact
+          path="/contest/:contestId/manage"
+          render={(props) => (
+            <div className="root">
+              <Navbar {...props} />
+              <Manage {...props} user={user} />
+            </div>
+          )}
+        />
+        <Route
+          exact
+          path="/contest/:contestId/winners"
+          render={(props) => (
+            <div className="root">
+              <Navbar {...props} />
+              <Winners {...props} user={user} />
             </div>
           )}
         />

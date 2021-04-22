@@ -1,21 +1,86 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   makeStyles,
   Typography,
-  Link,
-  Container,
   Button,
-  Menu,
   Box,
   CircularProgress,
-  useMediaQuery,
+  TextField,
 } from "@material-ui/core";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
+import logo from "./assets/contestlogo.png";
+import { Alert } from "@material-ui/lab";
+import client from "./client";
 
-export default function Submission(props) {
-  const isMobile = useMediaQuery("(max-width: 800px)");
+export default function Creation(props) {
   const classes = useStyles();
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(undefined);
+  const [title, setTitle] = useState("");
+  const [comment, setComment] = useState("");
+  const [video, setVideo] = useState(null);
+  const [linkError, setLinkError] = useState(false);
+  const [linkErrorMsg, setLinkErrorMsg] = useState(undefined);
+  const [commentError, setCommentError] = useState(false);
+  const [commentErrorMsg, setCommentErrorMsg] = useState(undefined);
+
+  const handleTitleChange = (evt) => {
+    setTitle(evt.target.value);
+  };
+
+  const handleCommentChange = (evt) => {
+    setCommentError(false);
+    if (evt.target.value.length >= 280) {
+      setCommentError(true);
+      setCommentErrorMsg("Comment is too long..");
+      setComment("");
+      return;
+    }
+    setComment(evt.target.value);
+  };
+
+  const handleVideoLinkChange = (evt) => {
+    setLinkError(false);
+    const link = evt.target.value;
+    //eslint-disable-next-line
+    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+    if (!regex.test(link)) {
+      setLinkError(true);
+      setLinkErrorMsg("Youtube link is not valid");
+      setVideo(null);
+      return;
+    }
+    const videoSplit = link.split(regex);
+    setVideo({
+      id: videoSplit[5],
+      link: link,
+      timestamp: videoSplit[6] ? videoSplit[6].substring(3, videoSplit[6].length) : null,
+    });
+  };
+
+  const handleSubmit = (evt) => {
+    if (evt) evt.preventDefault();
+    return client
+      .service("submissions")
+      .create({
+        contest_id: props.contest.id,
+        user_id: props.user.id,
+        username: props.user.username,
+        display_name: props.user.display_name,
+        video: video,
+        comment: comment,
+        title: title
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((e) => {
+        console.error(e);
+        setError(true);
+        setErrorMsg(e.message);
+      });
+  };
 
   if (props.user === undefined)
     return (
@@ -35,19 +100,148 @@ export default function Submission(props) {
     );
 
   return (
-    <div className={classes.parent}>
-      <SimpleBar style={{height: "100%"}}>
-
-      </SimpleBar>
-    </div>
+    <SimpleBar className={classes.parent}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+      >
+        <div style={{ textAlign: "center" }}>
+          <img alt="" src={logo} height="auto" width="100%" />
+          <Typography variant="h4" className={classes.title}>
+            {`${props.contest.title} Submission`}
+          </Typography>
+          {error ? (
+            <Alert style={{ marginTop: "1rem" }} severity="error">
+              {errorMsg}
+            </Alert>
+          ) : (
+            <></>
+          )}
+          <form className={classes.form} noValidate>
+            <TextField
+              inputProps={{
+                style: {
+                  backgroundColor: "hsla(0,0%,100%,.15)",
+                  color: "#fff",
+                },
+              }}
+              InputLabelProps={{
+                style: { color: "#fff" },
+              }}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              label="Title"
+              name="title"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              autoFocus
+              onChange={handleTitleChange}
+            />
+            {linkError ? (
+              <Alert style={{ marginTop: "1rem" }} severity="error">
+                {linkErrorMsg}
+              </Alert>
+            ) : (
+              <></>
+            )}
+            <TextField
+              inputProps={{
+                style: {
+                  backgroundColor: "hsla(0,0%,100%,.15)",
+                  color: "#fff",
+                },
+              }}
+              InputLabelProps={{
+                style: { color: "#fff" },
+              }}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              label="Youtube Link"
+              name="Youtube Link"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              onChange={handleVideoLinkChange}
+            />
+            {commentError ? (
+              <Alert style={{ marginTop: "1rem" }} severity="error">
+                {commentErrorMsg}
+              </Alert>
+            ) : (
+              <></>
+            )}
+            <TextField
+              inputProps={{
+                style: {
+                  backgroundColor: "hsla(0,0%,100%,.15)",
+                  color: "#fff",
+                },
+              }}
+              InputLabelProps={{
+                style: { color: "#fff" },
+              }}
+              multiline
+              rows={4}
+              variant="filled"
+              margin="normal"
+              fullWidth
+              label="Comment"
+              name="Comment"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              onChange={handleCommentChange}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={handleSubmit}
+              disabled={title.length === 0 || !video}
+              style={{ color: "#fff" }}
+            >
+              Submit
+            </Button>
+          </form>
+        </div>
+      </Box>
+    </SimpleBar>
   );
 }
 
 const useStyles = makeStyles(() => ({
   parent: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
     height: "100%",
+    padding: "1rem",
+  },
+  title: {
+    fontFamily: "Anton",
+    fontWeight: "550",
+    color: "rgb(255, 255, 255)",
+    textTransform: "uppercase",
+  },
+  form: {
+    width: "100%",
+    marginTop: "1rem",
+  },
+  submit: {
+    marginTop: "1rem",
+    backgroundColor: "#008230",
+    "&:hover": {
+      backgroundColor: "#008230",
+      opacity: "0.7",
+    },
+  },
+  textLabel: {
+    color: "#fff",
   },
 }));
