@@ -28,6 +28,7 @@ export default function Manage(props) {
   const [winnerUI, setWinnerUI] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(undefined);
   const [contestExists, setContestExists] = useState(null);
+  const [showPlayer, setShowPlayer] = useState(false);
   const contestId = props.match.params.contestId;
 
   useEffect(() => {
@@ -266,6 +267,7 @@ export default function Manage(props) {
     const nextIndex = currentIndex + 1;
     if (!submissions[nextIndex]) return;
 
+    setShowPlayer(false);
     setCurrentIndex(nextIndex);
     setCurrentSubmission(submissions[nextIndex]);
     cueVideo(
@@ -279,6 +281,7 @@ export default function Manage(props) {
     const prevIndex = currentIndex - 1;
     if (!submissions[prevIndex]) return;
 
+    setShowPlayer(false);
     setCurrentIndex(prevIndex);
     setCurrentSubmission(submissions[prevIndex]);
     cueVideo(
@@ -319,6 +322,10 @@ export default function Manage(props) {
     cueVideo(data.video.id, data.video.start, data.video.end);
   };
 
+  const handlePlayerClick = (evt) => {
+    setShowPlayer(true);
+  };
+
   if (props.user === undefined || contestExists === null)
     return (
       <Box
@@ -337,7 +344,7 @@ export default function Manage(props) {
     );
 
   if (!contestExists) return <Redirect to="/contest" />;
-
+  if (!props.user) return <Redirect to="/contest" />;
   if (props.user.type !== "mod" && props.user.type !== "admin")
     return <Redirect to="/contest" />;
 
@@ -421,20 +428,30 @@ export default function Manage(props) {
                       </Button>
                     </div>
                     <div className={classes.player}>
-                      <Youtube
-                        id="player"
-                        opts={{
+                      <div
+                        style={{
+                          backgroundColor: "black",
                           height: "500px",
                           width: "800px",
-                          playerVars: {
-                            autoplay: 0,
-                            playsinline: 1,
-                            rel: 0,
-                            modestbranding: 1,
-                          },
                         }}
-                        onReady={onReady}
-                      />
+                        onClick={handlePlayerClick}
+                      >
+                        <Youtube
+                          id="player"
+                          containerClassName={showPlayer ? "" : classes.hidden}
+                          opts={{
+                            height: "500px",
+                            width: "800px",
+                            playerVars: {
+                              autoplay: 0,
+                              playsinline: 1,
+                              rel: 0,
+                              modestbranding: 1,
+                            },
+                          }}
+                          onReady={onReady}
+                        />
+                      </div>
                       <div className={classes.textBox}>
                         <Typography variant="h5" className={classes.text}>
                           {`${currentSubmission.title}`}
@@ -810,5 +827,8 @@ const useStyles = makeStyles(() => ({
     marginRight: "0.1rem",
     marginLeft: "0.1rem",
     backgroundColor: "green",
+  },
+  hidden: {
+    display: "none",
   },
 }));
