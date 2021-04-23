@@ -14,6 +14,7 @@ import logo from "./assets/contestlogo.png";
 import Youtube from "react-youtube";
 import client from "./client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Redirect } from "react-router-dom";
 
 export default function Manage(props) {
   const classes = useStyles();
@@ -34,22 +35,18 @@ export default function Manage(props) {
   }, []);
 
   const fetchSubmissions = async (rank = false) => {
-    let res;
+    let res = [];
     await client
       .service("submissions")
       .find({
         query: {
           contest_id: contestId,
-          rank: rank
+          $sort: rank
             ? {
-                $sort: {
-                  rank: 1,
-                },
+                rank: 1,
               }
             : {
-                $sort: {
-                  id: 1,
-                },
+                id: 1,
               },
         },
       })
@@ -293,6 +290,10 @@ export default function Manage(props) {
       </Box>
     );
 
+  if (!props.user.type === "mod" || !props.user.type === "admin") {
+    <Redirect to="/contest" />;
+  }
+
   return (
     <SimpleBar className={classes.parent}>
       <div className={isMobile ? classes.mobileContainer : classes.container}>
@@ -389,7 +390,10 @@ export default function Manage(props) {
                       />
                       <div className={classes.textBox}>
                         <Typography variant="h5" className={classes.text}>
-                          {`${currentSubmission.title} - ${currentSubmission.display_name}`}
+                          {`${currentSubmission.title}`}
+                        </Typography>
+                        <Typography variant="h5" className={classes.text}>
+                          {`${currentSubmission.display_name}`}
                         </Typography>
                         <a
                           href={currentSubmission.video.link}
