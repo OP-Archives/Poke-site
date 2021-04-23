@@ -473,7 +473,7 @@ export default function Manage(props) {
                             variant="caption"
                             style={{ wordBreak: "break-word" }}
                           >
-                            {/*`${currentSubmission.comment}`*/}
+                            {`${currentSubmission.comment}`}
                           </Typography>
                         </div>
                       </div>
