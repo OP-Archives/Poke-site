@@ -27,12 +27,25 @@ export default function Manage(props) {
   const [approvedUI, setApprovedUI] = useState(false);
   const [winnerUI, setWinnerUI] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(undefined);
+  const [contestExists, setContestExists] = useState(null);
   const contestId = props.match.params.contestId;
 
   useEffect(() => {
     document.title = "Sub Alert Contest - Poke";
+    const fetchContest = async () => {
+      await client
+        .service("contests")
+        .get(contestId)
+        .then(() => {
+          setContestExists(true);
+        })
+        .catch(() => {
+          setContestExists(false);
+        });
+    };
+    fetchContest();
     return;
-  }, []);
+  }, [contestId]);
 
   const fetchSubmissions = async (rank = false) => {
     let res = [];
@@ -273,7 +286,7 @@ export default function Manage(props) {
     );
   };
 
-  if (props.user === undefined)
+  if (props.user === undefined || contestExists === null)
     return (
       <Box
         display="flex"
@@ -290,9 +303,11 @@ export default function Manage(props) {
       </Box>
     );
 
-  if (!props.user.type === "mod" || !props.user.type === "admin") {
-    <Redirect to="/contest" />;
-  }
+  if (!contestExists) return <Redirect to="/contest" />;
+
+  
+  if (props.user.type !== "mod" && props.user.type !== "admin")
+    return <Redirect to="/contest" />;
 
   return (
     <SimpleBar className={classes.parent}>
