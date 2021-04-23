@@ -72,6 +72,52 @@ export default function Manage(props) {
     return res;
   };
 
+  const cueVideo = (id, start, end, argPlayer = false) => {
+    if (!player) {
+      if (start !== null && end !== null)
+        return argPlayer.cueVideoById({
+          videoId: id,
+          startSeconds: start,
+          endSeconds: end,
+        });
+
+      if (start !== null && end === null)
+        return argPlayer.cueVideoById({
+          videoId: id,
+          startSeconds: start,
+        });
+
+      if (start === null && end !== null)
+        return argPlayer.cueVideoById({
+          videoId: id,
+          endSeconds: end,
+        });
+
+      argPlayer.cueVideoById(id);
+    }
+
+    if (start !== null && end !== null)
+      return player.cueVideoById({
+        videoId: id,
+        startSeconds: start,
+        endSeconds: end,
+      });
+
+    if (start !== null && end === null)
+      return player.cueVideoById({
+        videoId: id,
+        startSeconds: start,
+      });
+
+    if (start === null && end !== null)
+      return player.cueVideoById({
+        videoId: id,
+        endSeconds: end,
+      });
+
+    player.cueVideoById(id);
+  };
+
   const showSubmissions = async (evt) => {
     const tmp_submissions = await fetchSubmissions();
     setSubmissions(tmp_submissions);
@@ -81,14 +127,12 @@ export default function Manage(props) {
     setSubmissionUI(true);
     setApprovedUI(false);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player) {
-      player.cueVideoById(
+    if (tmp_submissions.length > 0 && player)
+      cueVideo(
         tmp_submissions[0].video.id,
-        tmp_submissions[0].video.timestamp
-          ? tmp_submissions[0].video.timestamp
-          : 0
+        tmp_submissions[0].video.start,
+        tmp_submissions[0].video.end
       );
-    }
   };
 
   const showUnapprovedSubmissions = async (evt) => {
@@ -103,14 +147,12 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(false);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player) {
-      player.cueVideoById(
+    if (tmp_submissions.length > 0 && player)
+      cueVideo(
         tmp_submissions[0].video.id,
-        tmp_submissions[0].video.timestamp
-          ? tmp_submissions[0].video.timestamp
-          : 0
+        tmp_submissions[0].video.start,
+        tmp_submissions[0].video.end
       );
-    }
   };
 
   const showApprovedSubmissions = async (evt) => {
@@ -125,14 +167,12 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(true);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player) {
-      player.cueVideoById(
+    if (tmp_submissions.length > 0 && player)
+      cueVideo(
         tmp_submissions[0].video.id,
-        tmp_submissions[0].video.timestamp
-          ? tmp_submissions[0].video.timestamp
-          : 0
+        tmp_submissions[0].video.start,
+        tmp_submissions[0].video.end
       );
-    }
   };
 
   const showWinnersSubmissions = async (evt) => {
@@ -153,25 +193,23 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(false);
     setWinnerUI(true);
-    if (tmp_submissions.length > 0 && player) {
-      player.cueVideoById(
+    if (tmp_submissions.length > 0 && player)
+      cueVideo(
         tmp_submissions[0].video.id,
-        tmp_submissions[0].video.timestamp
-          ? tmp_submissions[0].video.timestamp
-          : 0
+        tmp_submissions[0].video.start,
+        tmp_submissions[0].video.end
       );
-    }
   };
 
   const onReady = (evt) => {
     const argPlayer = evt.target;
     setPlayer(argPlayer);
     if (currentSubmission)
-      argPlayer.cueVideoById(
+      cueVideo(
         currentSubmission.video.id,
-        currentSubmission.video.timestamp
-          ? currentSubmission.video.timestamp
-          : 0
+        currentSubmission.video.start,
+        currentSubmission.video.end,
+        argPlayer
       );
   };
 
@@ -230,11 +268,10 @@ export default function Manage(props) {
 
     setCurrentIndex(nextIndex);
     setCurrentSubmission(submissions[nextIndex]);
-    player.cueVideoById(
+    cueVideo(
       submissions[nextIndex].video.id,
-      submissions[nextIndex].video.timestamp
-        ? submissions[nextIndex].video.timestamp
-        : 0
+      submissions[nextIndex].video.start,
+      submissions[nextIndex].video.end
     );
   };
 
@@ -244,11 +281,10 @@ export default function Manage(props) {
 
     setCurrentIndex(prevIndex);
     setCurrentSubmission(submissions[prevIndex]);
-    player.cueVideoById(
+    cueVideo(
       submissions[prevIndex].video.id,
-      submissions[prevIndex].video.timestamp
-        ? submissions[prevIndex].video.timestamp
-        : 0
+      submissions[prevIndex].video.start,
+      submissions[prevIndex].video.end
     );
   };
 
@@ -280,10 +316,7 @@ export default function Manage(props) {
     }
     setCurrentSubmission(data);
     setCurrentIndex(submissions.indexOf(data));
-    player.cueVideoById(
-      data.video.id,
-      data.video.timestamp ? data.video.timestamp : 0
-    );
+    cueVideo(data.video.id, data.video.start, data.video.end);
   };
 
   if (props.user === undefined || contestExists === null)
@@ -305,7 +338,6 @@ export default function Manage(props) {
 
   if (!contestExists) return <Redirect to="/contest" />;
 
-  
   if (props.user.type !== "mod" && props.user.type !== "admin")
     return <Redirect to="/contest" />;
 
