@@ -25,6 +25,7 @@ export default function Manage(props) {
   const [submissionUI, setSubmissionUI] = useState(false);
   const [unapprovedUI, setUnapprovedUI] = useState(false);
   const [approvedUI, setApprovedUI] = useState(false);
+  const [deniedUI, setDeniedUI] = useState(false);
   const [winnerUI, setWinnerUI] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(undefined);
   const [contestExists, setContestExists] = useState(null);
@@ -139,7 +140,7 @@ export default function Manage(props) {
   const showUnapprovedSubmissions = async (evt) => {
     let tmp_submissions = await fetchSubmissions();
     tmp_submissions = tmp_submissions.filter(
-      (submission) => !submission.approved
+      (submission) => submission.status === ""
     );
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
@@ -159,14 +160,36 @@ export default function Manage(props) {
   const showApprovedSubmissions = async (evt) => {
     let tmp_submissions = await fetchSubmissions();
     tmp_submissions = tmp_submissions.filter(
-      (submission) => submission.approved
+      (submission) => submission.status === "approved"
     );
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
     setCurrentIndex(0);
+    setDeniedUI(false);
     setUnapprovedUI(false);
     setSubmissionUI(false);
     setApprovedUI(true);
+    setWinnerUI(false);
+    if (tmp_submissions.length > 0 && player)
+      cueVideo(
+        tmp_submissions[0].video.id,
+        tmp_submissions[0].video.start,
+        tmp_submissions[0].video.end
+      );
+  };
+
+  const showDeniedVideos = async (evt) => {
+    let tmp_submissions = await fetchSubmissions();
+    tmp_submissions = tmp_submissions.filter(
+      (submission) => submission.status === "denied"
+    );
+    setSubmissions(tmp_submissions);
+    setCurrentSubmission(tmp_submissions[0]);
+    setCurrentIndex(0);
+    setDeniedUI(true);
+    setUnapprovedUI(false);
+    setSubmissionUI(false);
+    setApprovedUI(false);
     setWinnerUI(false);
     if (tmp_submissions.length > 0 && player)
       cueVideo(
@@ -181,15 +204,8 @@ export default function Manage(props) {
     tmp_submissions = tmp_submissions.filter((submission) => submission.winner);
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
-    /*
-    let fakedata = [];
-    for (let i = 0; i < 50; i++) {
-      let newData = { ...tmp_submissions[0] };
-      newData.id = Math.floor(Math.random() * 10000).toString();
-      fakedata.push(newData);
-    }
-    setWinners(fakedata);*/
     setCurrentIndex(0);
+    setDeniedUI(false);
     setUnapprovedUI(false);
     setSubmissionUI(false);
     setApprovedUI(false);
@@ -218,8 +234,39 @@ export default function Manage(props) {
     await client
       .service("submissions")
       .patch(currentSubmission.id, {
-        approved: !currentSubmission.approved,
-        winner: false,
+        status: "approved",
+      })
+      .then((data) => {
+        submissions[currentSubmission] = data;
+        setSubmissions(submissions);
+        setCurrentSubmission(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const handleUnApproval = async (evt) => {
+    await client
+      .service("submissions")
+      .patch(currentSubmission.id, {
+        status: "",
+      })
+      .then((data) => {
+        submissions[currentSubmission] = data;
+        setSubmissions(submissions);
+        setCurrentSubmission(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  const handleDeny = async (evt) => {
+    await client
+      .service("submissions")
+      .patch(currentSubmission.id, {
+        status: "denied",
       })
       .then((data) => {
         submissions[currentSubmission] = data;
@@ -257,6 +304,19 @@ export default function Manage(props) {
           banned: true,
         })
         .then(() => {})
+        .catch((e) => {
+          console.error(e);
+        });
+      await client
+        .service("submissions")
+        .patch(currentSubmission.id, {
+          status: "denied",
+        })
+        .then((data) => {
+          submissions[currentSubmission] = data;
+          setSubmissions(submissions);
+          setCurrentSubmission(data);
+        })
         .catch((e) => {
           console.error(e);
         });
@@ -361,7 +421,14 @@ export default function Manage(props) {
                   onClick={showSubmissions}
                   className={classes.button}
                 >
-                  Submissions
+                  ALL
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={showDeniedVideos}
+                  className={classes.button}
+                >
+                  Denied Videos
                 </Button>
                 <Button
                   variant="outlined"
@@ -493,46 +560,51 @@ export default function Manage(props) {
                       {submissionUI ? (
                         <div>
                           <Box display="flex">
-                            <Switch
-                              checked={currentSubmission.approved}
-                              onChange={handleApproval}
-                              classes={{
-                                track: classes.switch_track,
-                                switchBase: classes.switch_base,
-                                colorPrimary: classes.switch_primary,
-                              }}
-                            />
-                            <div style={{ marginTop: "0.4rem" }}>
-                              <Typography
-                                variant="body1"
-                                className={classes.textLabel}
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleApproval}
+                                className={classes.button}
                               >
-                                Approved
-                              </Typography>
+                                {`Approve`}
+                              </Button>
                             </div>
-                            <Switch
-                              checked={currentSubmission.winner}
-                              onChange={handleWinnerChange}
-                              classes={{
-                                track: classes.switch_track,
-                                switchBase: classes.switch_base,
-                                colorPrimary: classes.switch_primary,
-                              }}
-                            />
-                            <div style={{ marginTop: "0.4rem" }}>
-                              <Typography
-                                variant="body1"
-                                className={classes.textLabel}
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleDeny}
+                                className={classes.denyButton}
                               >
-                                Winner
-                              </Typography>
+                                {`Deny`}
+                              </Button>
                             </div>
                           </Box>
                           <div style={{ marginTop: "1rem" }}>
                             <Button
                               variant="outlined"
                               onClick={handleBan}
+                              className={classes.denyButton}
+                            >
+                              {`Ban User`}
+                            </Button>
+                          </div>
+                        </div>
+                      ) : deniedUI ? (
+                        <div>
+                          <Box display="flex">
+                            <Button
+                              variant="outlined"
+                              onClick={handleUnApproval}
                               className={classes.button}
+                            >
+                              {`Un-deny`}
+                            </Button>
+                          </Box>
+                          <div style={{ marginTop: "1rem" }}>
+                            <Button
+                              variant="outlined"
+                              onClick={handleBan}
+                              className={classes.denyButton}
                             >
                               {`Ban User`}
                             </Button>
@@ -541,22 +613,23 @@ export default function Manage(props) {
                       ) : unapprovedUI ? (
                         <div>
                           <Box display="flex">
-                            <Switch
-                              checked={currentSubmission.approved}
-                              onChange={handleApproval}
-                              classes={{
-                                track: classes.switch_track,
-                                switchBase: classes.switch_base,
-                                colorPrimary: classes.switch_primary,
-                              }}
-                            />
-                            <div style={{ marginTop: "0.4rem" }}>
-                              <Typography
-                                variant="body1"
-                                className={classes.textLabel}
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleApproval}
+                                className={classes.button}
                               >
-                                Approved
-                              </Typography>
+                                {`Approve`}
+                              </Button>
+                            </div>
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleDeny}
+                                className={classes.denyButton}
+                              >
+                                {`Deny`}
+                              </Button>
                             </div>
                           </Box>
                           <div style={{ marginTop: "1rem" }}>
@@ -571,23 +644,13 @@ export default function Manage(props) {
                         </div>
                       ) : approvedUI ? (
                         <>
-                          <Switch
-                            checked={currentSubmission.approved}
-                            onChange={handleApproval}
-                            classes={{
-                              track: classes.switch_track,
-                              switchBase: classes.switch_base,
-                              colorPrimary: classes.switch_primary,
-                            }}
-                          />
-                          <div style={{ marginTop: "0.4rem" }}>
-                            <Typography
-                              variant="body1"
-                              className={classes.textLabel}
-                            >
-                              Approved
-                            </Typography>
-                          </div>
+                          <Button
+                            variant="outlined"
+                            onClick={handleUnApproval}
+                            className={classes.button}
+                          >
+                            {`Un-Approve`}
+                          </Button>
                           <Switch
                             checked={currentSubmission.winner}
                             onChange={handleWinnerChange}
@@ -756,6 +819,16 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "#008230",
     "&:hover": {
       backgroundColor: "#008230",
+      opacity: "0.7",
+      textDecoration: "none",
+      color: `#fff`,
+    },
+  },
+  denyButton: {
+    color: "#fff",
+    backgroundColor: "red",
+    "&:hover": {
+      backgroundColor: "red",
       opacity: "0.7",
       textDecoration: "none",
       color: `#fff`,
