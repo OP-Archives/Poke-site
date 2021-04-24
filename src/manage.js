@@ -125,6 +125,7 @@ export default function Manage(props) {
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
     setCurrentIndex(0);
+    setDeniedUI(false);
     setUnapprovedUI(false);
     setSubmissionUI(true);
     setApprovedUI(false);
@@ -145,6 +146,7 @@ export default function Manage(props) {
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
     setCurrentIndex(0);
+    setDeniedUI(false);
     setUnapprovedUI(true);
     setSubmissionUI(false);
     setApprovedUI(false);
