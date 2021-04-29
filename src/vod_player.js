@@ -149,7 +149,9 @@ class VodPlayer extends Component {
       this.player.loadVideoById(this.state.vodData.youtube[this.state.part].id);
     } else {
       this.setState({ part: 0 }, () => {
-        this.player.loadVideoById(this.state.vodData.youtube[this.state.part].id);
+        this.player.loadVideoById(
+          this.state.vodData.youtube[this.state.part].id
+        );
       });
     }
     canAutoPlay.video().then(({ result }) => {
@@ -170,10 +172,10 @@ class VodPlayer extends Component {
         comments: [],
         stoppedAtIndex: 0,
         chatLoading: true,
+        cursor: null,
       },
       () => {
         this.fetchComments(offset);
-        this.loop();
       }
     );
   };
@@ -192,7 +194,11 @@ class VodPlayer extends Component {
   };
 
   clearLoopTimeout = (evt) => {
-    clearTimeout(this.loopTimeout);
+    if (this.loopTimeout) {
+      clearTimeout(this.loopTimeout);
+      this.loopTimeout = null;
+      return;
+    }
   };
 
   fetchComments = async (offset) => {
@@ -207,11 +213,16 @@ class VodPlayer extends Component {
     )
       .then((response) => response.json())
       .then((data) => {
-        this.setState({
-          chatLoading: false,
-          comments: data.comments,
-          cursor: data.cursor,
-        });
+        this.setState(
+          {
+            chatLoading: false,
+            comments: data.comments,
+            cursor: data.cursor,
+          },
+          () => {
+            this.loop();
+          }
+        );
       })
       .catch((e) => {
         console.error(e);
@@ -398,13 +409,7 @@ class VodPlayer extends Component {
   buildMessages = async () => {
     if (!this.player || !this.state.comments) return;
     const playerState = this.player.getPlayerState();
-    if (
-      this.state.comments.length === 0 ||
-      playerState === -1 ||
-      playerState === 0 ||
-      playerState === 5
-    )
-      return;
+    if (this.state.comments.length === 0 || playerState != 1) return;
 
     let playerCurrentTime = Math.round(this.player.getCurrentTime());
     for (let i = 0; i < this.state.part; i++) {
@@ -491,12 +496,14 @@ class VodPlayer extends Component {
         stoppedAtIndex: pastIndex,
       },
       () => {
+        if (!this.chatRef.current) return;
         this.chatRef.current.scrollTop = this.chatRef.current.scrollHeight;
       }
     );
   };
 
   loop = () => {
+    if (this.loopTimeout) clearTimeout(this.loopTimeout);
     this.loopTimeout = setTimeout(async () => {
       await this.buildMessages();
       this.loop();
