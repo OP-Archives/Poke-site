@@ -10,6 +10,7 @@ import Youtube from "react-youtube";
 import SimpleBar from "simplebar-react";
 import canAutoPlay from "can-autoplay";
 import Logo from "./assets/jammin.gif";
+import { Resizable } from "re-resizable";
 
 class VodPlayer extends Component {
   constructor(props) {
@@ -540,11 +541,12 @@ class VodPlayer extends Component {
       </div>
     ) : (
       <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
-        <Box display={isMobile ? "block" : "flex"} className={classes.player}>
+        <Box
+          flexDirection={isMobile ? "column" : "row"}
+          className={classes.playerParent}
+        >
           <Youtube
-            containerClassName={
-              !isMobile ? classes.horizPlayer : classes.vertPlayer
-            }
+            containerClassName={classes.player}
             id="player"
             opts={{
               height: "100%",
@@ -562,33 +564,73 @@ class VodPlayer extends Component {
             onEnd={this.onEnd}
             onError={this.playerError}
           />
-          <div className={!isMobile ? classes.horizChat : classes.vertChat}>
-            {chatLoading ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  marginTop: isMobile ? "3rem" : "20vh",
-                }}
-              >
-                <CircularProgress size="3rem" />
-              </div>
-            ) : (
-              <div className={classes.chat}>
-                <SimpleBar
-                  scrollableNodeProps={{ ref: this.chatRef }}
-                  className={classes.scroll}
+          <div className={classes.chatContainer}>
+            <Resizable
+              defaultSize={
+                isMobile
+                  ? {
+                      height: "350px",
+                      width: "100%",
+                    }
+                  : {
+                      width: "340px",
+                      height: "100%",
+                    }
+              }
+              maxHeight={isMobile ? "350px" : "100%"}
+              minHeight={isMobile ? "100px" : "100%"}
+              minWidth={isMobile ? "100%" : "340px"}
+              enable={
+                isMobile
+                  ? {
+                      top: true,
+                      right: false,
+                      bottom: false,
+                      left: false,
+                      topRight: false,
+                      bottomRight: false,
+                      bottomLeft: false,
+                      topLeft: false,
+                    }
+                  : {
+                      top: false,
+                      right: false,
+                      bottom: false,
+                      left: true,
+                      topRight: false,
+                      bottomRight: false,
+                      bottomLeft: false,
+                      topLeft: false,
+                    }
+              }
+            >
+              {chatLoading ? (
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: isMobile ? "3rem" : "20vh",
+                  }}
                 >
-                  <Box
-                    display="flex"
-                    height="100%"
-                    justifyContent="flex-end"
-                    flexDirection="column"
+                  <CircularProgress size="3rem" />
+                </div>
+              ) : (
+                <div className={classes.chat}>
+                  <SimpleBar
+                    scrollableNodeProps={{ ref: this.chatRef }}
+                    className={classes.scroll}
                   >
-                    <ul className={classes.ul}>{messages}</ul>
-                  </Box>
-                </SimpleBar>
-              </div>
-            )}
+                    <Box
+                      display="flex"
+                      height="100%"
+                      justifyContent="flex-end"
+                      flexDirection="column"
+                    >
+                      <ul className={classes.ul}>{messages}</ul>
+                    </Box>
+                  </SimpleBar>
+                </div>
+              )}
+            </Resizable>
           </div>
         </Box>
       </Container>
@@ -603,31 +645,21 @@ const useStyles = () => ({
     alignItems: "center",
     height: "100%",
   },
+  playerParent: {
+    display: "flex",
+    height: "100%",
+    width: "100%",
+  },
   player: {
     height: "100%",
-    width: "100%",
-  },
-  horizPlayer: {
-    width: "calc(100% - 340px)",
-    height: "100%",
-  },
-  horizChat: {
-    backgroundColor: "#0e0e10",
-    width: "340px",
-    height: "100%",
-  },
-  vertPlayer: {
-    height: "calc(100% - 500px)",
-    width: "100%",
-  },
-  vertChat: {
-    backgroundColor: "#0e0e10",
-    height: "500px",
     width: "100%",
   },
   text: {
     marginTop: "1rem",
     color: "#fff",
+  },
+  chatContainer: {
+    backgroundColor: "#0e0e10",
   },
   chat: {
     height: "100%",
@@ -673,5 +705,5 @@ const withMediaQuery = (...args) => (Component) => (props) => {
 };
 
 export default withStyles(useStyles)(
-  withMediaQuery("(max-width: 900px)")(VodPlayer)
+  withMediaQuery("(max-width: 600px)")(VodPlayer)
 );
