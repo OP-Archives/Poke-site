@@ -95,7 +95,7 @@ export default function Manage(props) {
           endSeconds: end,
         });
 
-      argPlayer.cueVideoById(id);
+      return argPlayer.cueVideoById(id);
     }
 
     if (start !== null && end !== null)
@@ -376,12 +376,31 @@ export default function Manage(props) {
   };
 
   const handleItemClick = (data, evt) => {
-    if (evt.defaultPrevented) {
-      return;
-    }
+    if (evt.defaultPrevented) return;
     setCurrentSubmission(data);
     setCurrentIndex(submissions.indexOf(data));
     cueVideo(data.video.id, data.video.start, data.video.end);
+  };
+
+  const handleRemove = async (evt) => {
+    const confirmDialog = window.confirm("Are you sure?");
+    if (!confirmDialog) return;
+    await client
+      .service("submissions")
+      .remove(currentSubmission.id)
+      .then(() => {
+        const newSubmissions = [...submissions];
+        const index = submissions.indexOf(currentSubmission);
+        if (index !== -1) {
+          newSubmissions.splice(index, 1);
+          setSubmissions(newSubmissions);
+          setCurrentSubmission(newSubmissions[index]);
+          setCurrentIndex(index);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   const handlePlayerClick = (evt) => {
@@ -580,6 +599,15 @@ export default function Manage(props) {
                                 {`Deny`}
                               </Button>
                             </div>
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleRemove}
+                                className={classes.denyButton}
+                              >
+                                {`Remove`}
+                              </Button>
+                            </div>
                           </Box>
                           <div style={{ marginTop: "1rem" }}>
                             <Button
@@ -594,13 +622,24 @@ export default function Manage(props) {
                       ) : deniedUI ? (
                         <div>
                           <Box display="flex">
-                            <Button
-                              variant="outlined"
-                              onClick={handleUnApproval}
-                              className={classes.button}
-                            >
-                              {`Un-deny`}
-                            </Button>
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleUnApproval}
+                                className={classes.button}
+                              >
+                                {`Un-deny`}
+                              </Button>
+                            </div>
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleRemove}
+                                className={classes.denyButton}
+                              >
+                                {`Remove`}
+                              </Button>
+                            </div>
                           </Box>
                           <div style={{ marginTop: "1rem" }}>
                             <Button
@@ -631,6 +670,15 @@ export default function Manage(props) {
                                 className={classes.denyButton}
                               >
                                 {`Deny`}
+                              </Button>
+                            </div>
+                            <div style={{ marginRight: "1rem" }}>
+                              <Button
+                                variant="outlined"
+                                onClick={handleRemove}
+                                className={classes.denyButton}
+                              >
+                                {`Remove`}
                               </Button>
                             </div>
                           </Box>

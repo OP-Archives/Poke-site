@@ -409,7 +409,7 @@ class VodPlayer extends Component {
   buildMessages = async () => {
     if (!this.player || !this.state.comments) return;
     const playerState = this.player.getPlayerState();
-    if (this.state.comments.length === 0 || playerState != 1) return;
+    if (this.state.comments.length === 0 || playerState !== 1) return;
 
     let playerCurrentTime = Math.round(this.player.getCurrentTime());
     for (let i = 0; i < this.state.part; i++) {
