@@ -41,6 +41,7 @@ class VodPlayer extends Component {
       chatLoading: true,
       messages: [],
       stoppedAtIndex: 0,
+      comments: [],
     };
   }
 
@@ -162,22 +163,37 @@ class VodPlayer extends Component {
   };
 
   onPlay = async (evt) => {
-    let offset = Math.round(this.player.getCurrentTime());
-    for (let i = 0; i < this.state.part; i++) {
-      offset += this.state.vodData.youtube[i].duration;
-    }
-    this.setState(
-      {
-        messages: [],
-        comments: [],
-        stoppedAtIndex: 0,
-        chatLoading: true,
-        cursor: null,
-      },
-      () => {
-        this.fetchComments(offset);
+    if (this.playTimeout) clearTimeout(this.playTimeout);
+    this.playTimeout = setTimeout(async () => {
+      let offset = Math.round(this.player.getCurrentTime());
+      for (let i = 0; i < this.state.part; i++) {
+        offset += this.state.vodData.youtube[i].duration;
       }
-    );
+      //check if it was a seek.
+      if (this.state.comments.length > 0) {
+        const lastComment = this.state.comments[this.state.comments.length - 1];
+        const firstComment = this.state.comments[0];
+        if (
+          offset - lastComment.content_offset_seconds <= 30 &&
+          offset > firstComment.content_offset_seconds
+        ) {
+          this.buildMessages();
+          return;
+        }
+      }
+      this.setState(
+        {
+          messages: [],
+          comments: [],
+          stoppedAtIndex: 0,
+          chatLoading: true,
+          cursor: null,
+        },
+        () => {
+          this.fetchComments(offset);
+        }
+      );
+    }, 300);
   };
 
   onEnd = (evt) => {
