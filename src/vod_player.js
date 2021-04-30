@@ -178,7 +178,7 @@ class VodPlayer extends Component {
           offset - lastComment.content_offset_seconds <= 30 &&
           offset > firstComment.content_offset_seconds
         ) {
-          this.buildMessages();
+          this.loop();
           return;
         }
       }
@@ -192,6 +192,7 @@ class VodPlayer extends Component {
         },
         () => {
           this.fetchComments(offset);
+          this.loop();
         }
       );
     }, 300);
@@ -230,16 +231,11 @@ class VodPlayer extends Component {
     )
       .then((response) => response.json())
       .then((data) => {
-        this.setState(
-          {
-            chatLoading: false,
-            comments: data.comments,
-            cursor: data.cursor,
-          },
-          () => {
-            this.loop();
-          }
-        );
+        this.setState({
+          chatLoading: false,
+          comments: data.comments,
+          cursor: data.cursor,
+        });
       })
       .catch((e) => {
         console.error(e);
