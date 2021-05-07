@@ -12,6 +12,11 @@ import canAutoPlay from "can-autoplay";
 import Logo from "./assets/jammin.gif";
 import { Resizable } from "re-resizable";
 
+/**
+ * TODO:
+ * DURATION QUERY PARAM
+ */
+
 class VodPlayer extends Component {
   constructor(props) {
     super(props);
@@ -170,7 +175,7 @@ class VodPlayer extends Component {
       for (let i = 0; i < this.state.part; i++) {
         offset += this.state.vodData.youtube[i].duration;
       }
-      //check if it was a seek.
+      //SEEK
       if (this.state.comments.length > 0) {
         const lastComment = this.state.comments[this.state.comments.length - 1];
         const firstComment = this.state.comments[0];
@@ -178,6 +183,24 @@ class VodPlayer extends Component {
           offset - lastComment.content_offset_seconds <= 30 &&
           offset > firstComment.content_offset_seconds
         ) {
+          //IF: rewinded?
+          if (
+            this.state.comments[this.state.stoppedAtIndex]
+              .content_offset_seconds -
+              offset >=
+            4
+          ) {
+            this.setState(
+              {
+                stoppedAtIndex: 0,
+                messages: [],
+              },
+              () => {
+                this.loop();
+              }
+            );
+            return;
+          }
           this.loop();
           return;
         }
@@ -452,11 +475,7 @@ class VodPlayer extends Component {
       return;
 
     let messages = this.state.messages.slice(0);
-
     for (let i = this.state.stoppedAtIndex.valueOf(); i < pastIndex; i++) {
-      if (messages.length > 75) {
-        messages.splice(0, 1);
-      }
       const comment = this.state.comments[i];
       messages.push(
         <li key={comment.id} style={{ width: "100%" }}>
@@ -501,6 +520,7 @@ class VodPlayer extends Component {
           </Box>
         </li>
       );
+      if (messages.length > 75) messages.splice(0, 1);
     }
 
     this.setState(
