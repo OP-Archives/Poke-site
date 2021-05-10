@@ -50,7 +50,7 @@ export default function Creation(props) {
     setLinkError(false);
     const link = evt.target.value;
     //eslint-disable-next-line
-    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/;
+    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/;
     if (!regex.test(link)) {
       setLinkError(true);
       setLinkErrorMsg("Youtube link is not valid");
