@@ -281,7 +281,7 @@ export default function Manage(props) {
   };
 
   const handleWinnerChange = async (evt) => {
-    if (!currentSubmission.approved) return;
+    if (currentSubmission.status !== 'approved') return;
     await client
       .service("submissions")
       .patch(currentSubmission.id, {
