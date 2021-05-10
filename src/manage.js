@@ -359,6 +359,9 @@ export default function Manage(props) {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
+    setCurrentIndex(items.indexOf(currentSubmission));
+    setSubmissions(items);
+
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       await client
@@ -370,9 +373,6 @@ export default function Manage(props) {
           console.error(e);
         });
     }
-
-    setCurrentIndex(items.indexOf(currentSubmission));
-    setSubmissions(items);
   };
 
   const handleItemClick = (data, evt) => {
