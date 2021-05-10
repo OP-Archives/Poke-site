@@ -46,15 +46,61 @@ export default function Winners(props) {
     return;
   }, [contestId]);
 
+  const cueVideo = (id, start, end, argPlayer = false) => {
+    if (!player) {
+      if (start !== null && end !== null)
+        return argPlayer.cueVideoById({
+          videoId: id,
+          startSeconds: start,
+          endSeconds: end,
+        });
+
+      if (start !== null && end === null)
+        return argPlayer.cueVideoById({
+          videoId: id,
+          startSeconds: start,
+        });
+
+      if (start === null && end !== null)
+        return argPlayer.cueVideoById({
+          videoId: id,
+          endSeconds: end,
+        });
+
+      return argPlayer.cueVideoById(id);
+    }
+
+    if (start !== null && end !== null)
+      return player.cueVideoById({
+        videoId: id,
+        startSeconds: start,
+        endSeconds: end,
+      });
+
+    if (start !== null && end === null)
+      return player.cueVideoById({
+        videoId: id,
+        startSeconds: start,
+      });
+
+    if (start === null && end !== null)
+      return player.cueVideoById({
+        videoId: id,
+        endSeconds: end,
+      });
+
+    player.cueVideoById(id);
+  };
+
   const onReady = (evt) => {
     const argPlayer = evt.target;
     setPlayer(argPlayer);
     if (currentSubmission)
-      argPlayer.cueVideoById(
+      cueVideo(
         currentSubmission.video.id,
-        currentSubmission.video.timestamp
-          ? currentSubmission.video.timestamp
-          : 0
+        currentSubmission.video.start,
+        currentSubmission.video.end,
+        argPlayer
       );
   };
 
@@ -63,11 +109,10 @@ export default function Winners(props) {
     if (!submissions[nextIndex]) return;
 
     setCurrentSubmission(submissions[nextIndex]);
-    player.cueVideoById(
+    cueVideo(
       submissions[nextIndex].video.id,
-      submissions[nextIndex].video.timestamp
-        ? submissions[nextIndex].video.timestamp
-        : 0
+      submissions[nextIndex].video.start,
+      submissions[nextIndex].video.end
     );
   };
 
@@ -76,11 +121,10 @@ export default function Winners(props) {
     if (!submissions[prevIndex]) return;
 
     setCurrentSubmission(submissions[prevIndex]);
-    player.cueVideoById(
+    cueVideo(
       submissions[prevIndex].video.id,
-      submissions[prevIndex].video.timestamp
-        ? submissions[prevIndex].video.timestamp
-        : 0
+      submissions[prevIndex].video.start,
+      submissions[prevIndex].video.end
     );
   };
 
