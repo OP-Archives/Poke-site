@@ -231,7 +231,7 @@ export default function Navbar(props) {
                 alignItems="center"
               >
                 <a
-                  href="https://discord.gg/chUMEPR"
+                  href="https://discord.gg/pokelawls"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
