@@ -19,6 +19,7 @@ export default function Winners(props) {
   const [player, setPlayer] = useState(undefined);
   const [submissions, setSubmissions] = useState(undefined);
   const [currentSubmission, setCurrentSubmission] = useState(undefined);
+  const [currentIndex, setCurrentIndex] = useState(undefined);
   const contestId = props.match.params.contestId;
 
   useEffect(() => {
@@ -35,8 +36,10 @@ export default function Winners(props) {
           },
         })
         .then((data) => {
-          setSubmissions(data.filter((submission) => submission.winner));
-          setCurrentSubmission(data[0]);
+          const filteredSubmissions = data.filter((submission) => submission.winner);
+          setSubmissions(filteredSubmissions);
+          setCurrentSubmission(filteredSubmissions[0]);
+          setCurrentIndex(0);
         })
         .catch((e) => {
           console.error(e);
@@ -105,10 +108,11 @@ export default function Winners(props) {
   };
 
   const nextSubmission = (evt) => {
-    const nextIndex = submissions.indexOf(currentSubmission) + 1;
+    const nextIndex = currentIndex + 1;
     if (!submissions[nextIndex]) return;
 
     setCurrentSubmission(submissions[nextIndex]);
+    setCurrentIndex(nextIndex);
     cueVideo(
       submissions[nextIndex].video.id,
       submissions[nextIndex].video.start,
@@ -117,10 +121,11 @@ export default function Winners(props) {
   };
 
   const prevSubmission = (evt) => {
-    const prevIndex = submissions.indexOf(currentSubmission) - 1;
+    const prevIndex = currentIndex - 1;
     if (!submissions[prevIndex]) return;
 
     setCurrentSubmission(submissions[prevIndex]);
+    setCurrentIndex(prevIndex);
     cueVideo(
       submissions[prevIndex].video.id,
       submissions[prevIndex].video.start,
@@ -176,9 +181,7 @@ export default function Winners(props) {
                       style={{ marginTop: "0.3rem", marginBottom: "0.3rem" }}
                     >
                       <Typography variant="body1" className={classes.textLabel}>
-                        {`${submissions.indexOf(currentSubmission) + 1} / ${
-                          submissions.length
-                        }`}
+                        {`${currentIndex + 1} / ${submissions.length}`}
                       </Typography>
                     </Box>
                   </div>
