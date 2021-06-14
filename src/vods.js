@@ -9,10 +9,15 @@ import {
   MenuItem,
   CircularProgress,
   useMediaQuery,
+  Box,
+  FormControlLabel,
+  Switch,
+  withStyles,
 } from "@material-ui/core";
 import SimpleBar from "simplebar-react";
 import ListIcon from "@material-ui/icons/List";
 import Logo from "./assets/jammin.gif";
+import { blue, grey } from "@material-ui/core/colors";
 
 export default function Vods(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
@@ -20,12 +25,13 @@ export default function Vods(props) {
   const [vods, setVods] = React.useState([]);
   const [skip, setSkip] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
+  const [showLiveVods, setShowLiveVods] = React.useState(false);
   const [vodList, setVodList] = React.useState([]);
   const [allVodsLoaded, setAllVodsLoaded] = React.useState(false);
   const channel = props.channel;
 
   useEffect(() => {
-    document.title = "VODS - Poke";
+    document.title = `VODS - ${channel.charAt(0).toUpperCase() + channel.slice(1)}`;
     const fetchVods = async () => {
       await fetch(
         `https://archive.overpowered.tv/${channel}/vods?$limit=50&$sort[createdAt]=-1`,
@@ -39,10 +45,16 @@ export default function Vods(props) {
         .then((response) => response.json())
         .then((data) => {
           //don't display vods without a video link
+          let vods = data.data.filter((vod) => {
+            return vod.youtube.length !== 0;
+          });
+
           setVodList(
-            data.data.filter((vod) => {
-              return vod.youtube.length !== 0;
-            })
+            vods.filter((vod) =>
+              vod.youtube.some((data) => {
+                return data.type === (showLiveVods ? "live" : "vod");
+              })
+            )
           );
         })
         .catch((e) => {
@@ -51,7 +63,7 @@ export default function Vods(props) {
     };
     fetchVods();
     return;
-  }, [classes, channel]);
+  }, [classes, channel, showLiveVods]);
 
   const IsolatedMenu = (props) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -63,6 +75,10 @@ export default function Vods(props) {
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
+
+    const filteredArray = props.vod.youtube.filter(
+      (data) => data.type === (showLiveVods ? "live" : "vod")
+    );
 
     return (
       <React.Fragment>
@@ -79,11 +95,13 @@ export default function Vods(props) {
           }}
           onClose={handleClose}
         >
-          {props.vod.youtube.map((data, index) => {
+          {filteredArray.map((data, index) => {
             return (
               <Link
                 key={data.id}
-                href={`/vods/${props.vod.id}?part=${index + 1}`}
+                href={`/${data.type === "live" ? "live" : "vods"}/${
+                  props.vod.id
+                }?part=${index + 1}`}
                 style={{ textDecoration: "none" }}
               >
                 <MenuItem className={classes.item}>Part {index + 1}</MenuItem>
@@ -118,7 +136,7 @@ export default function Vods(props) {
                   <div style={{ marginBottom: "0.1rem" }}>
                     <Link
                       className={classes.title}
-                      href={`/vods/${vod.id}`}
+                      href={`/${showLiveVods ? "live" : "vods"}/${vod.id}`}
                       variant="caption"
                     >
                       {vod.title}
@@ -129,7 +147,7 @@ export default function Vods(props) {
               {vod.youtube.length > 1 ? <IsolatedMenu vod={vod} /> : <></>}
             </div>
             <div className={classes.imageBox}>
-              <Link href={`/vods/${vod.id}`}>
+              <Link href={`/${showLiveVods ? "live" : "vods"}/${vod.id}`}>
                 <img alt="" src={vod.thumbnail_url} className={classes.image} />
               </Link>
               <div className={classes.corners}>
@@ -153,7 +171,7 @@ export default function Vods(props) {
     );
     setLoading(false);
     return;
-  }, [vodList, classes, isMobile]);
+  }, [vodList, classes, isMobile, showLiveVods]);
 
   const fetchNextVods = async () => {
     if (allVodsLoaded) return;
@@ -174,11 +192,17 @@ export default function Vods(props) {
           return;
         }
         //don't display vods without a video link
+        let vods = data.data.filter((vod) => {
+          return vod.youtube.length !== 0;
+        });
+
         setVodList(
           vodList.concat(
-            data.data.filter((vod) => {
-              return vod.youtube.length !== 0;
-            })
+            vods.filter((vod) =>
+              vod.youtube.some((data) => {
+                return data.type === (showLiveVods ? "live" : "vod");
+              })
+            )
           )
         );
       })
@@ -186,6 +210,10 @@ export default function Vods(props) {
         console.error(e);
       });
     setSkip(next);
+  };
+
+  const toggleShowVods = () => {
+    setShowLiveVods(!showLiveVods);
   };
 
   return loading ? (
@@ -200,9 +228,18 @@ export default function Vods(props) {
   ) : (
     <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
       <SimpleBar className={classes.scroll}>
-        <Typography className={classes.header} variant="h4">
-          {`Vods`}
-        </Typography>
+        <Box display="flex">
+          <Typography className={classes.header} variant="h4">
+            {`Vods`}
+          </Typography>
+          <FormControlLabel
+            className={classes.header}
+            control={
+              <BlueSwitch checked={showLiveVods} onChange={toggleShowVods} />
+            }
+            label="Live Vods"
+          />
+        </Box>
         <div className={classes.root}>{vods}</div>
         {!allVodsLoaded ? (
           <div className={classes.center}>
@@ -222,6 +259,24 @@ export default function Vods(props) {
     </Container>
   );
 }
+
+const BlueSwitch = withStyles({
+  switchBase: {
+    color: blue[300],
+    "&$checked": {
+      color: blue[500],
+    },
+    "&$checked + $track": {
+      backgroundColor: blue[500],
+    },
+  },
+  checked: {},
+  track: {
+    borderRadius: 26 / 2,
+    backgroundColor: grey[500],
+    opacity: 1,
+  },
+})(Switch);
 
 const useStyles = makeStyles(() => ({
   parent: {

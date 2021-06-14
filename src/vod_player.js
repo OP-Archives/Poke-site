@@ -17,7 +17,7 @@ import { Resizable } from "re-resizable";
  * DURATION QUERY PARAM
  */
 
-class VodPlayer extends Component {
+ class VodPlayer extends Component {
   constructor(props) {
     super(props);
 
@@ -30,6 +30,7 @@ class VodPlayer extends Component {
     this.BASE_BTTV_CDN = "https://cdn.betterttv.net/";
     this.vodId = props.match.params.vodId;
     this.twitchId = props.twitchId;
+    this.type = props.type;
     this.player = null;
     this.chatRef = React.createRef();
     this.messageCount = 0;
@@ -52,7 +53,7 @@ class VodPlayer extends Component {
   }
 
   componentDidMount() {
-    document.title = `${this.props.match.params.vodId} Vod - Poke`;
+    document.title = `${this.props.match.params.vodId} Vod - ${this.channel.charAt(0).toUpperCase() + this.channel.slice(1)}`;
     this.fetchVodData();
     this.loadBadges();
     this.loadChannelBadges(this.twitchId);
@@ -74,7 +75,10 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        this.setState({ vodData: data });
+        this.setState({
+          vodData: data,
+          youtube_data: data.youtube.filter((data) => data.type === this.type),
+        });
       })
       .catch((e) => {
         console.error(e);
@@ -152,14 +156,14 @@ class VodPlayer extends Component {
 
   onReady = (evt) => {
     this.player = evt.target;
-    if (this.state.vodData.youtube[this.state.part]) {
-      this.player.loadVideoById(this.state.vodData.youtube[this.state.part].id);
-    } else {
+    if (this.state.youtube_data[this.state.part]) {
+      this.player.loadVideoById(this.state.youtube_data[this.state.part].id);
+    } else if (this.state.youtube_data[0]) {
       this.setState({ part: 0 }, () => {
-        this.player.loadVideoById(
-          this.state.vodData.youtube[this.state.part].id
-        );
+        this.player.loadVideoById(this.state.youtube_data[this.state.part].id);
       });
+    } else {
+      return;
     }
     canAutoPlay.video().then(({ result }) => {
       if (!result) {
@@ -173,7 +177,7 @@ class VodPlayer extends Component {
     this.playTimeout = setTimeout(async () => {
       let offset = Math.round(this.player.getCurrentTime());
       for (let i = 0; i < this.state.part; i++) {
-        offset += this.state.vodData.youtube[i].duration;
+        offset += this.state.youtube_data[i].duration;
       }
       //SEEK
       if (this.state.comments.length > 0) {
@@ -224,9 +228,9 @@ class VodPlayer extends Component {
   onEnd = (evt) => {
     this.clearLoopTimeout();
     const nextPart = this.state.part + 1;
-    if (this.state.vodData.youtube[nextPart].id) {
+    if (this.state.youtube_data[nextPart].id) {
       this.setState({ part: nextPart });
-      this.player.loadVideoById(this.state.vodData.youtube[nextPart].id);
+      this.player.loadVideoById(this.state.youtube_data[nextPart].id);
     }
   };
 
@@ -450,7 +454,7 @@ class VodPlayer extends Component {
 
     let playerCurrentTime = Math.round(this.player.getCurrentTime());
     for (let i = 0; i < this.state.part; i++) {
-      playerCurrentTime += this.state.vodData.youtube[i].duration;
+      playerCurrentTime += this.state.youtube_data[i].duration;
     }
 
     let pastIndex = this.state.comments.length - 1;
@@ -465,7 +469,7 @@ class VodPlayer extends Component {
         break;
       }
     }
-    
+
     if (this.state.comments.length - 1 === pastIndex) {
       await this.fetchNextComments();
     }
@@ -717,10 +721,13 @@ const useStyles = () => ({
   },
 });
 
-const withMediaQuery = (...args) => (Component) => (props) => {
-  const mediaQuery = useMediaQuery(...args);
-  return <Component isMobile={mediaQuery} {...props} />;
-};
+const withMediaQuery =
+  (...args) =>
+  (Component) =>
+  (props) => {
+    const mediaQuery = useMediaQuery(...args);
+    return <Component isMobile={mediaQuery} {...props} />;
+  };
 
 export default withStyles(useStyles)(
   withMediaQuery("(max-width: 600px)")(VodPlayer)
