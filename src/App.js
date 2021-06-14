@@ -10,7 +10,7 @@ import client from "./client";
 import { useState, useEffect } from "react";
 
 export default function App() {
-  const channel = "poke",
+  const channel = "pokelawls",
     twitchId = "12943173";
   const [user, setUser] = useState(undefined);
 

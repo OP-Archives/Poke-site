@@ -347,6 +347,7 @@ class VodPlayer extends Component {
   };
 
   transformMessage = (messageFragments) => {
+    if (messageFragments === null) return;
     const textFragments = [];
     for (let messageFragment of messageFragments) {
       if (!messageFragment.emoticon) {
@@ -464,7 +465,7 @@ class VodPlayer extends Component {
         break;
       }
     }
-
+    
     if (this.state.comments.length - 1 === pastIndex) {
       await this.fetchNextComments();
     }
@@ -477,6 +478,7 @@ class VodPlayer extends Component {
     let messages = this.state.messages.slice(0);
     for (let i = this.state.stoppedAtIndex.valueOf(); i < pastIndex; i++) {
       const comment = this.state.comments[i];
+      if (!comment.message) continue;
       messages.push(
         <li key={comment.id} style={{ width: "100%" }}>
           <Box
