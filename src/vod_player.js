@@ -24,7 +24,6 @@ import { Resizable } from "re-resizable";
     this.BADGES_TWITCH_URL =
       "https://badges.twitch.tv/v1/badges/global/display?language=en";
     this.BASE_TWITCH_CDN = "https://static-cdn.jtvnw.net/";
-    this.BASE_TWITCH_EMOTES_API = "https://api.twitchemotes.com/api/v4/";
     this.BASE_FFZ_EMOTE_API = "https://api.frankerfacez.com/v1/";
     this.BASE_BTTV_EMOTE_API = "https://api.betterttv.net/3/";
     this.BASE_BTTV_CDN = "https://cdn.betterttv.net/";
@@ -53,7 +52,9 @@ import { Resizable } from "re-resizable";
   }
 
   componentDidMount() {
-    document.title = `${this.props.match.params.vodId} Vod - ${this.channel.charAt(0).toUpperCase() + this.channel.slice(1)}`;
+    document.title = `${this.props.match.params.vodId} Vod - ${
+      this.channel.charAt(0).toUpperCase() + this.channel.slice(1)
+    }`;
     this.fetchVodData();
     this.loadBadges();
     this.loadChannelBadges(this.twitchId);
@@ -140,14 +141,16 @@ import { Resizable } from "re-resizable";
       });
   };
 
-  loadChannelBadges = (twitchId) => {
-    fetch(`${this.BASE_TWITCH_EMOTES_API}channels/${twitchId}`)
+  loadChannelBadges = () => {
+    fetch(`https://archive.overpowered.tv/${this.channel}/v2/badges`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
-        this.channelBadges = {
-          subscriber: data.subscriber_badges,
-          bits: data.bits_badges,
-        };
+        this.channelBadges = data;
       })
       .catch((e) => {
         console.error(e);
@@ -295,25 +298,26 @@ import { Resizable } from "re-resizable";
     if (!badges) return null;
     let badgeWrapper = [];
     for (const badge of badges) {
-      if (this.channelBadges) {
-        const channelBadge = this.channelBadges[badge._id];
-        if (channelBadge) {
-          if (channelBadge[badge.version]) {
+      let foundBadge = false;
+      if (this.channelBadges && this.channelBadges.length > 0) {
+        for (let channelBadge of this.channelBadges) {
+          if (badge._id !== channelBadge.set_id) continue;
+          for (let badgeVersion of channelBadge.versions) {
+            if (badgeVersion.id !== badge.version) continue;
             badgeWrapper.push(
               <img
                 key={this.badgesCount++}
                 crossOrigin="anonymous"
                 className={this.props.classes.badges}
-                src={channelBadge[badge.version].image_url_1x}
-                srcSet={`${channelBadge[badge.version].image_url_1x} 1x, ${
-                  channelBadge[badge.version].image_url_2x
-                } 2x, ${channelBadge[badge.version].image_url_4x} 4x`}
+                src={badgeVersion.image_url_1x}
+                srcSet={`${badgeVersion.image_url_1x} 1x, ${badgeVersion.image_url_2x} 2x, ${badgeVersion.image_url_4x} 4x`}
                 alt=""
               />
             );
+            foundBadge = true;
           }
-          continue;
         }
+        if (foundBadge) continue;
       }
 
       const twitchBadge = this.badgeSets[badge._id];
@@ -432,10 +436,10 @@ import { Resizable } from "re-resizable";
             <img
               crossOrigin="anonymous"
               className={this.props.classes.chatEmote}
-              src={`${this.BASE_TWITCH_CDN}emoticons/v1/${messageFragment.emoticon.emoticon_id}/1.0`}
+              src={`${this.BASE_TWITCH_CDN}emoticons/v2/${messageFragment.emoticon.emoticon_id}/default/dark/1.0`}
               srcSet={
                 messageFragment.emoticon.emoticon_set_id
-                  ? `${this.BASE_TWITCH_CDN}emoticons/v1/${messageFragment.emoticon.emoticon_set_id}/1.0 1x, ${this.BASE_TWITCH_CDN}emoticons/v1/${messageFragment.emoticon.emoticon_set_id}/2.0 2x`
+                  ? `${this.BASE_TWITCH_CDN}emoticons/v2/${messageFragment.emoticon.emoticon_set_id}/default/dark/1.0 1x, ${this.BASE_TWITCH_CDN}emoticons/v2/${messageFragment.emoticon.emoticon_set_id}/default/dark/2.0 2x`
                   : ""
               }
               alt=""

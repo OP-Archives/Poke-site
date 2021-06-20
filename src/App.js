@@ -57,7 +57,16 @@ export default function App() {
           path="/vods/:vodId"
           render={(props) => (
             <div className="root">
-              <VodPlayer {...props} channel={channel} twitchId={twitchId} />
+              <VodPlayer {...props} channel={channel} type={"vod"} twitchId={twitchId} />
+            </div>
+          )}
+        />
+        <Route
+          exact
+          path="/live/:vodId"
+          render={(props) => (
+            <div className="root">
+              <VodPlayer {...props} channel={channel} type={"live"} twitchId={twitchId} />
             </div>
           )}
         />
