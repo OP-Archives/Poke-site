@@ -11,13 +11,14 @@ import SimpleBar from "simplebar-react";
 import canAutoPlay from "can-autoplay";
 import Logo from "./assets/jammin.gif";
 import { Resizable } from "re-resizable";
+import moment from "moment";
 
 /**
  * TODO:
  * DURATION QUERY PARAM
  */
 
- class VodPlayer extends Component {
+class VodPlayer extends Component {
   constructor(props) {
     super(props);
 
@@ -36,6 +37,7 @@ import { Resizable } from "re-resizable";
     this.badgesCount = 0;
     this.channel = props.channel;
     this.durations = [];
+    this.totalYoutubeDuration = 0;
     let part = new URLSearchParams(props.location.search).get("part");
     if (part && !isNaN(part) && part > 0) {
       part = part - 1;
@@ -51,16 +53,27 @@ import { Resizable } from "re-resizable";
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     document.title = `${this.props.match.params.vodId} Vod - ${
       this.channel.charAt(0).toUpperCase() + this.channel.slice(1)
     }`;
-    this.fetchVodData();
+    await this.fetchVodData();
     this.loadBadges();
     this.loadChannelBadges(this.twitchId);
     this.loadFFZEmotes(this.twitchId);
     this.loadBTTVGlobalEmotes(this.twitchId);
     this.loadBTTVChannelEmotes(this.twitchId);
+    for (let video of this.state.youtube_data) {
+      this.totalYoutubeDuration += video.duration;
+    }
+    this.vodDuration = moment
+      .duration(this.state.vodData.duration, "HH:mm:ss")
+      .asSeconds();
+    this.delay =
+      this.vodDuration - this.totalYoutubeDuration < 0
+        ? 0
+        : this.vodDuration - this.totalYoutubeDuration;
+    console.info(`Chat Delay: ${this.delay} seconds`);
   }
 
   componentWillUnmount() {
@@ -68,12 +81,15 @@ import { Resizable } from "re-resizable";
   }
 
   fetchVodData = async () => {
-    fetch(`https://archive.overpowered.tv/${this.channel}/vods/${this.vodId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    await fetch(
+      `https://archive.overpowered.tv/${this.channel}/vods/${this.vodId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         this.setState({
@@ -182,6 +198,7 @@ import { Resizable } from "re-resizable";
       for (let i = 0; i < this.state.part; i++) {
         offset += this.state.youtube_data[i].duration;
       }
+      offset += this.delay;
       //SEEK
       if (this.state.comments.length > 0) {
         const lastComment = this.state.comments[this.state.comments.length - 1];
@@ -460,6 +477,7 @@ import { Resizable } from "re-resizable";
     for (let i = 0; i < this.state.part; i++) {
       playerCurrentTime += this.state.youtube_data[i].duration;
     }
+    playerCurrentTime += this.delay;
 
     let pastIndex = this.state.comments.length - 1;
     for (
