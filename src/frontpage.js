@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SimpleBar from "simplebar-react";
-import { makeStyles, Box, Typography, useMediaQuery } from "@material-ui/core";
+import {
+  makeStyles,
+  Box,
+  Typography,
+  useMediaQuery,
+  Link,
+} from "@material-ui/core";
 import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
@@ -9,60 +15,193 @@ import merch4 from "./assets/merch/merch4.png";
 const merchImages = [
   {
     image: merch1,
-    link:
-      "https://metathreads.com/collections/pokelawls/products/pokelawls-smoke-black-tee",
+    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-smoke-black-tee",
   },
   {
     image: merch2,
-    link:
-      "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-black-tee",
+    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-black-tee",
   },
   {
     image: merch3,
-    link:
-      "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-white-tee",
+    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-white-tee",
   },
   {
     image: merch4,
-    link:
-      "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-black-hoodie",
+    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-black-hoodie",
   },
 ];
 
-export default function Frontpage() {
+export default function Frontpage(props) {
   const classes = useStyles();
   const isMobile = useMediaQuery("(max-width: 800px)");
+  const channel = props.channel;
+  const [vodList, setVodList] = React.useState([]);
+  const [vods, setVods] = React.useState([]);
+
+  useEffect(() => {
+    const fetchVods = async () => {
+      await fetch(
+        `https://archive.overpowered.tv/${channel}/vods?$limit=3&$sort[createdAt]=-1`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          //don't display vods without a video link
+          setVodList(
+            data.data.filter((vod) => {
+              return vod.youtube.length !== 0;
+            })
+          );
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    };
+    fetchVods();
+    return;
+  }, [classes, channel]);
+
+  useEffect(() => {
+    if (!vodList) return;
+    if (vodList.length === 0) return;
+    setVods(
+      vodList.map((vod, i) => {
+        return (
+          <div
+            key={vod.id}
+            style={{ width: isMobile ? "6rem" : "18rem" }}
+            className={classes.paper}
+          >
+            <div className={classes.lower}>
+              <div style={{ display: "flex", flexWrap: "nowrap" }}>
+                <div
+                  style={{
+                    flexGrow: 1,
+                    flexShrink: 1,
+                    width: "100%",
+                    order: 2,
+                    minWidth: 0,
+                  }}
+                >
+                  <div style={{ marginBottom: "0.1rem" }}>
+                    <Link
+                      className={classes.title2}
+                      href={`/live/${vodList[0].id}`}
+                      variant="caption"
+                    >
+                      {vod.title}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={classes.imageBox}>
+              <Link href={`/live/${vod.id}`}>
+                <img
+                  alt=""
+                  src={vod.thumbnail_url}
+                  className={classes.image2}
+                />
+              </Link>
+              <div className={classes.corners}>
+                <div className={classes.bottomLeft}>
+                  <Typography variant="caption" className={classes.cornerText}>
+                    {`${vod.date}`}
+                  </Typography>
+                </div>
+              </div>
+              <div className={classes.corners}>
+                <div className={classes.bottomRight}>
+                  <Typography variant="caption" className={classes.cornerText}>
+                    {`${vod.duration}`}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })
+    );
+    return;
+  }, [vodList, classes, isMobile]);
 
   return (
     <Box className={classes.root}>
       <SimpleBar style={{ height: "100%" }}>
         <div className={classes.wrapper}>
           <div className={classes.column}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              flexDirection="column"
+            >
+              <Box
+                display="flex"
+                flexDirection="column"
+                width={`${isMobile ? "100%" : "50%"}`}
+              >
+                <div className={classes.container}>
+                  <div className={classes.row}>
+                    <div className={classes.form}>
+                      <Box
+                        display="flex"
+                        flexWrap="wrap"
+                        justifyContent="center"
+                      >
+                        <div className={`${classes.header} ${classes.linkText}`}>
+                          <a href="/vods">
+                            <Typography className={classes.alt} variant="h6">
+                              Most Recent Music Vods
+                            </Typography>
+                          </a>
+                        </div>
+                      </Box>
+                      <Box display="flex" marginTop="1rem">
+                        {vods}
+                      </Box>
+                    </div>
+                  </div>
+                </div>
+              </Box>
+            </Box>
             <Box display="flex" justifyContent="center" alignItems="center">
               <Box
                 display="flex"
                 flexDirection="column"
-                marginTop="5rem"
                 width={`${isMobile ? "100%" : "50%"}`}
               >
-                <div className={`${classes.header} ${classes.linkText}`}>
-                  <a
-                    href="https://metathreads.com/collections/pokelawls"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Typography className={classes.alt} variant="h4">
-                      Merch
-                    </Typography>
-                  </a>
-                </div>
                 <div className={classes.container}>
                   <div className={classes.row}>
                     <div className={classes.form}>
+                      <Box
+                        display="flex"
+                        flexWrap="wrap"
+                        justifyContent="center"
+                      >
+                        <div
+                          className={`${classes.header} ${classes.linkText}`}
+                        >
+                          <a
+                            href="https://metathreads.com/collections/pokelawls"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Typography className={classes.alt} variant="h4">
+                              Merch
+                            </Typography>
+                          </a>
+                        </div>
+                      </Box>
                       <Box display="flex" flexWrap="nowrap">
                         {merchImages.map((item, index) => {
                           return (
-                            <div className={classes.hover}>
+                            <div key={index} className={classes.hover}>
                               <a
                                 href={item.link}
                                 target="_blank"
@@ -100,7 +239,7 @@ export default function Frontpage() {
                   width="100%"
                   height="160"
                   scrolling="no"
-                  frameborder="no"
+                  frameBorder="no"
                   allow="autoplay"
                   src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/910917202&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
                 />
@@ -147,6 +286,7 @@ const useStyles = makeStyles({
   column: {
     maxWidth: "200rem",
     margin: "0 auto",
+    marginTop: "5rem",
   },
   header: {
     marginBottom: "0.5rem",
@@ -257,5 +397,70 @@ const useStyles = makeStyles({
     "&:hover": {
       boxShadow: "0 0 8px #fff",
     },
+  },
+  flexCenter: {
+    justifyContent: "center",
+    alignContent: "center",
+  },
+  center: {
+    textAlign: "center",
+  },
+  paper: {
+    maxWidth: "30%",
+    flex: "0 0 auto",
+    padding: "0 .5rem",
+    display: "flex",
+    flexDirection: "column",
+  },
+  title2: {
+    color: "#fff",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    display: "block",
+  },
+  imageBox: {
+    overflow: "hidden",
+    height: 0,
+    paddingTop: "56.25%",
+    position: "relative",
+    order: 1,
+    "&:hover": {
+      boxShadow: "0 0 8px #fff",
+    },
+  },
+  image2: {
+    verticalAlign: "top",
+    maxWidth: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+  },
+  lower: {
+    order: 2,
+    marginTop: "1rem",
+    marginBottom: "1rem",
+  },
+  corners: {
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+  },
+  bottomLeft: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    marginLeft: "5px",
+  },
+  bottomRight: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    marginRight: "5px",
   },
 });

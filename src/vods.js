@@ -237,7 +237,7 @@ export default function Vods(props) {
             control={
               <BlueSwitch checked={showLiveVods} onChange={toggleShowVods} />
             }
-            label="Live Vods"
+            label="Show Music Vods"
           />
         </Box>
         <div className={classes.root}>{vods}</div>

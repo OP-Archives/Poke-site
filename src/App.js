@@ -38,7 +38,7 @@ export default function App() {
           render={(props) => (
             <div className="root background">
               <Navbar {...props} />
-              <Frontpage {...props} />
+              <Frontpage channel={channel} {...props} />
             </div>
           )}
         />
