@@ -41,7 +41,7 @@ export default function Frontpage(props) {
   useEffect(() => {
     const fetchVods = async () => {
       await fetch(
-        `https://archive.overpowered.tv/${channel}/vods?$limit=3&$sort[createdAt]=-1`,
+        `https://archive.overpowered.tv/${channel}/vods?$limit=10&$sort[createdAt]=-1`,
         {
           method: "GET",
           headers: {
@@ -53,9 +53,11 @@ export default function Frontpage(props) {
         .then((data) => {
           //don't display vods without a video link
           setVodList(
-            data.data.filter((vod) => {
-              return vod.youtube.length !== 0;
-            })
+            data.data
+              .filter((vod) => {
+                return vod.youtube.length !== 0;
+              })
+              .slice(0, 3)
           );
         })
         .catch((e) => {
@@ -154,7 +156,9 @@ export default function Frontpage(props) {
                         flexWrap="wrap"
                         justifyContent="center"
                       >
-                        <div className={`${classes.header} ${classes.linkText}`}>
+                        <div
+                          className={`${classes.header} ${classes.linkText}`}
+                        >
                           <a href="/vods">
                             <Typography className={classes.alt} variant="h6">
                               Most Recent Music Vods
