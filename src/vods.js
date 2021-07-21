@@ -236,7 +236,6 @@ export default function Vods(props) {
           <ErrorBoundary>
             {isMobile ? (
               <AdSense.Google
-                key={Math.floor(Math.random() * Math.floor(100))}
                 client="ca-pub-8093490837210586"
                 slot="3667265818"
                 style={{
@@ -249,7 +248,6 @@ export default function Vods(props) {
               />
             ) : (
               <AdSense.Google
-                key={Math.floor(Math.random() * Math.floor(100))}
                 client="ca-pub-8093490837210586"
                 slot="3667265818"
                 style={{
@@ -280,7 +278,6 @@ export default function Vods(props) {
           <div id="square-ad-banner" className={classes.squareAd}>
             <ErrorBoundary>
               <AdSense.Google
-                key={Math.floor(Math.random() * Math.floor(100))}
                 client="ca-pub-8093490837210586"
                 slot="7846377499"
                 style={{

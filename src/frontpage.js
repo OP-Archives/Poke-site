@@ -141,7 +141,6 @@ export default function Frontpage(props) {
           <ErrorBoundary>
             {isMobile ? (
               <AdSense.Google
-                key={Math.floor(Math.random() * Math.floor(100))}
                 client="ca-pub-8093490837210586"
                 slot="3667265818"
                 style={{
@@ -154,7 +153,6 @@ export default function Frontpage(props) {
               />
             ) : (
               <AdSense.Google
-                key={Math.floor(Math.random() * Math.floor(100))}
                 client="ca-pub-8093490837210586"
                 slot="3667265818"
                 style={{
