@@ -18,6 +18,8 @@ import SimpleBar from "simplebar-react";
 import ListIcon from "@material-ui/icons/List";
 import Logo from "./assets/jammin.gif";
 import { blue, grey } from "@material-ui/core/colors";
+import ErrorBoundary from "./ErrorBoundary.js";
+import AdSense from "react-adsense";
 
 export default function Vods(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
@@ -31,7 +33,9 @@ export default function Vods(props) {
   const channel = props.channel;
 
   useEffect(() => {
-    document.title = `VODS - ${channel.charAt(0).toUpperCase() + channel.slice(1)}`;
+    document.title = `VODS - ${
+      channel.charAt(0).toUpperCase() + channel.slice(1)
+    }`;
     const fetchVods = async () => {
       await fetch(
         `https://archive.overpowered.tv/${channel}/vods?$limit=50&$sort[createdAt]=-1`,
@@ -228,6 +232,37 @@ export default function Vods(props) {
   ) : (
     <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
       <SimpleBar className={classes.scroll}>
+        <div id="top-ad-banner" className={classes.topAdBanner}>
+          <ErrorBoundary>
+            {isMobile ? (
+              <AdSense.Google
+                key={Math.floor(Math.random() * Math.floor(100))}
+                client="ca-pub-8093490837210586"
+                slot="3667265818"
+                style={{
+                  border: "0px",
+                  verticalAlign: "bottom",
+                  width: "300px",
+                  height: "100px",
+                }}
+                format=""
+              />
+            ) : (
+              <AdSense.Google
+                key={Math.floor(Math.random() * Math.floor(100))}
+                client="ca-pub-8093490837210586"
+                slot="3667265818"
+                style={{
+                  border: "0px",
+                  verticalAlign: "bottom",
+                  width: "728px",
+                  height: "90px",
+                }}
+                format=""
+              />
+            )}
+          </ErrorBoundary>
+        </div>
         <Box display="flex">
           <Typography className={classes.header} variant="h4">
             {`Vods`}
@@ -240,7 +275,23 @@ export default function Vods(props) {
             label="Show Music Vods"
           />
         </Box>
-        <div className={classes.root}>{vods}</div>
+        <div className={classes.root}>
+          {vods}
+          <div id="square-ad-banner" className={classes.squareAd}>
+            <ErrorBoundary>
+              <AdSense.Google
+                key={Math.floor(Math.random() * Math.floor(100))}
+                client="ca-pub-8093490837210586"
+                slot="7846377499"
+                style={{
+                  width: "300px",
+                  height: "200px",
+                }}
+                format=""
+              />
+            </ErrorBoundary>
+          </div>
+        </div>
         {!allVodsLoaded ? (
           <div className={classes.center}>
             <Button
@@ -399,5 +450,16 @@ const useStyles = makeStyles(() => ({
       opacity: "50%",
       color: "#fff",
     },
+  },
+  topAdBanner: {
+    textAlign: "center",
+    marginBottom: "0px",
+    marginTop: "30px",
+    border: "0pt none",
+  },
+  squareAd: {
+    textAlign: "center",
+    marginBottom: "0px",
+    marginTop: "15px",
   },
 }));

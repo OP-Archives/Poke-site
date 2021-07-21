@@ -11,6 +11,8 @@ import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
 import merch4 from "./assets/merch/merch4.png";
+import ErrorBoundary from "./ErrorBoundary.js";
+import AdSense from "react-adsense";
 
 const merchImages = [
   {
@@ -135,6 +137,37 @@ export default function Frontpage(props) {
   return (
     <Box className={classes.root}>
       <SimpleBar style={{ height: "100%" }}>
+        <div id="top-ad-banner" className={classes.topAdBanner}>
+          <ErrorBoundary>
+            {isMobile ? (
+              <AdSense.Google
+                key={Math.floor(Math.random() * Math.floor(100))}
+                client="ca-pub-8093490837210586"
+                slot="3667265818"
+                style={{
+                  border: "0px",
+                  verticalAlign: "bottom",
+                  width: "300px",
+                  height: "100px",
+                }}
+                format=""
+              />
+            ) : (
+              <AdSense.Google
+                key={Math.floor(Math.random() * Math.floor(100))}
+                client="ca-pub-8093490837210586"
+                slot="3667265818"
+                style={{
+                  border: "0px",
+                  verticalAlign: "bottom",
+                  width: "728px",
+                  height: "90px",
+                }}
+                format=""
+              />
+            )}
+          </ErrorBoundary>
+        </div>
         <div className={classes.wrapper}>
           <div className={classes.column}>
             <Box
@@ -466,5 +499,11 @@ const useStyles = makeStyles({
     bottom: 0,
     right: 0,
     marginRight: "5px",
+  },
+  topAdBanner: {
+    textAlign: "center",
+    marginBottom: "0px",
+    marginTop: "30px",
+    border: "0pt none",
   },
 });
