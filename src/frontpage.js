@@ -141,6 +141,7 @@ export default function Frontpage(props) {
           <ErrorBoundary>
             {isMobile ? (
               <AdSense.Google
+                key="top-ad"
                 client="ca-pub-8093490837210586"
                 slot="3667265818"
                 style={{
@@ -153,6 +154,7 @@ export default function Frontpage(props) {
               />
             ) : (
               <AdSense.Google
+                key="top-ad"
                 client="ca-pub-8093490837210586"
                 slot="3667265818"
                 style={{
