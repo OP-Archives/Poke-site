@@ -586,8 +586,7 @@ const useStyles = makeStyles({
   },
   topAdBanner: {
     textAlign: "center",
-    marginBottom: "0px",
-    marginTop: "30px",
+    marginBottom: "1rem",
     border: "0pt none",
   },
 });
