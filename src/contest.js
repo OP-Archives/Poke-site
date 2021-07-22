@@ -17,6 +17,8 @@ import client from "./client";
 import Creation from "./creation";
 import Submission from "./submission";
 import Edit from "./edit";
+import ErrorBoundary from "./ErrorBoundary.js";
+import AdSense from "react-adsense";
 
 export default function Contest(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
@@ -254,6 +256,37 @@ export default function Contest(props) {
   return (
     <div className={classes.parent}>
       <SimpleBar className={classes.scroll}>
+      <div id="top-ad-banner" className={classes.topAdBanner}>
+          <ErrorBoundary>
+            {isMobile ? (
+              <AdSense.Google
+                key="top-ad"
+                client="ca-pub-8093490837210586"
+                slot="3667265818"
+                style={{
+                  border: "0px",
+                  verticalAlign: "bottom",
+                  width: "300px",
+                  height: "100px",
+                }}
+                format=""
+              />
+            ) : (
+              <AdSense.Google
+                key="top-ad"
+                client="ca-pub-8093490837210586"
+                slot="3667265818"
+                style={{
+                  border: "0px",
+                  verticalAlign: "bottom",
+                  width: "728px",
+                  height: "90px",
+                }}
+                format=""
+              />
+            )}
+          </ErrorBoundary>
+        </div>
         <div className={isMobile ? classes.mobileContainer : classes.container}>
           <div className={classes.box}>
             <div className={classes.inner}>
@@ -550,5 +583,11 @@ const useStyles = makeStyles({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+  },
+  topAdBanner: {
+    textAlign: "center",
+    marginBottom: "0px",
+    marginTop: "30px",
+    border: "0pt none",
   },
 });
