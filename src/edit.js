@@ -7,6 +7,10 @@ import {
   CircularProgress,
   TextField,
   Switch,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
@@ -21,6 +25,7 @@ export default function Creation(props) {
   const [title, setTitle] = useState(props.contest.title);
   const [active, setActive] = useState(props.contest.active);
   const [submission, setSubmission] = useState(props.contest.submission);
+  const [type, setType] = useState(props.contest.type);
 
   const handleTitleChange = (evt) => {
     setTitle(evt.target.value);
@@ -42,6 +47,7 @@ export default function Creation(props) {
         title: title,
         active: active,
         submission: submission,
+        type: type,
       })
       .then(() => {
         window.location.reload();
@@ -51,6 +57,28 @@ export default function Creation(props) {
         setError(true);
         setErrorMsg("Something went wrong..");
       });
+  };
+
+  const handleDelete = (evt) => {
+    if (evt) evt.preventDefault();
+    const confirmDialog = window.confirm("Are you sure?");
+    if (confirmDialog) {
+      return client
+        .service("contests")
+        .remove(props.contest.id)
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((e) => {
+          console.error(e);
+          setError(true);
+          setErrorMsg("Something went wrong..");
+        });
+    }
+  };
+
+  const handleTypeChange = (event) => {
+    setType(event.target.value);
   };
 
   if (props.user === undefined)
@@ -114,6 +142,32 @@ export default function Creation(props) {
               defaultValue={props.contest.title}
               onChange={handleTitleChange}
             />
+            <FormControl className={classes.formControl}>
+              <InputLabel className={classes.label} id="select-label">
+                Type
+              </InputLabel>
+              <Select
+                labelId="select-label"
+                value={type}
+                onChange={handleTypeChange}
+                autoWidth
+                className={classes.dropdownSelect}
+                MenuProps={{
+                  classes: { paper: classes.dropdownStyle },
+                }}
+                classes={{
+                  root: classes.dropdownRoot,
+                }}
+                inputProps={{
+                  classes: {
+                    icon: classes.dropdownIcon,
+                  },
+                }}
+              >
+                <MenuItem value="alert">Alert</MenuItem>
+                <MenuItem value="song">Song</MenuItem>
+              </Select>
+            </FormControl>
             <Box display="flex">
               <Switch
                 checked={active}
@@ -156,11 +210,23 @@ export default function Creation(props) {
               disabled={
                 title === props.contest.title &&
                 submission === props.contest.submission &&
-                active === props.contest.active
+                active === props.contest.active &&
+                type === props.contest.type
               }
               style={{ color: "#fff" }}
             >
               Edit
+            </Button>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.deleteBtn}
+              onClick={handleDelete}
+              style={{ color: "#fff" }}
+            >
+              Delete
             </Button>
           </form>
         </div>
@@ -218,5 +284,44 @@ const useStyles = makeStyles(() => ({
     "&.Mui-checked + .MuiSwitch-track": {
       backgroundColor: "#4CAF50",
     },
+  },
+  deleteBtn: {
+    marginTop: "1rem",
+    color: "#fff",
+    backgroundColor: "red",
+    "&:hover": {
+      backgroundColor: "red",
+      opacity: "0.7",
+      textDecoration: "none",
+      color: `#fff`,
+    },
+  },
+  formControl: {
+    margin: "1rem",
+    display: "flex",
+  },
+  label: {
+    color: "#fff",
+    "&.Mui-focused": {
+      color: "#fff",
+    },
+  },
+  dropdownStyle: {
+    color: "#fff",
+    backgroundColor: "#1d1d1d",
+  },
+  dropdownRoot: {
+    color: "#fff",
+  },
+  dropdownSelect: {
+    "&:before": {
+      borderColor: "#fff",
+    },
+    "&:after": {
+      borderColor: "#fff",
+    },
+  },
+  dropdownIcon: {
+    fill: "#fff",
   },
 }));

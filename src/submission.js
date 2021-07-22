@@ -50,16 +50,27 @@ export default function Creation(props) {
     setLinkError(false);
     const link = evt.target.value;
     //eslint-disable-next-line
-    const regex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/;
+    const regex =
+      props.contest.type === "alert"
+        ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/
+        : props.contest.type === "song"
+        ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
+        : null;
     if (!regex.test(link)) {
       setLinkError(true);
-      setLinkErrorMsg("Youtube link is not valid");
+      setLinkErrorMsg(
+        props.contest.type === "alert"
+          ? "Youtube link is not valid.."
+          : props.contest.type === "song"
+          ? "Soundcloud link is not valid.."
+          : "What is going on.."
+      );
       setVideo(null);
       return;
     }
     const videoSplit = link.split(regex);
     setVideo({
-      id: videoSplit[5],
+      id: props.contest.type === "alert" ? videoSplit[5] : props.contest.type === "song" ? videoSplit[7] : null,
       link: link,
     });
   };
@@ -83,8 +94,6 @@ export default function Creation(props) {
       return;
     }
 
-    console.log(number);
-    console.log(end);
     if (end !== undefined) {
       if (number >= end) {
         setStartError(true);
@@ -236,67 +245,87 @@ export default function Creation(props) {
               margin="normal"
               required
               fullWidth
-              label="Youtube Link"
-              name="Youtube Link"
+              label={
+                props.contest.type === "alert"
+                  ? "Youtube Link"
+                  : "Soundcloud Link"
+              }
+              name={
+                props.contest.type === "alert"
+                  ? "Youtube Link"
+                  : "Soundcloud Link"
+              }
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
               onChange={handleVideoLinkChange}
             />
-            {startError ? (
-              <Alert style={{ marginTop: "1rem" }} severity="error">
-                {startErrorMsg}
-              </Alert>
-            ) : (
+            {props.contest.type === "song" ? (
               <></>
-            )}
-            <TextField
-              inputProps={{
-                style: {
-                  backgroundColor: "hsla(0,0%,100%,.15)",
-                  color: "#fff",
-                },
-              }}
-              InputLabelProps={{
-                style: { color: "#fff" },
-              }}
-              variant="filled"
-              margin="normal"
-              fullWidth
-              label="Start Timestamp (optional)"
-              name="Start"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              onChange={startChange}
-            />
-            {endError ? (
-              <Alert style={{ marginTop: "1rem" }} severity="error">
-                {endErrorMsg}
-              </Alert>
             ) : (
-              <></>
+              <>
+                {startError ? (
+                  <Alert style={{ marginTop: "1rem" }} severity="error">
+                    {startErrorMsg}
+                  </Alert>
+                ) : (
+                  <></>
+                )}
+                <TextField
+                  inputProps={{
+                    style: {
+                      backgroundColor: "hsla(0,0%,100%,.15)",
+                      color: "#fff",
+                    },
+                  }}
+                  InputLabelProps={{
+                    style: { color: "#fff" },
+                  }}
+                  variant="filled"
+                  margin="normal"
+                  fullWidth
+                  label="Start Timestamp (optional)"
+                  name="Start"
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  onChange={startChange}
+                />
+              </>
             )}
-            <TextField
-              inputProps={{
-                style: {
-                  backgroundColor: "hsla(0,0%,100%,.15)",
-                  color: "#fff",
-                },
-              }}
-              InputLabelProps={{
-                style: { color: "#fff" },
-              }}
-              variant="filled"
-              margin="normal"
-              fullWidth
-              label="End Timestamp (optional)"
-              name="End"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              onChange={endChange}
-            />
+            {props.contest.type === "song" ? (
+              <></>
+            ) : (
+              <>
+                {endError ? (
+                  <Alert style={{ marginTop: "1rem" }} severity="error">
+                    {endErrorMsg}
+                  </Alert>
+                ) : (
+                  <></>
+                )}
+                <TextField
+                  inputProps={{
+                    style: {
+                      backgroundColor: "hsla(0,0%,100%,.15)",
+                      color: "#fff",
+                    },
+                  }}
+                  InputLabelProps={{
+                    style: { color: "#fff" },
+                  }}
+                  variant="filled"
+                  margin="normal"
+                  fullWidth
+                  label="End Timestamp (optional)"
+                  name="End"
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  onChange={endChange}
+                />
+              </>
+            )}
             {commentError ? (
               <Alert style={{ marginTop: "1rem" }} severity="error">
                 {commentErrorMsg}

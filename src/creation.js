@@ -7,6 +7,10 @@ import {
   CircularProgress,
   TextField,
   Switch,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
@@ -21,6 +25,7 @@ export default function Creation(props) {
   const [title, setTitle] = useState("");
   const [active, setActive] = useState(true);
   const [submission, setSubmission] = useState(true);
+  const [type, setType] = useState("alert");
 
   const handleTitleChange = (evt) => {
     setTitle(evt.target.value);
@@ -41,6 +46,7 @@ export default function Creation(props) {
       .create({
         title: title,
         active: active,
+        type: type,
         submission: submission,
       })
       .then(() => {
@@ -51,6 +57,10 @@ export default function Creation(props) {
         setError(true);
         setErrorMsg("Something went wrong..");
       });
+  };
+
+  const handleTypeChange = (event) => {
+    setType(event.target.value);
   };
 
   if (props.user === undefined)
@@ -113,6 +123,32 @@ export default function Creation(props) {
               autoFocus
               onChange={handleTitleChange}
             />
+            <FormControl className={classes.formControl}>
+              <InputLabel className={classes.label} id="select-label">
+                Type
+              </InputLabel>
+              <Select
+                labelId="select-label"
+                value={type}
+                onChange={handleTypeChange}
+                autoWidth
+                className={classes.dropdownSelect}
+                MenuProps={{
+                  classes: { paper: classes.dropdownStyle },
+                }}
+                classes={{
+                  root: classes.dropdownRoot,
+                }}
+                inputProps={{
+                  classes: {
+                    icon: classes.dropdownIcon,
+                  },
+                }}
+              >
+                <MenuItem value="alert">Alert</MenuItem>
+                <MenuItem value="song">Song</MenuItem>
+              </Select>
+            </FormControl>
             <Box display="flex">
               <Switch
                 checked={active}
@@ -213,5 +249,33 @@ const useStyles = makeStyles(() => ({
     "&.Mui-checked + .MuiSwitch-track": {
       backgroundColor: "#4CAF50",
     },
+  },
+  formControl: {
+    margin: "1rem",
+    display: "flex",
+  },
+  label: {
+    color: "#fff",
+    "&.Mui-focused": {
+      color: "#fff",
+    },
+  },
+  dropdownStyle: {
+    color: "#fff",
+    backgroundColor: "#1d1d1d",
+  },
+  dropdownRoot: {
+    color: "#fff",
+  },
+  dropdownSelect: {
+    "&:before": {
+      borderColor: "#fff",
+    },
+    "&:after": {
+      borderColor: "#fff",
+    },
+  },
+  dropdownIcon: {
+    fill: "#fff",
   },
 }));

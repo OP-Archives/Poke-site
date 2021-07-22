@@ -30,16 +30,18 @@ export default function Manage(props) {
   const [currentIndex, setCurrentIndex] = useState(undefined);
   const [contestExists, setContestExists] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
+  const [contest, setContest] = useState(null);
   const contestId = props.match.params.contestId;
 
   useEffect(() => {
-    document.title = "Sub Alert Contest - Poke";
+    document.title = `Contest ${contestId} - Poke`;
     const fetchContest = async () => {
       await client
         .service("contests")
         .get(contestId)
-        .then(() => {
+        .then((data) => {
           setContestExists(true);
+          setContest(data);
         })
         .catch(() => {
           setContestExists(false);
@@ -281,7 +283,7 @@ export default function Manage(props) {
   };
 
   const handleWinnerChange = async (evt) => {
-    if (currentSubmission.status !== 'approved') return;
+    if (currentSubmission.status !== "approved") return;
     await client
       .service("submissions")
       .patch(currentSubmission.id, {
@@ -332,11 +334,14 @@ export default function Manage(props) {
     setShowPlayer(false);
     setCurrentIndex(nextIndex);
     setCurrentSubmission(submissions[nextIndex]);
-    cueVideo(
-      submissions[nextIndex].video.id,
-      submissions[nextIndex].video.start,
-      submissions[nextIndex].video.end
-    );
+    if (contest.type === "alert") {
+      cueVideo(
+        submissions[nextIndex].video.id,
+        submissions[nextIndex].video.start,
+        submissions[nextIndex].video.end
+      );
+    } else if (contest.type === "song") {
+    }
   };
 
   const prevSubmission = (evt) => {
@@ -346,11 +351,14 @@ export default function Manage(props) {
     setShowPlayer(false);
     setCurrentIndex(prevIndex);
     setCurrentSubmission(submissions[prevIndex]);
-    cueVideo(
-      submissions[prevIndex].video.id,
-      submissions[prevIndex].video.start,
-      submissions[prevIndex].video.end
-    );
+    if (contest.type === "alert") {
+      cueVideo(
+        submissions[prevIndex].video.id,
+        submissions[prevIndex].video.start,
+        submissions[prevIndex].video.end
+      );
+    } else if (contest.type === "song") {
+    }
   };
 
   const handleOnDragEnd = async (result) => {
@@ -379,7 +387,10 @@ export default function Manage(props) {
     if (evt.defaultPrevented) return;
     setCurrentSubmission(data);
     setCurrentIndex(submissions.indexOf(data));
-    cueVideo(data.video.id, data.video.start, data.video.end);
+    if (contest.type === "alert") {
+      cueVideo(data.video.id, data.video.start, data.video.end);
+    } else if (contest.type === "song") {
+    }
   };
 
   const handleRemove = async (evt) => {
@@ -405,6 +416,24 @@ export default function Manage(props) {
 
   const handlePlayerClick = (evt) => {
     setShowPlayer(true);
+  };
+
+  const handleArrayIndexChange = (evt) => {
+    if (isNaN(evt.target.value)) return;
+    const index = evt.target.value - 1;
+    if (!submissions[index]) return;
+
+    setShowPlayer(false);
+    setCurrentIndex(index);
+    setCurrentSubmission(submissions[index]);
+    if (contest.type === "alert") {
+      cueVideo(
+        submissions[index].video.id,
+        submissions[index].video.start,
+        submissions[index].video.end
+      );
+    } else if (contest.type === "song") {
+    }
   };
 
   if (props.user === undefined || contestExists === null)
@@ -496,9 +525,29 @@ export default function Manage(props) {
                       justifyContent="center"
                       style={{ marginTop: "0.3rem", marginBottom: "0.3rem" }}
                     >
-                      <Typography variant="body1" className={classes.textLabel}>
-                        {`${currentIndex + 1} / ${submissions.length}`}
-                      </Typography>
+                      <input
+                        autoFocus={true}
+                        type="text"
+                        className={`${classes.arrayInput} ${classes.input}`}
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                        autoComplete="off"
+                        required={true}
+                        value={(currentIndex + 1).toString()}
+                        onChange={handleArrayIndexChange}
+                      />
+                      <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                      >
+                        <Typography
+                          variant="body1"
+                          className={classes.textLabel}
+                        >
+                          {`/ ${submissions.length}`}
+                        </Typography>
+                      </Box>
                     </Box>
                   </div>
                   <Box
@@ -516,30 +565,48 @@ export default function Manage(props) {
                       </Button>
                     </div>
                     <div className={classes.player}>
-                      <div
-                        style={{
-                          backgroundColor: "black",
-                          height: "500px",
-                          width: "800px",
-                        }}
-                        onClick={handlePlayerClick}
-                      >
-                        <Youtube
-                          id="player"
-                          containerClassName={showPlayer ? "" : classes.hidden}
-                          opts={{
+                      {contest.type === "song" ? (
+                        <Box display="flex" flexDirection="column" width="100%">
+                          <iframe
+                            title="Player"
+                            width="100%"
+                            height="160"
+                            scrolling="no"
+                            frameBorder="no"
+                            allow="autoplay"
+                            src={`https://w.soundcloud.com/player/?url=${currentSubmission.video.link.replace(/(www\.|m\.)/, '')}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+                          />
+                        </Box>
+                      ) : contest.type === "alert" ? (
+                        <div
+                          style={{
+                            backgroundColor: "black",
                             height: "500px",
                             width: "800px",
-                            playerVars: {
-                              autoplay: 0,
-                              playsinline: 1,
-                              rel: 0,
-                              modestbranding: 1,
-                            },
                           }}
-                          onReady={onReady}
-                        />
-                      </div>
+                          onClick={handlePlayerClick}
+                        >
+                          <Youtube
+                            id="player"
+                            containerClassName={
+                              showPlayer ? "" : classes.hidden
+                            }
+                            opts={{
+                              height: "500px",
+                              width: "800px",
+                              playerVars: {
+                                autoplay: 0,
+                                playsinline: 1,
+                                rel: 0,
+                                modestbranding: 1,
+                              },
+                            }}
+                            onReady={onReady}
+                          />
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                       <div className={classes.textBox}>
                         <Typography variant="h5" className={classes.text}>
                           {`${currentSubmission.title}`}
@@ -953,5 +1020,37 @@ const useStyles = makeStyles(() => ({
   },
   hidden: {
     display: "none",
+  },
+  arrayInput: {
+    borderBottomLeftRadius: "4px",
+    borderTopRightRadius: "4px",
+    borderBottomRightRadius: "4px",
+    borderTopLeftRadius: "4px",
+    textAlign: "center",
+    display: "block",
+    fontFamily: `"Roboto", "Helvetica", "Arial", sans-serif`,
+    fontSize: "1rem",
+    fontWeight: "400",
+    width: "40px",
+  },
+  input: {
+    appearance: "none",
+    backgroundClip: "padding-box",
+    backgroundColor: "inherit",
+    border: "2px solid rgba(0,0,0,.05)",
+    color: "#efeff1",
+    height: "1.6rem",
+    lineHeight: "1.3",
+    transition:
+      "box-shadow .1s ease-in,border .1s ease-in,background-color .1s ease-in",
+    transitionProperty: "box-shadow,border,background-color",
+    transitionDuration: ".1s,.1s,.1s",
+    transitionTimingFunction: "ease-in,ease-in,ease-in",
+    transitionDelay: "0s,0s,0s",
+    "&:focus": {
+      backgroundColor: "rgb(14 14 14/1)",
+      borderColor: "#2079ff",
+      outline: "none",
+    },
   },
 }));
