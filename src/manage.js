@@ -478,21 +478,21 @@ export default function Manage(props) {
                   onClick={showDeniedVideos}
                   className={classes.button}
                 >
-                  Denied Videos
+                  Denied
                 </Button>
                 <Button
                   variant="outlined"
                   onClick={showUnapprovedSubmissions}
                   className={classes.button}
                 >
-                  Unapproved Videos
+                  Unapproved
                 </Button>
                 <Button
                   variant="outlined"
                   onClick={showApprovedSubmissions}
                   className={classes.button}
                 >
-                  Approved Videos
+                  Approved
                 </Button>
                 <Button
                   variant="outlined"
