@@ -13,8 +13,8 @@ import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
 import Youtube from "react-youtube";
 import client from "./client";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Redirect } from "react-router-dom";
+import WinnerUI from "./winnerUI";
 
 export default function Manage(props) {
   const classes = useStyles();
@@ -51,20 +51,16 @@ export default function Manage(props) {
     return;
   }, [contestId]);
 
-  const fetchSubmissions = async (rank = false) => {
+  const fetchSubmissions = async () => {
     let res = [];
     await client
       .service("submissions")
       .find({
         query: {
           contest_id: contestId,
-          $sort: rank
-            ? {
-                rank: 1,
-              }
-            : {
-                id: 1,
-              },
+          $sort: {
+            id: 1,
+          },
         },
       })
       .then((data) => {
@@ -361,38 +357,6 @@ export default function Manage(props) {
     }
   };
 
-  const handleOnDragEnd = async (result) => {
-    if (!result.destination) return;
-    const items = Array.from(submissions);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setCurrentIndex(items.indexOf(currentSubmission));
-    setSubmissions(items);
-
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      await client
-        .service("submissions")
-        .patch(item.id, {
-          rank: i + 1,
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
-  };
-
-  const handleItemClick = (data, evt) => {
-    if (evt.defaultPrevented) return;
-    setCurrentSubmission(data);
-    setCurrentIndex(submissions.indexOf(data));
-    if (contest.type === "alert") {
-      cueVideo(data.video.id, data.video.start, data.video.end);
-    } else if (contest.type === "song") {
-    }
-  };
-
   const handleRemove = async (evt) => {
     const confirmDialog = window.confirm("Are you sure?");
     if (!confirmDialog) return;
@@ -502,367 +466,314 @@ export default function Manage(props) {
                   Winners
                 </Button>
               </div>
-              {submissions === undefined ? (
-                <></>
-              ) : submissions.length === 0 ? (
-                <Box className={classes.nothing}>
-                  <Typography variant="h5" className={classes.text}>
-                    Nothing here..
-                  </Typography>
-                </Box>
-              ) : !currentSubmission ? (
-                <></>
+              {winnerUI ? (
+                <WinnerUI contest={contest} submissions={submissions} />
               ) : (
                 <>
-                  <div className={classes.top}>
-                    <div style={{ marginRight: "1rem" }}>
-                      <Typography variant="body1" className={classes.textLabel}>
-                        {`Submission ID: ${currentSubmission.id}`}
+                  {submissions === undefined ? (
+                    <></>
+                  ) : submissions.length === 0 ? (
+                    <Box className={classes.nothing}>
+                      <Typography variant="h5" className={classes.text}>
+                        Nothing here..
                       </Typography>
-                    </div>
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      style={{ marginTop: "0.3rem", marginBottom: "0.3rem" }}
-                    >
-                      <input
-                        autoFocus={true}
-                        type="text"
-                        className={`${classes.arrayInput} ${classes.input}`}
-                        autoCapitalize="off"
-                        autoCorrect="off"
-                        autoComplete="off"
-                        required={true}
-                        value={(currentIndex + 1).toString()}
-                        onChange={handleArrayIndexChange}
-                      />
+                    </Box>
+                  ) : !currentSubmission ? (
+                    <></>
+                  ) : (
+                    <>
+                      <div className={classes.top}>
+                        <div style={{ marginRight: "1rem" }}>
+                          <Typography
+                            variant="body1"
+                            className={classes.textLabel}
+                          >
+                            {`Submission ID: ${currentSubmission.id}`}
+                          </Typography>
+                        </div>
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          style={{
+                            marginTop: "0.3rem",
+                            marginBottom: "0.3rem",
+                          }}
+                        >
+                          <input
+                            autoFocus={true}
+                            type="text"
+                            className={`${classes.arrayInput} ${classes.input}`}
+                            autoCapitalize="off"
+                            autoCorrect="off"
+                            autoComplete="off"
+                            required={true}
+                            value={(currentIndex + 1).toString()}
+                            onChange={handleArrayIndexChange}
+                          />
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                          >
+                            <Typography
+                              variant="body1"
+                              className={classes.textLabel}
+                            >
+                              {`/ ${submissions.length}`}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </div>
                       <Box
                         display="flex"
                         justifyContent="center"
                         alignItems="center"
                       >
-                        <Typography
-                          variant="body1"
-                          className={classes.textLabel}
-                        >
-                          {`/ ${submissions.length}`}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </div>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <div className={classes.left}>
-                      <Button
-                        variant="outlined"
-                        onClick={prevSubmission}
-                        className={classes.button}
-                      >
-                        {`<`}
-                      </Button>
-                    </div>
-                    <div className={classes.player}>
-                      {contest.type === "song" ? (
-                        <Box display="flex" flexDirection="column" width="100%">
-                          <iframe
-                            title="Player"
-                            width="100%"
-                            height="160"
-                            scrolling="no"
-                            frameBorder="no"
-                            allow="autoplay"
-                            src={`https://w.soundcloud.com/player/?url=${currentSubmission.video.link.replace(/(www\.|m\.)/, '')}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
-                          />
-                        </Box>
-                      ) : contest.type === "alert" ? (
-                        <div
-                          style={{
-                            backgroundColor: "black",
-                            height: "500px",
-                            width: "800px",
-                          }}
-                          onClick={handlePlayerClick}
-                        >
-                          <Youtube
-                            id="player"
-                            containerClassName={
-                              showPlayer ? "" : classes.hidden
-                            }
-                            opts={{
-                              height: "500px",
-                              width: "800px",
-                              playerVars: {
-                                autoplay: 0,
-                                playsinline: 1,
-                                rel: 0,
-                                modestbranding: 1,
-                              },
-                            }}
-                            onReady={onReady}
-                          />
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                      <div className={classes.textBox}>
-                        <Typography variant="h5" className={classes.text}>
-                          {`${currentSubmission.title}`}
-                        </Typography>
-                        <Typography variant="h5" className={classes.text}>
-                          {`${currentSubmission.display_name}`}
-                        </Typography>
-                        <a
-                          href={currentSubmission.video.link}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                        >
-                          <Typography variant="caption">
-                            {`${currentSubmission.video.link}`}
-                          </Typography>
-                        </a>
-                        <div style={{ marginTop: "0.5rem" }}>
-                          <Typography
-                            variant="caption"
-                            style={{ wordBreak: "break-word" }}
+                        <div className={classes.left}>
+                          <Button
+                            variant="outlined"
+                            onClick={prevSubmission}
+                            className={classes.button}
                           >
-                            {`${currentSubmission.comment}`}
-                          </Typography>
+                            {`<`}
+                          </Button>
                         </div>
-                      </div>
-                    </div>
-                    <div className={classes.right}>
-                      <Button
-                        variant="outlined"
-                        onClick={nextSubmission}
-                        className={classes.button}
-                      >
-                        {`>`}
-                      </Button>
-                    </div>
-                  </Box>
-                  <div className={classes.bottomNav}>
-                    <Box display="flex" justifyContent="center">
-                      {submissionUI ? (
-                        <div>
-                          <Box display="flex">
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleApproval}
-                                className={classes.button}
-                              >
-                                {`Approve`}
-                              </Button>
-                            </div>
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleDeny}
-                                className={classes.denyButton}
-                              >
-                                {`Deny`}
-                              </Button>
-                            </div>
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleRemove}
-                                className={classes.denyButton}
-                              >
-                                {`Remove`}
-                              </Button>
-                            </div>
-                          </Box>
-                          <div style={{ marginTop: "1rem" }}>
-                            <Button
-                              variant="outlined"
-                              onClick={handleBan}
-                              className={classes.denyButton}
+                        <div className={classes.player}>
+                          {contest.type === "song" ? (
+                            <Box
+                              display="flex"
+                              flexDirection="column"
+                              width="100%"
                             >
-                              {`Ban User`}
-                            </Button>
+                              <iframe
+                                title="Player"
+                                width="100%"
+                                height="160"
+                                scrolling="no"
+                                frameBorder="no"
+                                allow="autoplay"
+                                src={`https://w.soundcloud.com/player/?url=${currentSubmission.video.link.replace(
+                                  /(www\.|m\.)/,
+                                  ""
+                                )}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+                              />
+                            </Box>
+                          ) : contest.type === "alert" ? (
+                            <div
+                              style={{
+                                backgroundColor: "black",
+                                height: "500px",
+                                width: "800px",
+                              }}
+                              onClick={handlePlayerClick}
+                            >
+                              <Youtube
+                                id="player"
+                                containerClassName={
+                                  showPlayer ? "" : classes.hidden
+                                }
+                                opts={{
+                                  height: "500px",
+                                  width: "800px",
+                                  playerVars: {
+                                    autoplay: 0,
+                                    playsinline: 1,
+                                    rel: 0,
+                                    modestbranding: 1,
+                                  },
+                                }}
+                                onReady={onReady}
+                              />
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                          <div className={classes.textBox}>
+                            <Typography variant="h5" className={classes.text}>
+                              {`${currentSubmission.title}`}
+                            </Typography>
+                            <Typography variant="h5" className={classes.text}>
+                              {`${currentSubmission.display_name}`}
+                            </Typography>
+                            <a
+                              href={currentSubmission.video.link}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              <Typography variant="caption">
+                                {`${currentSubmission.video.link}`}
+                              </Typography>
+                            </a>
+                            <div style={{ marginTop: "0.5rem" }}>
+                              <Typography
+                                variant="caption"
+                                style={{ wordBreak: "break-word" }}
+                              >
+                                {`${currentSubmission.comment}`}
+                              </Typography>
+                            </div>
                           </div>
                         </div>
-                      ) : deniedUI ? (
-                        <div>
-                          <Box display="flex">
-                            <div style={{ marginRight: "1rem" }}>
+                        <div className={classes.right}>
+                          <Button
+                            variant="outlined"
+                            onClick={nextSubmission}
+                            className={classes.button}
+                          >
+                            {`>`}
+                          </Button>
+                        </div>
+                      </Box>
+                      <div className={classes.bottomNav}>
+                        <Box display="flex" justifyContent="center">
+                          {submissionUI ? (
+                            <div>
+                              <Box display="flex">
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleApproval}
+                                    className={classes.button}
+                                  >
+                                    {`Approve`}
+                                  </Button>
+                                </div>
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleDeny}
+                                    className={classes.denyButton}
+                                  >
+                                    {`Deny`}
+                                  </Button>
+                                </div>
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleRemove}
+                                    className={classes.denyButton}
+                                  >
+                                    {`Remove`}
+                                  </Button>
+                                </div>
+                              </Box>
+                              <div style={{ marginTop: "1rem" }}>
+                                <Button
+                                  variant="outlined"
+                                  onClick={handleBan}
+                                  className={classes.denyButton}
+                                >
+                                  {`Ban User`}
+                                </Button>
+                              </div>
+                            </div>
+                          ) : deniedUI ? (
+                            <div>
+                              <Box display="flex">
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleUnApproval}
+                                    className={classes.button}
+                                  >
+                                    {`Un-deny`}
+                                  </Button>
+                                </div>
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleRemove}
+                                    className={classes.denyButton}
+                                  >
+                                    {`Remove`}
+                                  </Button>
+                                </div>
+                              </Box>
+                              <div style={{ marginTop: "1rem" }}>
+                                <Button
+                                  variant="outlined"
+                                  onClick={handleBan}
+                                  className={classes.denyButton}
+                                >
+                                  {`Ban User`}
+                                </Button>
+                              </div>
+                            </div>
+                          ) : unapprovedUI ? (
+                            <div>
+                              <Box display="flex">
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleApproval}
+                                    className={classes.button}
+                                  >
+                                    {`Approve`}
+                                  </Button>
+                                </div>
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleDeny}
+                                    className={classes.denyButton}
+                                  >
+                                    {`Deny`}
+                                  </Button>
+                                </div>
+                                <div style={{ marginRight: "1rem" }}>
+                                  <Button
+                                    variant="outlined"
+                                    onClick={handleRemove}
+                                    className={classes.denyButton}
+                                  >
+                                    {`Remove`}
+                                  </Button>
+                                </div>
+                              </Box>
+                              <div style={{ marginTop: "1rem" }}>
+                                <Button
+                                  variant="outlined"
+                                  onClick={handleBan}
+                                  className={classes.button}
+                                >
+                                  {`Ban User`}
+                                </Button>
+                              </div>
+                            </div>
+                          ) : approvedUI ? (
+                            <>
                               <Button
                                 variant="outlined"
                                 onClick={handleUnApproval}
                                 className={classes.button}
                               >
-                                {`Un-deny`}
+                                {`Un-Approve`}
                               </Button>
-                            </div>
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleRemove}
-                                className={classes.denyButton}
-                              >
-                                {`Remove`}
-                              </Button>
-                            </div>
-                          </Box>
-                          <div style={{ marginTop: "1rem" }}>
-                            <Button
-                              variant="outlined"
-                              onClick={handleBan}
-                              className={classes.denyButton}
-                            >
-                              {`Ban User`}
-                            </Button>
-                          </div>
-                        </div>
-                      ) : unapprovedUI ? (
-                        <div>
-                          <Box display="flex">
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleApproval}
-                                className={classes.button}
-                              >
-                                {`Approve`}
-                              </Button>
-                            </div>
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleDeny}
-                                className={classes.denyButton}
-                              >
-                                {`Deny`}
-                              </Button>
-                            </div>
-                            <div style={{ marginRight: "1rem" }}>
-                              <Button
-                                variant="outlined"
-                                onClick={handleRemove}
-                                className={classes.denyButton}
-                              >
-                                {`Remove`}
-                              </Button>
-                            </div>
-                          </Box>
-                          <div style={{ marginTop: "1rem" }}>
-                            <Button
-                              variant="outlined"
-                              onClick={handleBan}
-                              className={classes.button}
-                            >
-                              {`Ban User`}
-                            </Button>
-                          </div>
-                        </div>
-                      ) : approvedUI ? (
-                        <>
-                          <Button
-                            variant="outlined"
-                            onClick={handleUnApproval}
-                            className={classes.button}
-                          >
-                            {`Un-Approve`}
-                          </Button>
-                          <Switch
-                            checked={currentSubmission.winner}
-                            onChange={handleWinnerChange}
-                            classes={{
-                              track: classes.switch_track,
-                              switchBase: classes.switch_base,
-                              colorPrimary: classes.switch_primary,
-                            }}
-                          />
-                          <div style={{ marginTop: "0.4rem" }}>
-                            <Typography
-                              variant="body1"
-                              className={classes.text}
-                            >
-                              Winner
-                            </Typography>
-                          </div>
-                        </>
-                      ) : winnerUI ? (
-                        <div>
-                          <div
-                            style={{
-                              marginTop: "1rem",
-                              borderTop: "1px solid lightgrey",
-                              borderLeft: "1px solid lightgrey",
-                              borderRight: "1px solid lightgrey",
-                            }}
-                          >
-                            <Typography
-                              variant="body1"
-                              className={classes.text}
-                            >
-                              Rankings
-                            </Typography>
-                          </div>
-                          <div className={classes.listContainer}>
-                            <DragDropContext onDragEnd={handleOnDragEnd}>
-                              <Droppable
-                                droppableId="winners"
-                                direction="horizontal"
-                              >
-                                {(provided) => (
-                                  <div
-                                    className={classes.list}
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                  >
-                                    {submissions.map((data, index) => {
-                                      return (
-                                        <Draggable
-                                          key={data.id}
-                                          draggableId={data.id}
-                                          index={index}
-                                        >
-                                          {(provided) => (
-                                            <div
-                                              ref={provided.innerRef}
-                                              {...provided.draggableProps}
-                                              {...provided.dragHandleProps}
-                                            >
-                                              <div
-                                                className={
-                                                  currentSubmission.id ===
-                                                  data.id
-                                                    ? classes.currentItem
-                                                    : classes.item
-                                                }
-                                                onClick={(e) =>
-                                                  handleItemClick(data, e)
-                                                }
-                                              >
-                                                <Typography
-                                                  variant="caption"
-                                                  className={classes.text}
-                                                >
-                                                  {`${data.display_name}`}
-                                                </Typography>
-                                              </div>
-                                            </div>
-                                          )}
-                                        </Draggable>
-                                      );
-                                    })}
-                                    {provided.placeholder}
-                                  </div>
-                                )}
-                              </Droppable>
-                            </DragDropContext>
-                          </div>
-                        </div>
-                      ) : (
-                        <></>
-                      )}
-                    </Box>
-                  </div>
+                              <Switch
+                                checked={currentSubmission.winner}
+                                onChange={handleWinnerChange}
+                                classes={{
+                                  track: classes.switch_track,
+                                  switchBase: classes.switch_base,
+                                  colorPrimary: classes.switch_primary,
+                                }}
+                              />
+                              <div style={{ marginTop: "0.4rem" }}>
+                                <Typography
+                                  variant="body1"
+                                  className={classes.text}
+                                >
+                                  Winner
+                                </Typography>
+                              </div>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+                        </Box>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
               <div style={{ marginTop: "2rem" }}>
@@ -891,8 +802,8 @@ const useStyles = makeStyles(() => ({
     maxHeight: "300px",
   },
   container: {
-    paddingRight: "25rem",
-    paddingLeft: "25rem",
+    paddingRight: "5rem",
+    paddingLeft: "5rem",
     marginTop: "2rem",
   },
   mobileContainer: {

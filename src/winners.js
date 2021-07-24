@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   makeStyles,
   Typography,
-  Button,
   Box,
   CircularProgress,
   useMediaQuery,
@@ -10,128 +9,126 @@ import {
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
-import Youtube from "react-youtube";
 import client from "./client";
+import { Bracket } from "react-brackets";
+import CustomSeed from "./CustomSeed";
 
 export default function Winners(props) {
   const classes = useStyles();
   const isMobile = useMediaQuery("(max-width: 800px)");
-  const [player, setPlayer] = useState(undefined);
+  const [matches, setMatches] = useState(undefined);
   const [submissions, setSubmissions] = useState(undefined);
-  const [currentSubmission, setCurrentSubmission] = useState(undefined);
-  const [currentIndex, setCurrentIndex] = useState(undefined);
+  const [contest, setContest] = useState(undefined);
+  const [rounds, setRounds] = useState(null);
+  const [bracketLoading, setBracketLoading] = useState(true);
   const contestId = props.match.params.contestId;
 
   useEffect(() => {
-    document.title = "Sub Alert Contest - Poke";
+    document.title = `Contest ${contestId} - Poke`;
     const fetchSubmissions = async () => {
       await client
         .service("submissions")
         .find({
           query: {
             contest_id: contestId,
-            $sort: {
-              rank: 1,
-            },
           },
         })
         .then((data) => {
-          const filteredSubmissions = data.filter((submission) => submission.winner);
+          const filteredSubmissions = data.filter(
+            (submission) => submission.winner
+          );
           setSubmissions(filteredSubmissions);
-          setCurrentSubmission(filteredSubmissions[0]);
-          setCurrentIndex(0);
         })
         .catch((e) => {
           console.error(e);
         });
     };
+    const fetchContest = async () => {
+      await client
+        .service("contests")
+        .get(contestId)
+        .then((data) => {
+          setContest(data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    };
+    const fetchMatches = async () => {
+      await client
+        .service("matches")
+        .find({
+          query: {
+            contest_id: contestId,
+            $sort: {
+              id: 1,
+            },
+          },
+        })
+        .then((data) => {
+          setMatches(data);
+        })
+        .catch(() => {
+          setMatches(undefined);
+        });
+    };
+    fetchContest();
+    fetchMatches();
     fetchSubmissions();
     return;
   }, [contestId]);
 
-  const cueVideo = (id, start, end, argPlayer = false) => {
-    if (!player) {
-      if (start !== null && end !== null)
-        return argPlayer.cueVideoById({
-          videoId: id,
-          startSeconds: start,
-          endSeconds: end,
-        });
+  useEffect(() => {
+    if (!matches || !submissions) return;
 
-      if (start !== null && end === null)
-        return argPlayer.cueVideoById({
-          videoId: id,
-          startSeconds: start,
-        });
+    const getSubmission = (id) => {
+      let data;
+      for (let submission of submissions) {
+        if (parseInt(submission.id) !== id) continue;
+        data = submission;
+      }
+      return data;
+    };
 
-      if (start === null && end !== null)
-        return argPlayer.cueVideoById({
-          videoId: id,
-          endSeconds: end,
-        });
+    let maxRounds = 0,
+      tmpRounds = [];
 
-      return argPlayer.cueVideoById(id);
+    for (let match of matches) {
+      if (match.round > maxRounds) maxRounds = match.round;
     }
 
-    if (start !== null && end !== null)
-      return player.cueVideoById({
-        videoId: id,
-        startSeconds: start,
-        endSeconds: end,
+    for (let i = 1; i <= maxRounds; i++) {
+      let seeds = [];
+      for (let match of matches) {
+        if (parseInt(match.round) !== i) continue;
+        const team_a = getSubmission(match.team_a_id);
+        const team_b = getSubmission(match.team_b_id);
+
+        seeds.push({
+          teams: [
+            {
+              id: team_a ? team_a.id : null,
+              name: team_a ? team_a.display_name : null,
+              submission: team_a ? team_a : null,
+            },
+            {
+              id: team_b ? team_b.id : null,
+              name: team_b ? team_b.display_name : null,
+              submission: team_b ? team_b : null,
+            },
+          ],
+          winner: match.winner_id,
+          match: match,
+        });
+      }
+      tmpRounds.push({
+        seeds: seeds,
       });
+    }
 
-    if (start !== null && end === null)
-      return player.cueVideoById({
-        videoId: id,
-        startSeconds: start,
-      });
-
-    if (start === null && end !== null)
-      return player.cueVideoById({
-        videoId: id,
-        endSeconds: end,
-      });
-
-    player.cueVideoById(id);
-  };
-
-  const onReady = (evt) => {
-    const argPlayer = evt.target;
-    setPlayer(argPlayer);
-    if (currentSubmission)
-      cueVideo(
-        currentSubmission.video.id,
-        currentSubmission.video.start,
-        currentSubmission.video.end,
-        argPlayer
-      );
-  };
-
-  const nextSubmission = (evt) => {
-    const nextIndex = currentIndex + 1;
-    if (!submissions[nextIndex]) return;
-
-    setCurrentSubmission(submissions[nextIndex]);
-    setCurrentIndex(nextIndex);
-    cueVideo(
-      submissions[nextIndex].video.id,
-      submissions[nextIndex].video.start,
-      submissions[nextIndex].video.end
-    );
-  };
-
-  const prevSubmission = (evt) => {
-    const prevIndex = currentIndex - 1;
-    if (!submissions[prevIndex]) return;
-
-    setCurrentSubmission(submissions[prevIndex]);
-    setCurrentIndex(prevIndex);
-    cueVideo(
-      submissions[prevIndex].video.id,
-      submissions[prevIndex].video.start,
-      submissions[prevIndex].video.end
-    );
-  };
+    setRounds(tmpRounds);
+    setBracketLoading(false);
+  }, [matches, submissions]);
 
   if (props.user === undefined)
     return (
@@ -150,6 +147,8 @@ export default function Winners(props) {
       </Box>
     );
 
+  if (!matches || !rounds) return null;
+
   return (
     <SimpleBar className={classes.parent}>
       <div className={isMobile ? classes.mobileContainer : classes.container}>
@@ -157,98 +156,32 @@ export default function Winners(props) {
           <div className={classes.inner}>
             <Box display="block" textAlign="center">
               <img src={logo} className={classes.banner} alt="" />
-              {submissions === undefined ? (
-                <></>
-              ) : submissions.length === 0 ? (
-                <Box className={classes.nothing}>
-                  <Typography variant="h5" className={classes.text}>
-                    Nothing here..
-                  </Typography>
+              <Box marginTop="3rem">
+                <Box marginTop="3rem">
+                  {bracketLoading ? (
+                    <CircularProgress
+                      style={{ marginTop: "2rem" }}
+                      size="2rem"
+                    />
+                  ) : (
+                    <Bracket
+                      rounds={rounds}
+                      renderSeedComponent={(props) => {
+                        return (
+                          <CustomSeed
+                            {...props}
+                            public={true}
+                            classes={classes}
+                            contest={contest}
+                            matches={matches}
+                            setMatches={setMatches}
+                          />
+                        );
+                      }}
+                    />
+                  )}
                 </Box>
-              ) : !currentSubmission ? (
-                <></>
-              ) : (
-                <>
-                  <div className={classes.top}>
-                    <div style={{ marginRight: "1rem" }}>
-                      <Typography variant="body1" className={classes.textLabel}>
-                        {`Submission ID: ${currentSubmission.id}`}
-                      </Typography>
-                    </div>
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      style={{ marginTop: "0.3rem", marginBottom: "0.3rem" }}
-                    >
-                      <Typography variant="body1" className={classes.textLabel}>
-                        {`${currentIndex + 1} / ${submissions.length}`}
-                      </Typography>
-                    </Box>
-                  </div>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <div className={classes.left}>
-                      <Button
-                        variant="outlined"
-                        onClick={prevSubmission}
-                        className={classes.button}
-                      >
-                        {`<`}
-                      </Button>
-                    </div>
-                    <div className={classes.player}>
-                      <Youtube
-                        id="player"
-                        opts={{
-                          height: "500px",
-                          width: "800px",
-                          playerVars: {
-                            autoplay: 0,
-                            playsinline: 1,
-                            rel: 0,
-                            modestbranding: 1,
-                          },
-                        }}
-                        onReady={onReady}
-                      />
-                      <div className={classes.textBox}>
-                        <Typography variant="h5" className={classes.text}>
-                          {`${currentSubmission.title} - ${currentSubmission.display_name}`}
-                        </Typography>
-                        <a
-                          href={currentSubmission.video.link}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                        >
-                          <Typography variant="caption">
-                            {`${currentSubmission.video.link}`}
-                          </Typography>
-                        </a>
-                        <div style={{ marginTop: "0.5rem" }}>
-                          <Typography
-                            variant="caption"
-                            style={{ wordBreak: "break-word" }}
-                          >
-                            {/*`${currentSubmission.comment}`*/}
-                          </Typography>
-                        </div>
-                      </div>
-                    </div>
-                    <div className={classes.right}>
-                      <Button
-                        variant="outlined"
-                        onClick={nextSubmission}
-                        className={classes.button}
-                      >
-                        {`>`}
-                      </Button>
-                    </div>
-                  </Box>
-                </>
-              )}
+              </Box>
               <div style={{ marginTop: "2rem" }}>
                 <a
                   className={classes.navigation}
@@ -307,14 +240,6 @@ const useStyles = makeStyles(() => ({
     textTransform: "uppercase",
     fontWeight: "550",
   },
-  player: {
-    width: "800px",
-  },
-  navbar: {
-    marginBottom: "1rem",
-    display: "flex",
-    justifyContent: "space-evenly",
-  },
   button: {
     color: "#fff",
     backgroundColor: "#008230",
@@ -325,22 +250,46 @@ const useStyles = makeStyles(() => ({
       color: `#fff`,
     },
   },
+  modalContent: {
+    position: "absolute",
+    width: "400px",
+    backgroundColor: "#1d1d1d",
+    outline: "none",
+  },
+  modal: {
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "60%",
+  },
+  modalParent: {
+    height: "100%",
+    padding: "5rem",
+  },
   text: {
     color: "#fff",
+    fontWeight: "700",
   },
-  nothing: {
-    marginTop: "2rem",
+  winner: {
+    color: "#008230",
+    fontWeight: "700",
   },
-  left: {
-    marginRight: "3rem",
+  textLink: {
+    color: "#fff",
+    fontWeight: "700",
+    "&:hover": {
+      color: "#fff",
+      opacity: "0.7",
+      textDecoration: "none",
+    },
   },
-  right: {
-    marginLeft: "3rem",
-  },
-  bottomNav: {
-    marginTop: "1rem",
-  },
-  navButton: {
-    marginRight: "1rem",
+  winnerLink: {
+    color: "#008230",
+    fontWeight: "700",
+    "&:hover": {
+      color: "#008230",
+      opacity: "0.7",
+      textDecoration: "none",
+    },
   },
 }));
