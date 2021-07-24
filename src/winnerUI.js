@@ -174,7 +174,7 @@ export default function Winners(props) {
         indexOfMatch = i;
         break;
       }
-
+      
       let nextMatch = nextRoundMatches[Math.floor(indexOfMatch / 2)];
       if (!nextMatch) return;
       await client
@@ -184,22 +184,26 @@ export default function Winners(props) {
           indexOfMatch % 2
             ? {
                 team_b_id: match.winner_id,
-                winner_id: thisRoundMatches[indexOfMatch + 1]
-                  ? thisRoundMatches.team_a_id === -1
-                  : null && thisRoundMatches[indexOfMatch + 1]
-                  ? thisRoundMatches.team_b_id === -1
-                  : null
-                  ? match.winner_id
+                winner_id: thisRoundMatches[indexOfMatch - 1]
+                  ? parseInt(thisRoundMatches[indexOfMatch - 1].team_a_id) ===
+                      -1 &&
+                    parseInt(thisRoundMatches[indexOfMatch - 1].team_b_id) ===
+                      -1
+                    ? match.winner_id
+                    : null
                   : null,
               }
             : !(indexOfMatch % 2) || indexOfMatch === 0
             ? {
                 team_a_id: match.winner_id,
-                winner_id:
-                  thisRoundMatches[indexOfMatch + 1].team_a_id === -1 &&
-                  thisRoundMatches[indexOfMatch + 1].team_b_id === -1
+                winner_id: thisRoundMatches[indexOfMatch + 1]
+                  ? parseInt(thisRoundMatches[indexOfMatch + 1].team_a_id) ===
+                      -1 &&
+                    parseInt(thisRoundMatches[indexOfMatch + 1].team_b_id) ===
+                      -1
                     ? match.winner_id
-                    : null,
+                    : null
+                  : null,
               }
             : {}
         )
@@ -207,6 +211,7 @@ export default function Winners(props) {
           for (let x = 0; x < tmpMatches.length; x++) {
             if (parseInt(tmpMatches[x].id) !== parseInt(data.id)) continue;
             tmpMatches[x] = data;
+            break;
           }
         })
         .catch((e) => {
