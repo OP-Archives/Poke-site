@@ -95,7 +95,7 @@ export default function Frontpage(props) {
                   <div style={{ marginBottom: "0.1rem" }}>
                     <Link
                       className={classes.title2}
-                      href={`/live/${vodList[0].id}`}
+                      href={`/${vod.type === "live" ? "live" : "vods"}/${vod.id}`}
                       variant="caption"
                     >
                       {vod.title}
@@ -105,7 +105,7 @@ export default function Frontpage(props) {
               </div>
             </div>
             <div className={classes.imageBox}>
-              <Link href={`/live/${vod.id}`}>
+              <Link href={`/${vod.type === "live" ? "live" : "vods"}/${vod.id}`}>
                 <img
                   alt=""
                   src={vod.thumbnail_url}
@@ -194,7 +194,7 @@ export default function Frontpage(props) {
                         >
                           <a href="/vods">
                             <Typography className={classes.alt} variant="h6">
-                              Most Recent Music Vods
+                              Most Recent Vods
                             </Typography>
                           </a>
                         </div>
