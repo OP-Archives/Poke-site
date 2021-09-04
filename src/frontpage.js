@@ -95,7 +95,7 @@ export default function Frontpage(props) {
                   <div style={{ marginBottom: "0.1rem" }}>
                     <Link
                       className={classes.title2}
-                      href={`/${vod.type === "live" ? "live" : "vods"}/${vod.id}`}
+                      href={`/${vod.youtube.some(youtube => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}
                       variant="caption"
                     >
                       {vod.title}
@@ -105,7 +105,7 @@ export default function Frontpage(props) {
               </div>
             </div>
             <div className={classes.imageBox}>
-              <Link href={`/${vod.type === "live" ? "live" : "vods"}/${vod.id}`}>
+              <Link href={`/${vod.youtube.some(youtube => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}>
                 <img
                   alt=""
                   src={vod.thumbnail_url}
