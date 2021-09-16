@@ -31,6 +31,7 @@ export default function Manage(props) {
   const [contestExists, setContestExists] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
   const [contest, setContest] = useState(null);
+  const [submissionIdInput, setSubmissionIdInput] = useState(null);
   const contestId = props.match.params.contestId;
 
   useEffect(() => {
@@ -336,7 +337,6 @@ export default function Manage(props) {
         submissions[nextIndex].video.start,
         submissions[nextIndex].video.end
       );
-    } else if (contest.type === "song") {
     }
   };
 
@@ -353,7 +353,6 @@ export default function Manage(props) {
         submissions[prevIndex].video.start,
         submissions[prevIndex].video.end
       );
-    } else if (contest.type === "song") {
     }
   };
 
@@ -396,9 +395,44 @@ export default function Manage(props) {
         submissions[index].video.start,
         submissions[index].video.end
       );
-    } else if (contest.type === "song") {
     }
   };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (isNaN(submissionIdInput) || submissionIdInput === null) return;
+      let s,
+        index,
+        id = submissionIdInput.toString();
+      for (let i = 0; i < submissions.length; i++) {
+        const submission = submissions[i];
+        if (id === submission.id) {
+          s = submission;
+          index = i;
+          break;
+        }
+      }
+
+      if (!s) return;
+
+      setShowPlayer(false);
+      setCurrentIndex(index);
+      setCurrentSubmission(submissions[index]);
+
+      if (contest.type === "alert") {
+        cueVideo(
+          submissions[index].video.id,
+          submissions[index].video.start,
+          submissions[index].video.end
+        );
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submissionIdInput]);
+
+  const handleFocus = (e) => e.target.select();
 
   if (props.user === undefined || contestExists === null)
     return (
@@ -483,14 +517,41 @@ export default function Manage(props) {
                   ) : (
                     <>
                       <div className={classes.top}>
-                        <div style={{ marginRight: "1rem" }}>
-                          <Typography
-                            variant="body1"
-                            className={classes.textLabel}
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          style={{
+                            marginTop: "0.3rem",
+                            marginBottom: "0.3rem",
+                            marginRight: "1rem",
+                          }}
+                        >
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
                           >
-                            {`Submission ID: ${currentSubmission.id}`}
-                          </Typography>
-                        </div>
+                            <Typography
+                              variant="body1"
+                              className={classes.textLabel}
+                            >
+                              {`Submission ID: `}
+                            </Typography>
+                          </Box>
+                          <input
+                            key={currentSubmission.id}
+                            type="text"
+                            className={`${classes.arrayInput} ${classes.input}`}
+                            autoCapitalize="off"
+                            autoCorrect="off"
+                            autoComplete="off"
+                            defaultValue={currentSubmission.id}
+                            onFocus={handleFocus}
+                            onChange={(e) =>
+                              setSubmissionIdInput(e.target.value)
+                            }
+                          />
+                        </Box>
                         <Box
                           display="flex"
                           justifyContent="center"
@@ -500,14 +561,15 @@ export default function Manage(props) {
                           }}
                         >
                           <input
-                            autoFocus={true}
+                            key={currentSubmission.id}
                             type="text"
                             className={`${classes.arrayInput} ${classes.input}`}
                             autoCapitalize="off"
                             autoCorrect="off"
                             autoComplete="off"
                             required={true}
-                            value={(currentIndex + 1).toString()}
+                            onFocus={handleFocus}
+                            defaultValue={(currentIndex + 1).toString()}
                             onChange={handleArrayIndexChange}
                           />
                           <Box

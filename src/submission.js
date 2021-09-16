@@ -49,12 +49,13 @@ export default function Creation(props) {
   const handleVideoLinkChange = (evt) => {
     setLinkError(false);
     const link = evt.target.value;
-    //eslint-disable-next-line
     const regex =
       props.contest.type === "alert"
-        ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/
+        ? //eslint-disable-next-line
+          /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/
         : props.contest.type === "song"
-        ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
+        ? //eslint-disable-next-line
+          /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
         : null;
     if (!regex.test(link)) {
       setLinkError(true);
@@ -70,7 +71,12 @@ export default function Creation(props) {
     }
     const videoSplit = link.split(regex);
     setVideo({
-      id: props.contest.type === "alert" ? videoSplit[5] : props.contest.type === "song" ? videoSplit[7] : null,
+      id:
+        props.contest.type === "alert"
+          ? videoSplit[5]
+          : props.contest.type === "song"
+          ? videoSplit[7]
+          : null,
       link: link,
     });
   };
