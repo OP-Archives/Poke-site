@@ -18,12 +18,24 @@ import SimpleBar from "simplebar-react";
 import canAutoPlay from "can-autoplay";
 import Logo from "./assets/jammin.gif";
 import { Resizable } from "re-resizable";
-import moment from "moment";
 
 /**
  * TODO:
  * DURATION QUERY PARAM
  */
+
+function toSeconds(str) {
+  var p = str.split(":"),
+    s = 0,
+    m = 1;
+
+  while (p.length > 0) {
+    s += m * parseInt(p.pop(), 10);
+    m *= 60;
+  }
+
+  return s;
+}
 
 class VodPlayer extends Component {
   constructor(props) {
@@ -73,9 +85,7 @@ class VodPlayer extends Component {
     for (let video of this.state.youtube_data) {
       this.totalYoutubeDuration += video.duration;
     }
-    this.vodDuration = moment
-      .duration(this.state.vodData.duration, "HH:mm:ss")
-      .asSeconds();
+    this.vodDuration = toSeconds(this.state.vodData.duration);
     this.delay =
       this.vodDuration - this.totalYoutubeDuration < 0
         ? 0
@@ -86,7 +96,7 @@ class VodPlayer extends Component {
       this.setState({ driveId: drive.id });
       break;
     }
-    if(this.state.vodData.chapters[0].image) {
+    if (this.state.vodData.chapters[0].image) {
       this.gameBoxArt = this.state.vodData.chapters[0].image;
       this.gameBoxArt = this.gameBoxArt.replace("{width}", "40");
       this.gameBoxArt = this.gameBoxArt.replace("{height}", "53");
