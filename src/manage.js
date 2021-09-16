@@ -237,7 +237,7 @@ export default function Manage(props) {
         status: "approved",
       })
       .then((data) => {
-        submissions[currentSubmission] = data;
+        submissions[currentIndex] = data;
         setSubmissions(submissions);
         setCurrentSubmission(data);
       })
@@ -253,7 +253,7 @@ export default function Manage(props) {
         status: "",
       })
       .then((data) => {
-        submissions[currentSubmission] = data;
+        submissions[currentIndex] = data;
         setSubmissions(submissions);
         setCurrentSubmission(data);
       })
@@ -269,7 +269,7 @@ export default function Manage(props) {
         status: "denied",
       })
       .then((data) => {
-        submissions[currentSubmission] = data;
+        submissions[currentIndex] = data;
         setSubmissions(submissions);
         setCurrentSubmission(data);
       })
@@ -286,7 +286,7 @@ export default function Manage(props) {
         winner: !currentSubmission.winner,
       })
       .then((data) => {
-        submissions[currentSubmission] = data;
+        submissions[currentIndex] = data;
         setSubmissions(submissions);
         setCurrentSubmission(data);
       })
@@ -313,7 +313,7 @@ export default function Manage(props) {
           status: "denied",
         })
         .then((data) => {
-          submissions[currentSubmission] = data;
+          submissions[currentIndex] = data;
           setSubmissions(submissions);
           setCurrentSubmission(data);
         })
