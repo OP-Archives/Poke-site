@@ -426,7 +426,7 @@ export default function Manage(props) {
                         Nothing here..
                       </Typography>
                     </Box>
-                  ) : !currentSubmission ? (
+                  ) : !currentSubmission || currentIndex == null ? (
                     <></>
                   ) : (
                     <>
