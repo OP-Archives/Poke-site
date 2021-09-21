@@ -1,21 +1,10 @@
 import React, { useState } from "react";
-import {
-  makeStyles,
-  Typography,
-  Button,
-  Box,
-  CircularProgress,
-  TextField,
-  Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@material-ui/core";
+import { Typography, Button, Box, CircularProgress, TextField, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
-import { Alert } from "@material-ui/lab";
+import { Alert } from "@mui/material";
 import client from "./client";
 
 export default function Creation(props) {
@@ -83,12 +72,7 @@ export default function Creation(props) {
 
   if (props.user === undefined)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <div>
             <img alt="" src={loadingLogo} height="auto" width="75%" />
@@ -100,12 +84,7 @@ export default function Creation(props) {
 
   return (
     <SimpleBar className={classes.parent}>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <img alt="" src={logo} height="auto" width="100%" />
           <Typography variant="h4" className={classes.title}>
@@ -142,7 +121,7 @@ export default function Creation(props) {
               defaultValue={props.contest.title}
               onChange={handleTitleChange}
             />
-            <FormControl className={classes.formControl}>
+            <FormControl variant="standard" sx={{ m: 1, width: "100%" }}>
               <InputLabel className={classes.label} id="select-label">
                 Type
               </InputLabel>
@@ -151,18 +130,6 @@ export default function Creation(props) {
                 value={type}
                 onChange={handleTypeChange}
                 autoWidth
-                className={classes.dropdownSelect}
-                MenuProps={{
-                  classes: { paper: classes.dropdownStyle },
-                }}
-                classes={{
-                  root: classes.dropdownRoot,
-                }}
-                inputProps={{
-                  classes: {
-                    icon: classes.dropdownIcon,
-                  },
-                }}
               >
                 <MenuItem value="alert">Alert</MenuItem>
                 <MenuItem value="song">Song</MenuItem>
@@ -200,34 +167,23 @@ export default function Creation(props) {
                 </Typography>
               </div>
             </Box>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleEdit}
-              disabled={
-                title === props.contest.title &&
-                submission === props.contest.submission &&
-                active === props.contest.active &&
-                type === props.contest.type
-              }
-              style={{ color: "#fff" }}
-            >
-              Edit
-            </Button>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.deleteBtn}
-              onClick={handleDelete}
-              style={{ color: "#fff" }}
-            >
-              Delete
-            </Button>
+            <Box sx={{ mt: 1 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                className={classes.submit}
+                onClick={handleEdit}
+                disabled={title === props.contest.title && submission === props.contest.submission && active === props.contest.active && type === props.contest.type}
+              >
+                Edit
+              </Button>
+            </Box>
+            <Box sx={{ mt: 1 }}>
+              <Button fullWidth type="submit" variant="contained" color="error" className={classes.deleteBtn} onClick={handleDelete}>
+                Delete
+              </Button>
+            </Box>
           </form>
         </div>
       </Box>
@@ -241,7 +197,7 @@ const useStyles = makeStyles(() => ({
     padding: "1rem",
   },
   title: {
-    fontFamily: "Anton",
+    fontFamily: "Anton !important",
     fontWeight: "550",
     color: "rgb(255, 255, 255)",
     textTransform: "uppercase",

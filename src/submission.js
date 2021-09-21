@@ -1,16 +1,10 @@
 import React, { useState } from "react";
-import {
-  makeStyles,
-  Typography,
-  Button,
-  Box,
-  CircularProgress,
-  TextField,
-} from "@material-ui/core";
+import { Typography, Button, Box, CircularProgress, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
-import { Alert } from "@material-ui/lab";
+import { Alert } from "@mui/material";
 import client from "./client";
 
 export default function Creation(props) {
@@ -59,24 +53,13 @@ export default function Creation(props) {
         : null;
     if (!regex.test(link)) {
       setLinkError(true);
-      setLinkErrorMsg(
-        props.contest.type === "alert"
-          ? "Youtube link is not valid.."
-          : props.contest.type === "song"
-          ? "Soundcloud link is not valid.."
-          : "What is going on.."
-      );
+      setLinkErrorMsg(props.contest.type === "alert" ? "Youtube link is not valid.." : props.contest.type === "song" ? "Soundcloud link is not valid.." : "What is going on..");
       setVideo(null);
       return;
     }
     const videoSplit = link.split(regex);
     setVideo({
-      id:
-        props.contest.type === "alert"
-          ? videoSplit[5]
-          : props.contest.type === "song"
-          ? videoSplit[7]
-          : null,
+      id: props.contest.type === "alert" ? videoSplit[5] : props.contest.type === "song" ? videoSplit[7] : null,
       link: link,
     });
   };
@@ -93,9 +76,7 @@ export default function Creation(props) {
 
     if (number < 0) {
       setStartError(true);
-      setStartErrorMsg(
-        "Must be a positive number & Start timestamp must be less than start"
-      );
+      setStartErrorMsg("Must be a positive number & Start timestamp must be less than start");
       setStart(undefined);
       return;
     }
@@ -172,12 +153,7 @@ export default function Creation(props) {
 
   if (props.user === undefined)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <div>
             <img alt="" src={loadingLogo} height="auto" width="75%" />
@@ -189,12 +165,7 @@ export default function Creation(props) {
 
   return (
     <SimpleBar className={classes.parent}>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <img alt="" src={logo} height="auto" width="100%" />
           <Typography variant="h4" className={classes.title}>
@@ -251,16 +222,8 @@ export default function Creation(props) {
               margin="normal"
               required
               fullWidth
-              label={
-                props.contest.type === "alert"
-                  ? "Youtube Link"
-                  : "Soundcloud Link"
-              }
-              name={
-                props.contest.type === "alert"
-                  ? "Youtube Link"
-                  : "Soundcloud Link"
-              }
+              label={props.contest.type === "alert" ? "Youtube Link" : "Soundcloud Link"}
+              name={props.contest.type === "alert" ? "Youtube Link" : "Soundcloud Link"}
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
@@ -361,16 +324,7 @@ export default function Creation(props) {
               autoCorrect="off"
               onChange={handleCommentChange}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleSubmit}
-              disabled={title.length === 0 || !video}
-              style={{ color: "#fff" }}
-            >
+            <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleSubmit} disabled={title.length === 0 || !video} style={{ color: "#fff" }}>
               Submit
             </Button>
           </form>

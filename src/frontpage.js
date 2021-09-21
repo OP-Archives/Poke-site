@@ -1,12 +1,7 @@
 import React, { useEffect } from "react";
 import SimpleBar from "simplebar-react";
-import {
-  makeStyles,
-  Box,
-  Typography,
-  useMediaQuery,
-  Link,
-} from "@material-ui/core";
+import { Box, Typography, useMediaQuery, Link } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
@@ -42,15 +37,12 @@ export default function Frontpage(props) {
 
   useEffect(() => {
     const fetchVods = async () => {
-      await fetch(
-        `https://archive.overpowered.tv/${channel}/vods?$limit=10&$sort[createdAt]=-1`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      await fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=10&$sort[createdAt]=-1`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           //don't display vods without a video link
@@ -76,11 +68,7 @@ export default function Frontpage(props) {
     setVods(
       vodList.map((vod, i) => {
         return (
-          <div
-            key={vod.id}
-            style={{ width: isMobile ? "6rem" : "18rem" }}
-            className={classes.paper}
-          >
+          <div key={vod.id} style={{ width: isMobile ? "6rem" : "18rem" }} className={classes.paper}>
             <div className={classes.lower}>
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <div
@@ -94,9 +82,11 @@ export default function Frontpage(props) {
                 >
                   <div style={{ marginBottom: "0.1rem" }}>
                     <Link
+                      underline="hover"
                       className={classes.title2}
-                      href={`/${vod.youtube.some(youtube => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}
+                      href={`/${vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}
                       variant="caption"
+                      color="textSecondary"
                     >
                       {vod.title}
                     </Link>
@@ -105,12 +95,8 @@ export default function Frontpage(props) {
               </div>
             </div>
             <div className={classes.imageBox}>
-              <Link href={`/${vod.youtube.some(youtube => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}>
-                <img
-                  alt=""
-                  src={vod.thumbnail_url}
-                  className={classes.image2}
-                />
+              <Link href={`/${vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}>
+                <img alt="" src={vod.thumbnail_url} className={classes.image2} />
               </Link>
               <div className={classes.corners}>
                 <div className={classes.bottomLeft}>
@@ -170,33 +156,16 @@ export default function Frontpage(props) {
         </div>
         <div className={classes.wrapper}>
           <div className={classes.column}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              flexDirection="column"
-            >
-              <Box
-                display="flex"
-                flexDirection="column"
-                width={`${isMobile ? "100%" : "50%"}`}
-              >
+            <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
+              <Box display="flex" flexDirection="column" width={`${isMobile ? "100%" : "50%"}`}>
                 <div className={classes.container}>
                   <div className={classes.row}>
                     <div className={classes.form}>
-                      <Box
-                        display="flex"
-                        flexWrap="wrap"
-                        justifyContent="center"
-                      >
-                        <div
-                          className={`${classes.header} ${classes.linkText}`}
-                        >
-                          <a href="/vods">
-                            <Typography className={classes.alt} variant="h6">
-                              Most Recent Vods
-                            </Typography>
-                          </a>
+                      <Box display="flex" flexWrap="wrap" justifyContent="center">
+                        <div className={`${classes.header} ${classes.linkText}`}>
+                          <Link underline="hover" href="/vods">
+                            <Typography variant="h6">Most Recent Vods</Typography>
+                          </Link>
                         </div>
                       </Box>
                       <Box display="flex" marginTop="1rem">
@@ -208,48 +177,23 @@ export default function Frontpage(props) {
               </Box>
             </Box>
             <Box display="flex" justifyContent="center" alignItems="center">
-              <Box
-                display="flex"
-                flexDirection="column"
-                width={`${isMobile ? "100%" : "50%"}`}
-              >
+              <Box display="flex" flexDirection="column" width={`${isMobile ? "100%" : "50%"}`}>
                 <div className={classes.container}>
                   <div className={classes.row}>
                     <div className={classes.form}>
-                      <Box
-                        display="flex"
-                        flexWrap="wrap"
-                        justifyContent="center"
-                      >
-                        <div
-                          className={`${classes.header} ${classes.linkText}`}
-                        >
-                          <a
-                            href="https://metathreads.com/collections/pokelawls"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Typography className={classes.alt} variant="h4">
-                              Merch
-                            </Typography>
-                          </a>
+                      <Box display="flex" flexWrap="wrap" justifyContent="center">
+                        <div className={`${classes.header} ${classes.linkText}`}>
+                          <Link underline="hover" href="https://metathreads.com/collections/pokelawls" target="_blank" rel="noopener noreferrer">
+                            <Typography variant="h6">Merch</Typography>
+                          </Link>
                         </div>
                       </Box>
                       <Box display="flex" flexWrap="nowrap">
                         {merchImages.map((item, index) => {
                           return (
                             <div key={index} className={classes.hover}>
-                              <a
-                                href={item.link}
-                                target="_blank"
-                                rel="noreferrer noopener"
-                              >
-                                <img
-                                  alt=""
-                                  key={index}
-                                  src={item.image}
-                                  className={classes.image}
-                                />
+                              <a href={item.link} target="_blank" rel="noreferrer noopener">
+                                <img alt="" key={index} src={item.image} className={classes.image} />
                               </a>
                             </div>
                           );
@@ -260,17 +204,8 @@ export default function Frontpage(props) {
                 </div>
               </Box>
             </Box>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              flexDirection="column"
-            >
-              <Box
-                display="flex"
-                flexDirection="column"
-                width={`${isMobile ? "100%" : "50%"}`}
-              >
+            <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
+              <Box display="flex" flexDirection="column" width={`${isMobile ? "100%" : "50%"}`}>
                 <iframe
                   title="Player"
                   width="100%"
@@ -289,16 +224,9 @@ export default function Frontpage(props) {
                 Pokelawls ©
               </Typography>
             </div>
-            <a
-              className={classes.navigation}
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://twitter.com/overpowered"
-            >
-              <Typography variant="caption" className={classes.alt}>
-                made by OP with 💜
-              </Typography>
-            </a>
+            <Link underline="hover" href="/vods" color="textSecondary">
+              <Typography variant="caption">made by OP with 💜</Typography>
+            </Link>
           </div>
         </div>
       </SimpleBar>
@@ -432,7 +360,7 @@ const useStyles = makeStyles({
   },
   hover: {
     "&:hover": {
-      boxShadow: "0 0 8px #fff",
+      boxShadow: "0 0 8px #43a047",
     },
   },
   flexCenter: {

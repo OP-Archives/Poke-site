@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  makeStyles,
-  Typography,
-  Box,
-  CircularProgress,
-  useMediaQuery,
-} from "@material-ui/core";
+import { Typography, Box, CircularProgress, useMediaQuery, Link } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
@@ -34,9 +29,7 @@ export default function Winners(props) {
           },
         })
         .then((data) => {
-          const filteredSubmissions = data.filter(
-            (submission) => submission.winner
-          );
+          const filteredSubmissions = data.filter((submission) => submission.winner);
           setSubmissions(filteredSubmissions);
         })
         .catch((e) => {
@@ -132,12 +125,7 @@ export default function Winners(props) {
 
   if (props.user === undefined)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <div>
             <img alt="" src={loadingLogo} height="auto" width="75%" />
@@ -159,38 +147,21 @@ export default function Winners(props) {
               <Box marginTop="3rem">
                 <Box marginTop="3rem">
                   {bracketLoading ? (
-                    <CircularProgress
-                      style={{ marginTop: "2rem" }}
-                      size="2rem"
-                    />
+                    <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
                   ) : (
                     <Bracket
                       rounds={rounds}
                       renderSeedComponent={(props) => {
-                        return (
-                          <CustomSeed
-                            {...props}
-                            public={true}
-                            classes={classes}
-                            contest={contest}
-                            matches={matches}
-                            setMatches={setMatches}
-                          />
-                        );
+                        return <CustomSeed {...props} public={true} classes={classes} contest={contest} matches={matches} setMatches={setMatches} />;
                       }}
                     />
                   )}
                 </Box>
               </Box>
               <div style={{ marginTop: "2rem" }}>
-                <a
-                  className={classes.navigation}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://twitter.com/overpowered"
-                >
+                <Link underline="hover" href="/vods" color="textSecondary">
                   <Typography variant="caption">made by OP with 💜</Typography>
-                </a>
+                </Link>
               </div>
             </Box>
           </div>

@@ -1,20 +1,8 @@
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  makeStyles,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-  Divider,
-  IconButton,
-  Drawer,
-  useMediaQuery,
-  Box,
-} from "@material-ui/core";
+import { AppBar, Toolbar, List, ListItem, ListItemText, Typography, Divider, IconButton, Drawer, useMediaQuery, Box, Link } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Logo from "./assets/jammin.gif";
-import { Menu } from "@material-ui/icons";
+import Menu from "@mui/icons-material/Menu";
 import discord from "./assets/discord.png";
 import twitter from "./assets/twitter.png";
 import soundcloud from "./assets/soundcloud.png";
@@ -51,15 +39,7 @@ export default function Navbar(props) {
   const drawer = (
     <div>
       <div className={mobileClasses.toolbar} />
-      <Box
-        alignItems="center"
-        flexGrow={1}
-        flexShrink={1}
-        width="100%"
-        justifyContent="center"
-        display="flex"
-        marginBottom="1rem"
-      >
+      <Box alignItems="center" flexGrow={1} flexShrink={1} width="100%" justifyContent="center" display="flex" marginBottom="1rem">
         <div
           style={{
             height: "100%",
@@ -76,12 +56,7 @@ export default function Navbar(props) {
       <Divider classes={{ root: mobileClasses.divider }} />
       <List>
         {mainLinks.map(({ title, path }) => (
-          <ListItem
-            key={title}
-            component="a"
-            href={path}
-            className={mobileClasses.linkText}
-          >
+          <ListItem key={title} component="a" href={path} className={mobileClasses.linkText}>
             <ListItemText primary={title} />
           </ListItem>
         ))}
@@ -89,31 +64,15 @@ export default function Navbar(props) {
       <Divider classes={{ root: mobileClasses.divider }} />
       <List>
         {socialLinks.map(({ title, path }) => (
-          <ListItem
-            key={title}
-            component="a"
-            href={path}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={mobileClasses.linkText}
-          >
+          <ListItem key={title} component="a" href={path} target="_blank" rel="noreferrer noopener" className={mobileClasses.linkText}>
             <ListItemText primary={title} />
           </ListItem>
         ))}
       </List>
       <Divider classes={{ root: mobileClasses.divider }} />
       <div style={{ marginTop: "1rem" }}>
-        <Typography
-          variant="caption"
-          className={mobileClasses.content}
-          style={{ padding: "14px" }}
-        >
-          <a
-            href="https://twitter.com/overpowered"
-            target="_blank"
-            rel="noreferrer noopener"
-            className={mobileClasses.linkText}
-          >
+        <Typography variant="caption" className={mobileClasses.content} style={{ padding: "14px" }}>
+          <a href="https://twitter.com/overpowered" target="_blank" rel="noreferrer noopener" className={mobileClasses.linkText}>
             Made by OP with 💜
           </a>
         </Typography>
@@ -121,34 +80,16 @@ export default function Navbar(props) {
     </div>
   );
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+  const container = window !== undefined ? () => window().document.body : undefined;
 
   return isMobile ? (
     <div style={{ display: "flex" }}>
-      <AppBar
-        position="static"
-        color="inherit"
-        className={mobileClasses.appBar}
-      >
+      <AppBar position="static" color="inherit" className={mobileClasses.appBar}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={mobileClasses.menuButton}
-          >
+          <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} className={mobileClasses.menuButton}>
             <Menu />
           </IconButton>
-          <Box
-            alignItems="center"
-            flexGrow={1}
-            flexShrink={1}
-            width="100%"
-            justifyContent="center"
-            display="flex"
-          >
+          <Box alignItems="center" flexGrow={1} flexShrink={1} width="100%" justifyContent="center" display="flex">
             <div
               style={{
                 height: "100%",
@@ -184,119 +125,47 @@ export default function Navbar(props) {
     </div>
   ) : (
     <div className={classes.navDisplayFlex}>
-      <Box
-        alignItems="stretch"
-        display="flex"
-        flexWrap="nowrap"
-        height="100%"
-        width="100%"
-      >
-        <Box
-          alignItems="stretch"
-          justifyContent="flex-start"
-          width="100%"
-          display="flex"
-          flexShrink={1}
-          flexGrow={1}
-          flexWrap="nowrap"
-        >
-          <Box
-            marginLeft="1rem"
-            display="flex"
-            justifyContent="space-between"
-            flexDirection="row"
-            height="100%"
-          >
+      <Box alignItems="stretch" display="flex" flexWrap="nowrap" height="100%" width="100%">
+        <Box alignItems="stretch" justifyContent="flex-start" width="100%" display="flex" flexShrink={1} flexGrow={1} flexWrap="nowrap">
+          <Box marginLeft="1rem" display="flex" justifyContent="space-between" flexDirection="row" height="100%">
             <div className={classes.linkButton}>
-              <Box
-                height="100%"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <a
-                  href="https://twitter.com/pokelawls"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                <a href="https://twitter.com/pokelawls" target="_blank" rel="noopener noreferrer">
                   <img alt="" height="auto" width="35px" src={twitter} />
                 </a>
               </Box>
             </div>
             <div className={classes.linkButton}>
-              <Box
-                height="100%"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <a
-                  href="https://discord.gg/pokelawls"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                <a href="https://discord.gg/pokelawls" target="_blank" rel="noopener noreferrer">
                   <img alt="" height="auto" width="45px" src={discord} />
                 </a>
               </Box>
             </div>
             <div className={classes.linkButton}>
-              <Box
-                height="100%"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <a
-                  href="https://soundcloud.com/pokelawls"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                <a href="https://soundcloud.com/pokelawls" target="_blank" rel="noopener noreferrer">
                   <img alt="" height="auto" width="45px" src={soundcloud} />
                 </a>
               </Box>
             </div>
             <div className={classes.linkButton}>
-              <Box
-                height="100%"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <a
-                  href="https://reddit.com/r/pokelawls"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                <a href="https://reddit.com/r/pokelawls" target="_blank" rel="noopener noreferrer">
                   <img alt="" height="auto" width="42px" src={reddit} />
                 </a>
               </Box>
             </div>
             <div className={classes.linkButton}>
-              <Box
-                height="100%"
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <a
-                  href="https://youtube.com/c/pokelawls"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
+                <a href="https://youtube.com/c/pokelawls" target="_blank" rel="noopener noreferrer">
                   <img alt="" height="auto" width="45px" src={youtube} />
                 </a>
               </Box>
             </div>
           </Box>
         </Box>
-        <Box
-          alignItems="center"
-          flexGrow={1}
-          flexShrink={1}
-          width="100%"
-          justifyContent="center"
-          display="flex"
-        >
+        <Box alignItems="center" flexGrow={1} flexShrink={1} width="100%" justifyContent="center" display="flex">
           <div
             style={{
               height: "100%",
@@ -310,48 +179,35 @@ export default function Navbar(props) {
             </a>
           </div>
         </Box>
-        <Box
-          alignItems="center"
-          display="flex"
-          flexGrow={1}
-          flexShrink={1}
-          width="100%"
-          justifyContent="flex-end"
-          marginRight="1rem"
-        >
+        <Box alignItems="center" display="flex" flexGrow={1} flexShrink={1} width="100%" justifyContent="flex-end" marginRight="1rem">
           <Box display="flex" marginRight="1rem">
-            <a href="/contest" className={classes.linkText}>
+            <Link underline="hover" href="/contest">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <Box marginLeft="1rem">
                   <Typography>Contest</Typography>
                 </Box>
               </Box>
-            </a>
+            </Link>
           </Box>
           <Box display="flex" marginRight="1rem">
-            <a href="/vods" className={classes.linkText}>
+            <Link underline="hover" href="/vods">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <Box marginLeft="1rem">
                   <Typography>Vods</Typography>
                 </Box>
               </Box>
-            </a>
+            </Link>
           </Box>
           <div className={classes.linkButton}>
             <Box height="100%">
-              <a
-                href="https://twitch.tv/pokelawls"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={classes.linkText}
-              >
+              <Link underline="hover" href="https://twitch.tv/pokelawls" target="_blank" rel="noopener noreferrer">
                 <Box display="flex" justifyContent="center" alignItems="center">
                   <img alt="" height="auto" width="38px" src={twitch} />
                   <Box marginLeft="0.3rem">
                     <Typography>Watch me Live</Typography>
                   </Box>
                 </Box>
-              </a>
+              </Link>
             </Box>
           </div>
         </Box>
@@ -360,7 +216,7 @@ export default function Navbar(props) {
   );
 }
 
-const mobileStyles = makeStyles((theme) => ({
+const mobileStyles = makeStyles(() => ({
   appBar: {
     boxShadow: "none",
     backgroundColor: "inherit",
@@ -373,10 +229,9 @@ const mobileStyles = makeStyles((theme) => ({
     flexShrink: 0,
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: "16px",
     color: "#fff",
   },
-  toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: "10rem",
     backgroundColor: "#0e0e10",
@@ -384,7 +239,7 @@ const mobileStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: "24px",
   },
   linkText: {
     textDecoration: `none`,

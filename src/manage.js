@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  makeStyles,
-  Typography,
-  Button,
-  Box,
-  CircularProgress,
-  useMediaQuery,
-  Switch,
-} from "@material-ui/core";
+import { Typography, Button, Box, CircularProgress, useMediaQuery, Switch, Link } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
@@ -129,19 +122,12 @@ export default function Manage(props) {
     setSubmissionUI(true);
     setApprovedUI(false);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player)
-      cueVideo(
-        tmp_submissions[0].video.id,
-        tmp_submissions[0].video.start,
-        tmp_submissions[0].video.end
-      );
+    if (tmp_submissions.length > 0 && player) cueVideo(tmp_submissions[0].video.id, tmp_submissions[0].video.start, tmp_submissions[0].video.end);
   };
 
   const showUnapprovedSubmissions = async (evt) => {
     let tmp_submissions = await fetchSubmissions();
-    tmp_submissions = tmp_submissions.filter(
-      (submission) => submission.status === ""
-    );
+    tmp_submissions = tmp_submissions.filter((submission) => submission.status === "");
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
     setCurrentIndex(0);
@@ -150,19 +136,12 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(false);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player)
-      cueVideo(
-        tmp_submissions[0].video.id,
-        tmp_submissions[0].video.start,
-        tmp_submissions[0].video.end
-      );
+    if (tmp_submissions.length > 0 && player) cueVideo(tmp_submissions[0].video.id, tmp_submissions[0].video.start, tmp_submissions[0].video.end);
   };
 
   const showApprovedSubmissions = async (evt) => {
     let tmp_submissions = await fetchSubmissions();
-    tmp_submissions = tmp_submissions.filter(
-      (submission) => submission.status === "approved"
-    );
+    tmp_submissions = tmp_submissions.filter((submission) => submission.status === "approved");
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
     setCurrentIndex(0);
@@ -171,19 +150,12 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(true);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player)
-      cueVideo(
-        tmp_submissions[0].video.id,
-        tmp_submissions[0].video.start,
-        tmp_submissions[0].video.end
-      );
+    if (tmp_submissions.length > 0 && player) cueVideo(tmp_submissions[0].video.id, tmp_submissions[0].video.start, tmp_submissions[0].video.end);
   };
 
   const showDeniedVideos = async (evt) => {
     let tmp_submissions = await fetchSubmissions();
-    tmp_submissions = tmp_submissions.filter(
-      (submission) => submission.status === "denied"
-    );
+    tmp_submissions = tmp_submissions.filter((submission) => submission.status === "denied");
     setSubmissions(tmp_submissions);
     setCurrentSubmission(tmp_submissions[0]);
     setCurrentIndex(0);
@@ -192,12 +164,7 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(false);
     setWinnerUI(false);
-    if (tmp_submissions.length > 0 && player)
-      cueVideo(
-        tmp_submissions[0].video.id,
-        tmp_submissions[0].video.start,
-        tmp_submissions[0].video.end
-      );
+    if (tmp_submissions.length > 0 && player) cueVideo(tmp_submissions[0].video.id, tmp_submissions[0].video.start, tmp_submissions[0].video.end);
   };
 
   const showWinnersSubmissions = async (evt) => {
@@ -211,24 +178,13 @@ export default function Manage(props) {
     setSubmissionUI(false);
     setApprovedUI(false);
     setWinnerUI(true);
-    if (tmp_submissions.length > 0 && player)
-      cueVideo(
-        tmp_submissions[0].video.id,
-        tmp_submissions[0].video.start,
-        tmp_submissions[0].video.end
-      );
+    if (tmp_submissions.length > 0 && player) cueVideo(tmp_submissions[0].video.id, tmp_submissions[0].video.start, tmp_submissions[0].video.end);
   };
 
   const onReady = (evt) => {
     const argPlayer = evt.target;
     setPlayer(argPlayer);
-    if (currentSubmission)
-      cueVideo(
-        currentSubmission.video.id,
-        currentSubmission.video.start,
-        currentSubmission.video.end,
-        argPlayer
-      );
+    if (currentSubmission) cueVideo(currentSubmission.video.id, currentSubmission.video.start, currentSubmission.video.end, argPlayer);
   };
 
   const handleApproval = async (evt) => {
@@ -332,11 +288,7 @@ export default function Manage(props) {
     setCurrentIndex(nextIndex);
     setCurrentSubmission(submissions[nextIndex]);
     if (contest.type === "alert") {
-      cueVideo(
-        submissions[nextIndex].video.id,
-        submissions[nextIndex].video.start,
-        submissions[nextIndex].video.end
-      );
+      cueVideo(submissions[nextIndex].video.id, submissions[nextIndex].video.start, submissions[nextIndex].video.end);
     }
   };
 
@@ -348,11 +300,7 @@ export default function Manage(props) {
     setCurrentIndex(prevIndex);
     setCurrentSubmission(submissions[prevIndex]);
     if (contest.type === "alert") {
-      cueVideo(
-        submissions[prevIndex].video.id,
-        submissions[prevIndex].video.start,
-        submissions[prevIndex].video.end
-      );
+      cueVideo(submissions[prevIndex].video.id, submissions[prevIndex].video.start, submissions[prevIndex].video.end);
     }
   };
 
@@ -390,11 +338,7 @@ export default function Manage(props) {
     setCurrentIndex(index);
     setCurrentSubmission(submissions[index]);
     if (contest.type === "alert") {
-      cueVideo(
-        submissions[index].video.id,
-        submissions[index].video.start,
-        submissions[index].video.end
-      );
+      cueVideo(submissions[index].video.id, submissions[index].video.start, submissions[index].video.end);
     }
   };
 
@@ -420,11 +364,7 @@ export default function Manage(props) {
       setCurrentSubmission(submissions[index]);
 
       if (contest.type === "alert") {
-        cueVideo(
-          submissions[index].video.id,
-          submissions[index].video.start,
-          submissions[index].video.end
-        );
+        cueVideo(submissions[index].video.id, submissions[index].video.start, submissions[index].video.end);
       }
     }, 300);
 
@@ -436,12 +376,7 @@ export default function Manage(props) {
 
   if (props.user === undefined || contestExists === null)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <div>
             <img alt="" src={loadingLogo} height="auto" width="75%" />
@@ -453,8 +388,7 @@ export default function Manage(props) {
 
   if (!contestExists) return <Redirect to="/contest" />;
   if (!props.user) return <Redirect to="/contest" />;
-  if (props.user.type !== "mod" && props.user.type !== "admin")
-    return <Redirect to="/contest" />;
+  if (props.user.type !== "mod" && props.user.type !== "admin") return <Redirect to="/contest" />;
 
   return (
     <SimpleBar className={classes.parent}>
@@ -464,39 +398,19 @@ export default function Manage(props) {
             <Box display="block" textAlign="center">
               <img src={logo} className={classes.banner} alt="" />
               <div className={classes.navbar}>
-                <Button
-                  variant="outlined"
-                  onClick={showSubmissions}
-                  className={classes.button}
-                >
+                <Button variant="outlined" onClick={showSubmissions} className={classes.button}>
                   ALL
                 </Button>
-                <Button
-                  variant="outlined"
-                  onClick={showDeniedVideos}
-                  className={classes.button}
-                >
+                <Button variant="outlined" onClick={showDeniedVideos} className={classes.button}>
                   Denied
                 </Button>
-                <Button
-                  variant="outlined"
-                  onClick={showUnapprovedSubmissions}
-                  className={classes.button}
-                >
+                <Button variant="outlined" onClick={showUnapprovedSubmissions} className={classes.button}>
                   Unapproved
                 </Button>
-                <Button
-                  variant="outlined"
-                  onClick={showApprovedSubmissions}
-                  className={classes.button}
-                >
+                <Button variant="outlined" onClick={showApprovedSubmissions} className={classes.button}>
                   Approved
                 </Button>
-                <Button
-                  variant="outlined"
-                  onClick={showWinnersSubmissions}
-                  className={classes.button}
-                >
+                <Button variant="outlined" onClick={showWinnersSubmissions} className={classes.button}>
                   Winners
                 </Button>
               </div>
@@ -526,15 +440,8 @@ export default function Manage(props) {
                             marginRight: "1rem",
                           }}
                         >
-                          <Box
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                          >
-                            <Typography
-                              variant="body1"
-                              className={classes.textLabel}
-                            >
+                          <Box display="flex" justifyContent="center" alignItems="center">
+                            <Typography variant="body1" className={classes.textLabel}>
                               {`Submission ID: `}
                             </Typography>
                           </Box>
@@ -547,9 +454,7 @@ export default function Manage(props) {
                             autoComplete="off"
                             defaultValue={currentSubmission.id}
                             onFocus={handleFocus}
-                            onChange={(e) =>
-                              setSubmissionIdInput(e.target.value)
-                            }
+                            onChange={(e) => setSubmissionIdInput(e.target.value)}
                           />
                         </Box>
                         <Box
@@ -572,41 +477,22 @@ export default function Manage(props) {
                             defaultValue={(currentIndex + 1).toString()}
                             onChange={handleArrayIndexChange}
                           />
-                          <Box
-                            display="flex"
-                            justifyContent="center"
-                            alignItems="center"
-                          >
-                            <Typography
-                              variant="body1"
-                              className={classes.textLabel}
-                            >
+                          <Box display="flex" justifyContent="center" alignItems="center">
+                            <Typography variant="body1" className={classes.textLabel}>
                               {`/ ${submissions.length}`}
                             </Typography>
                           </Box>
                         </Box>
                       </div>
-                      <Box
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
+                      <Box display="flex" justifyContent="center" alignItems="center">
                         <div className={classes.left}>
-                          <Button
-                            variant="outlined"
-                            onClick={prevSubmission}
-                            className={classes.button}
-                          >
+                          <Button variant="outlined" onClick={prevSubmission}>
                             {`<`}
                           </Button>
                         </div>
                         <div className={classes.player}>
                           {contest.type === "song" ? (
-                            <Box
-                              display="flex"
-                              flexDirection="column"
-                              width="100%"
-                            >
+                            <Box display="flex" flexDirection="column" width="100%">
                               <iframe
                                 title="Player"
                                 width="100%"
@@ -631,9 +517,7 @@ export default function Manage(props) {
                             >
                               <Youtube
                                 id="player"
-                                containerClassName={
-                                  showPlayer ? "" : classes.hidden
-                                }
+                                containerClassName={showPlayer ? "" : classes.hidden}
                                 opts={{
                                   height: "500px",
                                   width: "800px",
@@ -657,31 +541,18 @@ export default function Manage(props) {
                             <Typography variant="h5" className={classes.text}>
                               {`${currentSubmission.display_name}`}
                             </Typography>
-                            <a
-                              href={currentSubmission.video.link}
-                              target="_blank"
-                              rel="noreferrer noopener"
-                            >
-                              <Typography variant="caption">
-                                {`${currentSubmission.video.link}`}
-                              </Typography>
-                            </a>
+                            <Link underline="hover" href={currentSubmission.video.link} target="_blank" rel="noreferrer noopener" color="textSecondary">
+                              <Typography variant="caption">{`${currentSubmission.video.link}`}</Typography>
+                            </Link>
                             <div style={{ marginTop: "0.5rem" }}>
-                              <Typography
-                                variant="caption"
-                                style={{ wordBreak: "break-word" }}
-                              >
+                              <Typography variant="caption" style={{ wordBreak: "break-word" }}>
                                 {`${currentSubmission.comment}`}
                               </Typography>
                             </div>
                           </div>
                         </div>
                         <div className={classes.right}>
-                          <Button
-                            variant="outlined"
-                            onClick={nextSubmission}
-                            className={classes.button}
-                          >
+                          <Button variant="outlined" onClick={nextSubmission}>
                             {`>`}
                           </Button>
                         </div>
@@ -692,39 +563,23 @@ export default function Manage(props) {
                             <div>
                               <Box display="flex">
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleApproval}
-                                    className={classes.button}
-                                  >
+                                  <Button variant="outlined" onClick={handleApproval}>
                                     {`Approve`}
                                   </Button>
                                 </div>
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleDeny}
-                                    className={classes.denyButton}
-                                  >
+                                  <Button variant="outlined" onClick={handleDeny} color="error">
                                     {`Deny`}
                                   </Button>
                                 </div>
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleRemove}
-                                    className={classes.denyButton}
-                                  >
+                                  <Button variant="outlined" onClick={handleRemove} color="error">
                                     {`Remove`}
                                   </Button>
                                 </div>
                               </Box>
                               <div style={{ marginTop: "1rem" }}>
-                                <Button
-                                  variant="outlined"
-                                  onClick={handleBan}
-                                  className={classes.denyButton}
-                                >
+                                <Button variant="outlined" onClick={handleBan} color="error">
                                   {`Ban User`}
                                 </Button>
                               </div>
@@ -733,30 +588,18 @@ export default function Manage(props) {
                             <div>
                               <Box display="flex">
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleUnApproval}
-                                    className={classes.button}
-                                  >
+                                  <Button variant="outlined" onClick={handleUnApproval}>
                                     {`Un-deny`}
                                   </Button>
                                 </div>
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleRemove}
-                                    className={classes.denyButton}
-                                  >
+                                  <Button variant="outlined" onClick={handleRemove} color="error">
                                     {`Remove`}
                                   </Button>
                                 </div>
                               </Box>
                               <div style={{ marginTop: "1rem" }}>
-                                <Button
-                                  variant="outlined"
-                                  onClick={handleBan}
-                                  className={classes.denyButton}
-                                >
+                                <Button variant="outlined" onClick={handleBan} color="error">
                                   {`Ban User`}
                                 </Button>
                               </div>
@@ -765,50 +608,30 @@ export default function Manage(props) {
                             <div>
                               <Box display="flex">
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleApproval}
-                                    className={classes.button}
-                                  >
+                                  <Button variant="outlined" onClick={handleApproval}>
                                     {`Approve`}
                                   </Button>
                                 </div>
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleDeny}
-                                    className={classes.denyButton}
-                                  >
+                                  <Button variant="outlined" onClick={handleDeny} color="error">
                                     {`Deny`}
                                   </Button>
                                 </div>
                                 <div style={{ marginRight: "1rem" }}>
-                                  <Button
-                                    variant="outlined"
-                                    onClick={handleRemove}
-                                    className={classes.denyButton}
-                                  >
+                                  <Button variant="outlined" onClick={handleRemove} color="error">
                                     {`Remove`}
                                   </Button>
                                 </div>
                               </Box>
                               <div style={{ marginTop: "1rem" }}>
-                                <Button
-                                  variant="outlined"
-                                  onClick={handleBan}
-                                  className={classes.button}
-                                >
+                                <Button variant="outlined" onClick={handleBan} color="error">
                                   {`Ban User`}
                                 </Button>
                               </div>
                             </div>
                           ) : approvedUI ? (
                             <>
-                              <Button
-                                variant="outlined"
-                                onClick={handleUnApproval}
-                                className={classes.button}
-                              >
+                              <Button variant="outlined" onClick={handleUnApproval} color="error">
                                 {`Un-Approve`}
                               </Button>
                               <Switch
@@ -821,10 +644,7 @@ export default function Manage(props) {
                                 }}
                               />
                               <div style={{ marginTop: "0.4rem" }}>
-                                <Typography
-                                  variant="body1"
-                                  className={classes.text}
-                                >
+                                <Typography variant="body1" className={classes.text}>
                                   Winner
                                 </Typography>
                               </div>
@@ -839,14 +659,9 @@ export default function Manage(props) {
                 </>
               )}
               <div style={{ marginTop: "2rem" }}>
-                <a
-                  className={classes.navigation}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://twitter.com/overpowered"
-                >
+                <Link underline="hover" href="/vods" color="textSecondary">
                   <Typography variant="caption">made by OP with 💜</Typography>
-                </a>
+                </Link>
               </div>
             </Box>
           </div>
@@ -1004,7 +819,7 @@ const useStyles = makeStyles(() => ({
     fontFamily: `"Roboto", "Helvetica", "Arial", sans-serif`,
     fontSize: "1rem",
     fontWeight: "400",
-    width: "40px",
+    width: "60px",
   },
   input: {
     appearance: "none",
@@ -1014,8 +829,7 @@ const useStyles = makeStyles(() => ({
     color: "#efeff1",
     height: "1.6rem",
     lineHeight: "1.3",
-    transition:
-      "box-shadow .1s ease-in,border .1s ease-in,background-color .1s ease-in",
+    transition: "box-shadow .1s ease-in,border .1s ease-in,background-color .1s ease-in",
     transitionProperty: "box-shadow,border,background-color",
     transitionDuration: ".1s,.1s,.1s",
     transitionTimingFunction: "ease-in,ease-in,ease-in",

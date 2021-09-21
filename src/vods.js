@@ -1,51 +1,33 @@
 import React, { useEffect } from "react";
-import {
-  makeStyles,
-  Typography,
-  Link,
-  Container,
-  Button,
-  Menu,
-  MenuItem,
-  CircularProgress,
-  useMediaQuery,
-  Box,
-  FormControlLabel,
-  Switch,
-  withStyles,
-} from "@material-ui/core";
+import { Box, Typography, useMediaQuery, Link, Container, Button, Menu, MenuItem, CircularProgress, Pagination } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
-import ListIcon from "@material-ui/icons/List";
+import ListIcon from "@mui/icons-material/List";
 import Logo from "./assets/jammin.gif";
-import { blue, grey } from "@material-ui/core/colors";
 import ErrorBoundary from "./ErrorBoundary.js";
 import AdSense from "react-adsense";
+
+const limit = 50;
 
 export default function Vods(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
   const classes = useStyles();
   const [vods, setVods] = React.useState([]);
-  const [skip, setSkip] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
-  const [showLiveVods, setShowLiveVods] = React.useState(true);
   const [vodList, setVodList] = React.useState([]);
-  const [allVodsLoaded, setAllVodsLoaded] = React.useState(false);
-  const channel = props.channel;
+  const [page, setPage] = React.useState(null);
+  const [totalPages, setTotalPages] = React.useState(null);
+  const { channel } = props;
 
   useEffect(() => {
-    document.title = `VODS - ${
-      channel.charAt(0).toUpperCase() + channel.slice(1)
-    }`;
+    document.title = `VODS - ${channel.charAt(0).toUpperCase() + channel.slice(1)}`;
     const fetchVods = async () => {
-      await fetch(
-        `https://archive.overpowered.tv/${channel}/vods?$limit=50&$sort[createdAt]=-1`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
+      await fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=${limit}&$sort[createdAt]=-1`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
         .then((response) => response.json())
         .then((data) => {
           //don't display vods without a video link
@@ -53,13 +35,9 @@ export default function Vods(props) {
             return vod.youtube.length !== 0;
           });
 
-          setVodList(
-            vods.filter((vod) =>
-              vod.youtube.some((data) => {
-                return data.type === (showLiveVods ? "live" : "vod");
-              })
-            )
-          );
+          setPage(1);
+          setVodList(vods);
+          setTotalPages(Math.floor(data.total / limit));
         })
         .catch((e) => {
           console.error(e);
@@ -67,9 +45,10 @@ export default function Vods(props) {
     };
     fetchVods();
     return;
-  }, [classes, channel, showLiveVods]);
+  }, [channel]);
 
   const IsolatedMenu = (props) => {
+    const { vod } = props;
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClose = () => {
@@ -79,10 +58,6 @@ export default function Vods(props) {
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
-
-    const filteredArray = props.vod.youtube.filter(
-      (data) => data.type === (showLiveVods ? "live" : "vod")
-    );
 
     return (
       <React.Fragment>
@@ -99,15 +74,9 @@ export default function Vods(props) {
           }}
           onClose={handleClose}
         >
-          {filteredArray.map((data, index) => {
+          {vod.youtube.map((data, index) => {
             return (
-              <Link
-                key={data.id}
-                href={`/${data.type === "live" ? "live" : "vods"}/${
-                  props.vod.id
-                }?part=${index + 1}`}
-                style={{ textDecoration: "none" }}
-              >
+              <Link key={data.id} href={`/${data.type === "live" ? "live" : "vods"}/${props.vod.id}?part=${index + 1}`} style={{ textDecoration: "none" }}>
                 <MenuItem className={classes.item}>Part {index + 1}</MenuItem>
               </Link>
             );
@@ -120,12 +89,10 @@ export default function Vods(props) {
   useEffect(() => {
     setVods(
       vodList.map((vod, i) => {
+        const containsLiveVods = vod.youtube.some((data) => data.type === "live");
+        vod.youtube = vod.youtube.filter((data) => (containsLiveVods ? data.type === "live" : data.type === "vod"));
         return (
-          <div
-            key={vod.id}
-            style={{ width: isMobile ? "6rem" : "18rem" }}
-            className={classes.paper}
-          >
+          <div key={vod.id} style={{ width: isMobile ? "6rem" : "18rem" }} className={classes.paper}>
             <div className={classes.lower}>
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <div
@@ -138,11 +105,7 @@ export default function Vods(props) {
                   }}
                 >
                   <div style={{ marginBottom: "0.1rem" }}>
-                    <Link
-                      className={classes.title}
-                      href={`/${showLiveVods ? "live" : "vods"}/${vod.id}`}
-                      variant="caption"
-                    >
+                    <Link underline="hover" className={classes.title} href={`/${containsLiveVods ? "live" : "vods"}/${vod.id}`} variant="caption" color="textSecondary">
                       {vod.title}
                     </Link>
                   </div>
@@ -151,7 +114,7 @@ export default function Vods(props) {
               {vod.youtube.length > 1 ? <IsolatedMenu vod={vod} /> : <></>}
             </div>
             <div className={classes.imageBox}>
-              <Link href={`/${showLiveVods ? "live" : "vods"}/${vod.id}`}>
+              <Link href={`/${containsLiveVods ? "live" : "vods"}/${vod.id}`}>
                 <img alt="" src={vod.thumbnail_url} className={classes.image} />
               </Link>
               <div className={classes.corners}>
@@ -175,24 +138,22 @@ export default function Vods(props) {
     );
     setLoading(false);
     return;
-  }, [vodList, classes, isMobile, showLiveVods]);
+  }, [vodList, classes, isMobile]);
 
-  const fetchNextVods = async () => {
-    if (allVodsLoaded) return;
-    let next = skip + 50;
-    await fetch(
-      `https://archive.overpowered.tv/${channel}/vods?$limit=50&$skip=${next}&$sort[createdAt]=-1`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+  const handlePageChange = (e, value) => {
+    if (page === value) return;
+    setLoading(true);
+    setPage(value);
+
+    fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=${limit}&$skip=${value * limit}&$sort[createdAt]=-1`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.data.length === 0) {
-          setAllVodsLoaded(true);
           return;
         }
         //don't display vods without a video link
@@ -200,24 +161,11 @@ export default function Vods(props) {
           return vod.youtube.length !== 0;
         });
 
-        setVodList(
-          vodList.concat(
-            vods.filter((vod) =>
-              vod.youtube.some((data) => {
-                return data.type === (showLiveVods ? "live" : "vod");
-              })
-            )
-          )
-        );
+        setVodList(vods);
       })
       .catch((e) => {
         console.error(e);
       });
-    setSkip(next);
-  };
-
-  const toggleShowVods = () => {
-    setShowLiveVods(!showLiveVods);
   };
 
   return loading ? (
@@ -263,17 +211,10 @@ export default function Vods(props) {
             )}
           </ErrorBoundary>
         </div>
-        <Box display="flex">
-          <Typography className={classes.header} variant="h4">
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Typography variant="h4" color="primary">
             {`Vods`}
           </Typography>
-          <FormControlLabel
-            className={classes.header}
-            control={
-              <BlueSwitch checked={showLiveVods} onChange={toggleShowVods} />
-            }
-            label="Show Music Vods"
-          />
         </Box>
         <div className={classes.root}>
           {vods}
@@ -291,42 +232,13 @@ export default function Vods(props) {
             </ErrorBoundary>
           </div>
         </div>
-        {!allVodsLoaded ? (
-          <div className={classes.center}>
-            <Button
-              onClick={fetchNextVods}
-              variant="contained"
-              color="primary"
-              className={classes.loadMore}
-            >
-              Load More
-            </Button>
-          </div>
-        ) : (
-          <></>
-        )}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
+          {totalPages !== null && <Pagination count={totalPages} disabled={totalPages <= 1} color="primary" page={page} onChange={handlePageChange} />}
+        </Box>
       </SimpleBar>
     </Container>
   );
 }
-
-const BlueSwitch = withStyles({
-  switchBase: {
-    color: blue[300],
-    "&$checked": {
-      color: blue[500],
-    },
-    "&$checked + $track": {
-      backgroundColor: blue[500],
-    },
-  },
-  checked: {},
-  track: {
-    borderRadius: 26 / 2,
-    backgroundColor: grey[500],
-    opacity: 1,
-  },
-})(Switch);
 
 const useStyles = makeStyles(() => ({
   parent: {
@@ -384,7 +296,7 @@ const useStyles = makeStyles(() => ({
     position: "relative",
     order: 1,
     "&:hover": {
-      boxShadow: "0 0 8px #fff",
+      boxShadow: "0 0 8px #43a047ff",
     },
   },
   image: {

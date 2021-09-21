@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  makeStyles,
-  useMediaQuery,
-  Box,
-  Typography,
-  Button,
-  CircularProgress,
-  Link,
-  Modal,
-} from "@material-ui/core";
+import { useMediaQuery, Box, Typography, Button, CircularProgress, Link, Modal } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import logo from "./assets/contestlogo.png";
 import SimpleBar from "simplebar-react";
 import sip from "./assets/sip.png";
@@ -29,7 +21,7 @@ export default function Contest(props) {
   const [createModal, setCreateModal] = React.useState(false);
 
   useEffect(() => {
-    document.title = "Sub Alert Contest - Poke";
+    document.title = "Contest - Poke";
     const fetchContests = async () => {
       await client
         .service("contests")
@@ -66,32 +58,17 @@ export default function Contest(props) {
     return (
       <>
         {props.type === "Edit" ? (
-          <Button
-            onClick={handleOpen}
-            variant="contained"
-            className={classes.editBtn}
-          >
+          <Button onClick={handleOpen} variant="contained" color="secondary">
             Edit
           </Button>
         ) : (
-          <Button
-            disabled={!props.contest.submission || !props.user}
-            onClick={handleOpen}
-            variant="contained"
-            className={classes.btn}
-          >
+          <Button disabled={!props.contest.submission || !props.user} onClick={handleOpen} variant="contained">
             Submit
           </Button>
         )}
         <Modal open={modal} onClose={handleClose}>
           <div className={`${classes.modalContent} ${classes.modal}`}>
-            {props.type === "Submit" ? (
-              <Submission user={props.user} contest={props.contest} />
-            ) : props.type === "Edit" ? (
-              <Edit user={props.user} contest={props.contest} />
-            ) : (
-              <></>
-            )}
+            {props.type === "Submit" ? <Submission user={props.user} contest={props.contest} /> : props.type === "Edit" ? <Edit user={props.user} contest={props.contest} /> : <></>}
           </div>
         </Modal>
       </>
@@ -124,32 +101,22 @@ export default function Contest(props) {
           return (
             <div key={data.id} className={classes.contestContainer}>
               <div className={classes.inner}>
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
+                <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Typography variant="h5" className={classes.title}>
                     {`${data.title} - ${data.submissionTotal} Submissions`}
                   </Typography>
                   <Box display="flex">
                     {props.user ? (
-                      props.user.type === "admin" ||
-                      props.user.type === "mod" ? (
+                      props.user.type === "admin" || props.user.type === "mod" ? (
                         <>
-                          <Button
-                            component={Link}
-                            href={`/contest/${data.id}/manage`}
-                            variant="contained"
-                            className={classes.adminBtn}
-                          >
-                            Manage
-                          </Button>
-                          <IsolatedModal
-                            type={"Edit"}
-                            user={props.user}
-                            contest={data}
-                          />
+                          <Box sx={{ mr: 2 }}>
+                            <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" color="error">
+                              Manage
+                            </Button>
+                          </Box>
+                          <Box sx={{ mr: 2 }}>
+                            <IsolatedModal type={"Edit"} user={props.user} contest={data} />
+                          </Box>
                         </>
                       ) : (
                         <></>
@@ -157,12 +124,7 @@ export default function Contest(props) {
                     ) : (
                       <></>
                     )}
-                    <Button
-                      component={Link}
-                      href={`/contest/${data.id}/winners`}
-                      variant="contained"
-                      className={classes.btn}
-                    >
+                    <Button component={Link} href={`/contest/${data.id}/winners`} variant="contained" className={classes.btn}>
                       Winners
                     </Button>
                   </Box>
@@ -178,32 +140,22 @@ export default function Contest(props) {
           return (
             <div key={data.id} className={classes.ongoingContestContainer}>
               <div className={classes.inner}>
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
+                <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Typography variant="h5" className={classes.title}>
                     {`${data.title} - ${data.submissionTotal} Submissions`}
                   </Typography>
                   <Box display="flex">
                     {props.user ? (
-                      props.user.type === "admin" ||
-                      props.user.type === "mod" ? (
+                      props.user.type === "admin" || props.user.type === "mod" ? (
                         <>
-                          <Button
-                            component={Link}
-                            href={`/contest/${data.id}/manage`}
-                            variant="contained"
-                            className={classes.adminBtn}
-                          >
-                            Manage
-                          </Button>
-                          <IsolatedModal
-                            type={"Edit"}
-                            user={props.user}
-                            contest={data}
-                          />
+                          <Box sx={{ mr: 2 }}>
+                            <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" className={classes.adminBtn} color="error">
+                              Manage
+                            </Button>
+                          </Box>
+                          <Box sx={{ mr: 2 }}>
+                            <IsolatedModal type={"Edit"} user={props.user} contest={data} />
+                          </Box>
                         </>
                       ) : (
                         <></>
@@ -211,11 +163,9 @@ export default function Contest(props) {
                     ) : (
                       <></>
                     )}
-                    <IsolatedModal
-                      type={"Submit"}
-                      user={props.user}
-                      contest={data}
-                    />
+                    <Box sx={{ mr: 2 }}>
+                      <IsolatedModal type={"Submit"} user={props.user} contest={data} />
+                    </Box>
                   </Box>
                 </Box>
               </div>
@@ -238,12 +188,7 @@ export default function Contest(props) {
 
   if (props.user === undefined)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <div>
             <img alt="" src={loadingLogo} height="auto" width="75%" />
@@ -256,7 +201,7 @@ export default function Contest(props) {
   return (
     <div className={classes.parent}>
       <SimpleBar className={classes.scroll}>
-      <div id="top-ad-banner" className={classes.topAdBanner}>
+        <div id="top-ad-banner" className={classes.topAdBanner}>
           <ErrorBoundary>
             {isMobile ? (
               <AdSense.Google
@@ -294,19 +239,13 @@ export default function Contest(props) {
                 <img src={logo} className={classes.banner} alt="" />
               </Box>
               <div>
-                <Typography
-                  className={isMobile ? classes.mobileCaption : classes.caption}
-                >
-                  {`🥇 $250 USD & VIP 🥈$150 USD 🥉 $25 USD`}
-                </Typography>
+                <Box>
+                  <Typography variant="body1" sx={{ fontWeight: "550" }}>{`🥇 $250 USD & VIP 🥈$150 USD 🥉 $25 USD`}</Typography>
+                </Box>
                 <img src={sip} className={classes.image} alt="" />
                 <Box display="flex" justifyContent="center" marginTop="1rem">
                   {!props.user ? (
-                    <Button
-                      variant="contained"
-                      onClick={login}
-                      className={classes.connect}
-                    >
+                    <Button variant="contained" onClick={login} className={classes.connect}>
                       <div
                         style={{
                           display: "flex",
@@ -314,51 +253,26 @@ export default function Contest(props) {
                           alignItems: "center",
                         }}
                       >
-                        <svg
-                          className={classes.twitchIcon}
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="40"
-                          viewBox="0 0 17 20"
-                          fill="none"
-                        >
+                        <svg className={classes.twitchIcon} xmlns="http://www.w3.org/2000/svg" width="20" height="40" viewBox="0 0 17 20" fill="none">
                           <path
                             d="M3.54167 0L0 3.57143V16.4286H4.25V20L7.79167 16.4286H10.625L17 10V0H3.54167ZM15.5833 9.28571L12.75 12.1429H9.91667L7.4375 14.6429V12.1429H4.25V1.42857H15.5833V9.28571Z"
                             fill="white"
                           />
-                          <path
-                            d="M13.4584 3.92847H12.0417V8.21418H13.4584V3.92847Z"
-                            fill="white"
-                          />
-                          <path
-                            d="M9.56242 3.92847H8.14575V8.21418H9.56242V3.92847Z"
-                            fill="white"
-                          />
+                          <path d="M13.4584 3.92847H12.0417V8.21418H13.4584V3.92847Z" fill="white" />
+                          <path d="M9.56242 3.92847H8.14575V8.21418H9.56242V3.92847Z" fill="white" />
                         </svg>
                         <div style={{ flexGrow: "0" }}>Connect</div>
                       </div>
                     </Button>
                   ) : (
                     <Box display="flex">
-                      {props.user.type === "admin" ||
-                      props.user.type === "mod" ? (
+                      {props.user.type === "admin" || props.user.type === "mod" ? (
                         <>
-                          <Button
-                            variant="contained"
-                            className={classes.btn}
-                            onClick={handleCreateModalOpen}
-                          >
+                          <Button variant="contained" className={classes.btn} onClick={handleCreateModalOpen}>
                             Create Contest
                           </Button>
-                          <Modal
-                            open={createModal}
-                            onClose={handleCreateModalClose}
-                            aria-labelledby="Create Contest"
-                            aria-describedby="Create a Contest"
-                          >
-                            <div
-                              className={`${classes.modalContent} ${classes.modal}`}
-                            >
+                          <Modal open={createModal} onClose={handleCreateModalClose} aria-labelledby="Create Contest" aria-describedby="Create a Contest">
+                            <div className={`${classes.modalContent} ${classes.modal}`}>
                               <Creation user={props.user} />
                             </div>
                           </Modal>
@@ -374,11 +288,7 @@ export default function Contest(props) {
           </div>
           {ongoingContests.length > 0 ? (
             <>
-              <Typography
-                variant="h3"
-                className={classes.title}
-                style={{ marginBottom: "1rem", color: "green" }}
-              >
+              <Typography variant="h3" className={classes.title} style={{ marginBottom: "1rem", color: "green" }}>
                 CONTESTS
               </Typography>
               {ongoingContests}
@@ -388,11 +298,7 @@ export default function Contest(props) {
           )}
           {prevContests.length > 0 ? (
             <>
-              <Typography
-                variant="h3"
-                className={classes.title}
-                style={{ marginBottom: "1rem", color: "#ff0000" }}
-              >
+              <Typography variant="h3" className={classes.title} style={{ marginBottom: "1rem", color: "#ff0000" }}>
                 PREVIOUS CONTESTS
               </Typography>
               {prevContests}
@@ -448,7 +354,7 @@ const useStyles = makeStyles({
   },
   title: {
     color: "rgb(255, 255, 255)",
-    fontFamily: "Anton",
+    fontFamily: "Anton !important",
     textTransform: "uppercase",
     fontWeight: "550",
   },

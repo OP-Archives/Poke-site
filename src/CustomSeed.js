@@ -2,7 +2,7 @@ import Youtube from "react-youtube";
 import SimpleBar from "simplebar-react";
 import React, { useState } from "react";
 import client from "./client";
-import { Typography, Button, Box, Modal } from "@material-ui/core";
+import { Typography, Button, Box, Modal } from "@mui/material";
 import { Seed, SeedItem, SeedTeam } from "react-brackets";
 
 export default function CustomSeed(props) {
@@ -18,9 +18,7 @@ export default function CustomSeed(props) {
 
   const chooseWinnerClick = async (matchData, winner) => {
     if (props.public) return;
-    const confirmDialog = window.confirm(
-      `${winner.display_name} will be the winner of this match. Are you sure?`
-    );
+    const confirmDialog = window.confirm(`${winner.display_name} will be the winner of this match. Are you sure?`);
     if (!confirmDialog) return;
 
     const newMatches = [...props.matches];
@@ -42,18 +40,14 @@ export default function CustomSeed(props) {
       });
 
     const nextRound = parseInt(matchData.round) + 1;
-    const nextRoundMatches = newMatches.filter(
-      (match) => parseInt(match.round) === nextRound
-    );
+    const nextRoundMatches = newMatches.filter((match) => parseInt(match.round) === nextRound);
 
     if (nextRoundMatches.length === 0) {
       props.setMatches(newMatches);
       handleClose();
     }
 
-    const thisRoundMatches = newMatches.filter(
-      (match) => parseInt(match.round) === parseInt(matchData.round)
-    );
+    const thisRoundMatches = newMatches.filter((match) => parseInt(match.round) === parseInt(matchData.round));
 
     let indexOfMatch = -1;
     for (let i = 0; i < thisRoundMatches.length; i++) {
@@ -97,68 +91,31 @@ export default function CustomSeed(props) {
 
   return (
     <>
-      <Seed
-        onClick={handleOpen}
-        mobileBreakpoint={props.breakpoint}
-        style={{ fontSize: 10, minWidth: "100px" }}
-      >
+      <Seed onClick={handleOpen} mobileBreakpoint={props.breakpoint} style={{ fontSize: 10, minWidth: "100px" }}>
         <SeedItem>
           <div>
-            <SeedTeam
-              style={
-                props.seed.winner
-                  ? props.seed.winner === parseInt(props.seed.teams[0].id)
-                    ? { color: "red" }
-                    : {}
-                  : {}
-              }
-            >
-              {props.seed.teams[0]?.name || "---------- "}
-            </SeedTeam>
-            <SeedTeam
-              style={
-                props.seed.winner
-                  ? props.seed.winner === parseInt(props.seed.teams[1].id)
-                    ? { color: "red" }
-                    : {}
-                  : {}
-              }
-            >
-              {props.seed.teams[1]?.name || "---------- "}
-            </SeedTeam>
+            <SeedTeam style={props.seed.winner ? (props.seed.winner === parseInt(props.seed.teams[0].id) ? { color: "red" } : {}) : {}}>{props.seed.teams[0]?.name || "---------- "}</SeedTeam>
+            <SeedTeam style={props.seed.winner ? (props.seed.winner === parseInt(props.seed.teams[1].id) ? { color: "red" } : {}) : {}}>{props.seed.teams[1]?.name || "---------- "}</SeedTeam>
           </div>
         </SeedItem>
       </Seed>
       {props.seed.teams[0].submission || props.seed.teams[1].submission ? (
         <Modal open={modal} onClose={handleClose}>
-          <div
-            className={`${props.classes.modalContent} ${props.classes.modal}`}
-          >
+          <div className={`${props.classes.modalContent} ${props.classes.modal}`}>
             <SimpleBar className={props.classes.modalParent}>
               <Box display="flex" justifyContent="center" alignItems="center">
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="100%"
-                  flexDirection="column"
-                >
+                <Box display="flex" justifyContent="center" alignItems="center" height="100%" flexDirection="column">
                   <div>
                     <Typography
                       variant="body2"
                       className={
-                        parseInt(props.seed.match.winner_id) ===
-                        props.seed.teams[0].submission
+                        parseInt(props.seed.match.winner_id) === props.seed.teams[0].submission
                           ? parseInt(props.seed.teams[0].submission.id)
                             ? props.classes.winner
                             : props.classes.text
                           : props.classes.text
                       }
-                    >{`Submission ID: ${
-                      props.seed.teams[0].submission
-                        ? props.seed.teams[0].submission.id
-                        : null
-                    }`}</Typography>
+                    >{`Submission ID: ${props.seed.teams[0].submission ? props.seed.teams[0].submission.id : null}`}</Typography>
                   </div>
                   <Box marginTop="1rem">
                     {props.contest.type === "song" ? (
@@ -171,19 +128,13 @@ export default function CustomSeed(props) {
                           frameBorder="no"
                           allow="autoplay"
                           src={`https://w.soundcloud.com/player/?url=${
-                            props.seed.teams[0].submission
-                              ? props.seed.teams[0].submission.video.link
-                              : "".replace(/(www\.|m\.)/, "")
+                            props.seed.teams[0].submission ? props.seed.teams[0].submission.video.link : "".replace(/(www\.|m\.)/, "")
                           }&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
                         />
                       </Box>
                     ) : props.contest.type === "alert" ? (
                       <Youtube
-                        videoId={
-                          props.seed.teams[0].submission
-                            ? props.seed.teams[0].submission.video.id
-                            : null
-                        }
+                        videoId={props.seed.teams[0].submission ? props.seed.teams[0].submission.video.id : null}
                         id="player"
                         opts={{
                           height: "240px",
@@ -200,68 +151,39 @@ export default function CustomSeed(props) {
                       <></>
                     )}
                   </Box>
-                  <Box
-                    marginTop="1rem"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    flexDirection="column"
-                  >
+                  <Box marginTop="1rem" display="flex" justifyContent="center" alignItems="center" flexDirection="column">
                     <Typography
                       variant="body2"
                       className={
-                        parseInt(props.seed.match.winner_id) ===
-                        props.seed.teams[0].submission
+                        parseInt(props.seed.match.winner_id) === props.seed.teams[0].submission
                           ? parseInt(props.seed.teams[0].submission.id)
                             ? props.classes.winner
                             : props.classes.text
                           : props.classes.text
                       }
-                    >{`${
-                      props.seed.teams[0].submission
-                        ? props.seed.teams[0].submission.title
-                        : null
-                    }`}</Typography>
+                    >{`${props.seed.teams[0].submission ? props.seed.teams[0].submission.title : null}`}</Typography>
                     <Typography
                       variant="body2"
                       className={
-                        parseInt(props.seed.match.winner_id) ===
-                        props.seed.teams[0].submission
+                        parseInt(props.seed.match.winner_id) === props.seed.teams[0].submission
                           ? parseInt(props.seed.teams[0].submission.id)
                             ? props.classes.winner
                             : props.classes.text
                           : props.classes.text
                       }
-                    >{`${
-                      props.seed.teams[0].submission
-                        ? props.seed.teams[0].submission.display_name
-                        : null
-                    }`}</Typography>
-                    <a
-                      href={
-                        props.seed.teams[0].submission
-                          ? props.seed.teams[0].submission.video.link
-                          : null
-                      }
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
+                    >{`${props.seed.teams[0].submission ? props.seed.teams[0].submission.display_name : null}`}</Typography>
+                    <a href={props.seed.teams[0].submission ? props.seed.teams[0].submission.video.link : null} target="_blank" rel="noreferrer noopener">
                       <Typography
                         variant="caption"
                         className={
-                          parseInt(props.seed.match.winner_id) ===
-                          props.seed.teams[0].submission
+                          parseInt(props.seed.match.winner_id) === props.seed.teams[0].submission
                             ? parseInt(props.seed.teams[0].submission.id)
                               ? props.classes.winner
                               : props.classes.text
                             : props.classes.text
                         }
                       >
-                        {`${
-                          props.seed.teams[0].submission
-                            ? props.seed.teams[0].submission.video.link
-                            : null
-                        }`}
+                        {`${props.seed.teams[0].submission ? props.seed.teams[0].submission.video.link : null}`}
                       </Typography>
                     </a>
                     <div style={{ marginTop: "0.5rem" }}>
@@ -269,22 +191,14 @@ export default function CustomSeed(props) {
                         variant="caption"
                         style={{ wordBreak: "break-word" }}
                         className={
-                          parseInt(props.seed.match.winner_id) ===
-                          props.seed.teams[0].submission
+                          parseInt(props.seed.match.winner_id) === props.seed.teams[0].submission
                             ? parseInt(props.seed.teams[0].submission.id)
                               ? props.classes.winner
                               : props.classes.text
                             : props.classes.text
                         }
                       >
-                        {`${
-                          props.seed.teams[0].submission
-                            ? props.seed.teams[0].submission.comment.length ===
-                              0
-                              ? "..."
-                              : props.seed.teams[0].submission.comment
-                            : null
-                        }`}
+                        {`${props.seed.teams[0].submission ? (props.seed.teams[0].submission.comment.length === 0 ? "..." : props.seed.teams[0].submission.comment) : null}`}
                       </Typography>
                     </div>
                     {!props.public && props.seed.teams[0].submission ? (
@@ -293,10 +207,7 @@ export default function CustomSeed(props) {
                           variant="outlined"
                           disabled={!props.seed.teams[0].submission}
                           onClick={() => {
-                            chooseWinnerClick(
-                              props.seed.match,
-                              props.seed.teams[0].submission
-                            );
+                            chooseWinnerClick(props.seed.match, props.seed.teams[0].submission);
                           }}
                           className={props.classes.button}
                         >
@@ -308,40 +219,24 @@ export default function CustomSeed(props) {
                     )}
                   </Box>
                 </Box>
-                <Box
-                  padding="5rem"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
+                <Box padding="5rem" display="flex" alignItems="center" justifyContent="center">
                   <Typography variant="h4" className={props.classes.text}>
                     {`Vs`}
                   </Typography>
                 </Box>
                 <Box display="flex" justifyContent="center" alignItems="center">
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    height="100%"
-                    flexDirection="column"
-                  >
+                  <Box display="flex" justifyContent="center" alignItems="center" height="100%" flexDirection="column">
                     <div>
                       <Typography
                         variant="body2"
                         className={
-                          parseInt(props.seed.match.winner_id) ===
-                          props.seed.teams[1].submission
+                          parseInt(props.seed.match.winner_id) === props.seed.teams[1].submission
                             ? parseInt(props.seed.teams[1].submission.id)
                               ? props.classes.winner
                               : props.classes.text
                             : props.classes.text
                         }
-                      >{`Submission ID: ${
-                        props.seed.teams[1].submission
-                          ? props.seed.teams[1].submission.id
-                          : null
-                      }`}</Typography>
+                      >{`Submission ID: ${props.seed.teams[1].submission ? props.seed.teams[1].submission.id : null}`}</Typography>
                     </div>
                     <Box marginTop="1rem">
                       {props.contest.type === "song" ? (
@@ -354,19 +249,13 @@ export default function CustomSeed(props) {
                             frameBorder="no"
                             allow="autoplay"
                             src={`https://w.soundcloud.com/player/?url=${
-                              props.seed.teams[1].submission
-                                ? props.seed.teams[1].submission.video.link
-                                : "".replace(/(www\.|m\.)/, "")
+                              props.seed.teams[1].submission ? props.seed.teams[1].submission.video.link : "".replace(/(www\.|m\.)/, "")
                             }&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
                           />
                         </Box>
                       ) : props.contest.type === "alert" ? (
                         <Youtube
-                          videoId={
-                            props.seed.teams[1].submission
-                              ? props.seed.teams[1].submission.video.id
-                              : null
-                          }
+                          videoId={props.seed.teams[1].submission ? props.seed.teams[1].submission.video.id : null}
                           id="player"
                           opts={{
                             height: "240px",
@@ -383,68 +272,39 @@ export default function CustomSeed(props) {
                         <></>
                       )}
                     </Box>
-                    <Box
-                      marginTop="1rem"
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      flexDirection="column"
-                    >
+                    <Box marginTop="1rem" display="flex" justifyContent="center" alignItems="center" flexDirection="column">
                       <Typography
                         variant="body2"
                         className={
-                          parseInt(props.seed.match.winner_id) ===
-                          props.seed.teams[1].submission
+                          parseInt(props.seed.match.winner_id) === props.seed.teams[1].submission
                             ? parseInt(props.seed.teams[1].submission.id)
                               ? props.classes.winner
                               : props.classes.text
                             : props.classes.text
                         }
-                      >{`${
-                        props.seed.teams[1].submission
-                          ? props.seed.teams[1].submission.title
-                          : null
-                      }`}</Typography>
+                      >{`${props.seed.teams[1].submission ? props.seed.teams[1].submission.title : null}`}</Typography>
                       <Typography
                         variant="body2"
                         className={
-                          parseInt(props.seed.match.winner_id) ===
-                          props.seed.teams[1].submission
+                          parseInt(props.seed.match.winner_id) === props.seed.teams[1].submission
                             ? parseInt(props.seed.teams[1].submission.id)
                               ? props.classes.winner
                               : props.classes.text
                             : props.classes.text
                         }
-                      >{`${
-                        props.seed.teams[1].submission
-                          ? props.seed.teams[1].submission.display_name
-                          : null
-                      }`}</Typography>
-                      <a
-                        href={
-                          props.seed.teams[1].submission
-                            ? props.seed.teams[1].submission.video.link
-                            : null
-                        }
-                        target="_blank"
-                        rel="noreferrer noopener"
-                      >
+                      >{`${props.seed.teams[1].submission ? props.seed.teams[1].submission.display_name : null}`}</Typography>
+                      <a href={props.seed.teams[1].submission ? props.seed.teams[1].submission.video.link : null} target="_blank" rel="noreferrer noopener">
                         <Typography
                           variant="caption"
                           className={
-                            parseInt(props.seed.match.winner_id) ===
-                            props.seed.teams[1].submission
+                            parseInt(props.seed.match.winner_id) === props.seed.teams[1].submission
                               ? parseInt(props.seed.teams[1].submission.id)
                                 ? props.classes.winner
                                 : props.classes.text
                               : props.classes.text
                           }
                         >
-                          {`${
-                            props.seed.teams[1].submission
-                              ? props.seed.teams[1].submission.video.link
-                              : null
-                          }`}
+                          {`${props.seed.teams[1].submission ? props.seed.teams[1].submission.video.link : null}`}
                         </Typography>
                       </a>
                       <div style={{ marginTop: "0.5rem" }}>
@@ -452,36 +312,23 @@ export default function CustomSeed(props) {
                           variant="caption"
                           style={{ wordBreak: "break-word" }}
                           className={
-                            parseInt(props.seed.match.winner_id) ===
-                            props.seed.teams[1].submission
+                            parseInt(props.seed.match.winner_id) === props.seed.teams[1].submission
                               ? parseInt(props.seed.teams[1].submission.id)
                                 ? props.classes.winner
                                 : props.classes.text
                               : props.classes.text
                           }
                         >
-                          {`${
-                            props.seed.teams[1].submission
-                              ? props.seed.teams[1].submission.comment
-                                  .length === 0
-                                ? "..."
-                                : props.seed.teams[1].submission.comment
-                              : null
-                          }`}
+                          {`${props.seed.teams[1].submission ? (props.seed.teams[1].submission.comment.length === 0 ? "..." : props.seed.teams[1].submission.comment) : null}`}
                         </Typography>
                       </div>
                       {!props.public ? (
                         <div style={{ marginTop: "1rem" }}>
                           <Button
                             variant="outlined"
-                            disabled={
-                              !props.seed.teams[1].submission
-                            }
+                            disabled={!props.seed.teams[1].submission}
                             onClick={() => {
-                              chooseWinnerClick(
-                                props.seed.match,
-                                props.seed.teams[1].submission
-                              );
+                              chooseWinnerClick(props.seed.match, props.seed.teams[1].submission);
                             }}
                             className={props.classes.button}
                           >

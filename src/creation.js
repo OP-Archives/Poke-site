@@ -1,21 +1,10 @@
 import React, { useState } from "react";
-import {
-  makeStyles,
-  Typography,
-  Button,
-  Box,
-  CircularProgress,
-  TextField,
-  Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@material-ui/core";
+import { Typography, Button, Box, CircularProgress, TextField, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
-import { Alert } from "@material-ui/lab";
+import { Alert } from "@mui/material";
 import client from "./client";
 
 export default function Creation(props) {
@@ -65,12 +54,7 @@ export default function Creation(props) {
 
   if (props.user === undefined)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <div>
             <img alt="" src={loadingLogo} height="auto" width="75%" />
@@ -82,12 +66,7 @@ export default function Creation(props) {
 
   return (
     <SimpleBar className={classes.parent}>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100%"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
           <img alt="" src={logo} height="auto" width="100%" />
           <Typography variant="h4" className={classes.title}>
@@ -181,16 +160,7 @@ export default function Creation(props) {
                 </Typography>
               </div>
             </Box>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleCreate}
-              disabled={title.length === 0}
-              style={{ color: "#fff" }}
-            >
+            <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleCreate} disabled={title.length === 0} style={{ color: "#fff" }}>
               Create
             </Button>
           </form>

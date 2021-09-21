@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles, Button, Box, CircularProgress } from "@material-ui/core";
+import { Button, Box, CircularProgress } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import client from "./client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
@@ -10,6 +11,7 @@ export default function Winners(props) {
   const [rounds, setRounds] = useState(null);
   const [bracketLoading, setBracketLoading] = useState(true);
   const submissions = props.submissions;
+  console.log(submissions.length);
   const contest = props.contest;
 
   useEffect(() => {
@@ -51,9 +53,7 @@ export default function Winners(props) {
     const shuffledArray = shuffleArray(submissions);
 
     if (matches.length !== 0) {
-      const confirmDialog = window.confirm(
-        "This will recreate the bracket. Are you sure?"
-      );
+      const confirmDialog = window.confirm("This will recreate the bracket. Are you sure?");
       if (!confirmDialog) return;
       for (let match of matches) {
         await client
@@ -64,6 +64,10 @@ export default function Winners(props) {
           });
       }
     }
+
+    const isPowerOf2 = (num) => {
+      return (Math.log(num) / Math.log(2)) % 1 === 0;
+    };
 
     //round up to nearest power of 2
     const pow2ceil = (num) => {
@@ -76,7 +80,7 @@ export default function Winners(props) {
 
     let round = 1,
       tmpMatches = [],
-      roundedSubmissions = pow2ceil(submissions.length);
+      roundedSubmissions = isPowerOf2(submissions.length) ? submissions.length : pow2ceil(submissions.length);
 
     for (let x = roundedSubmissions; x > 1; x -= x / 2) {
       if (round === 1) {
@@ -213,11 +217,7 @@ export default function Winners(props) {
 
   return (
     <Box marginTop="3rem">
-      <Button
-        variant="outlined"
-        onClick={createMatches}
-        className={classes.button}
-      >
+      <Button variant="outlined" onClick={createMatches} className={classes.button}>
         Create Bracket
       </Button>
       <Box marginTop="3rem">
@@ -227,15 +227,7 @@ export default function Winners(props) {
           <Bracket
             rounds={rounds}
             renderSeedComponent={(props) => {
-              return (
-                <CustomSeed
-                  {...props}
-                  classes={classes}
-                  contest={contest}
-                  matches={matches}
-                  setMatches={setMatches}
-                />
-              );
+              return <CustomSeed {...props} classes={classes} contest={contest} matches={matches} setMatches={setMatches} />;
             }}
           />
         )}

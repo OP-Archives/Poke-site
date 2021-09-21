@@ -27,13 +27,3 @@ ul {
   height: 100%;
   width: 100%;
 }
-
-a, a:visited {
-  color: #fff;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
-  color: #5eff74;
-}
