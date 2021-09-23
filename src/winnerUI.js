@@ -11,7 +11,6 @@ export default function Winners(props) {
   const [rounds, setRounds] = useState(null);
   const [bracketLoading, setBracketLoading] = useState(true);
   const submissions = props.submissions;
-  console.log(submissions.length);
   const contest = props.contest;
 
   useEffect(() => {
@@ -37,24 +36,14 @@ export default function Winners(props) {
     return;
   }, [contest.id]);
 
-  const shuffleArray = (array) => {
-    let tmp_array = [...array];
-    for (let i = tmp_array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [tmp_array[i], tmp_array[j]] = [tmp_array[j], tmp_array[i]];
-    }
-    return tmp_array;
-  };
-
   const createMatches = async (evt) => {
     if (!matches) return;
     setBracketLoading(true);
-
-    const shuffledArray = shuffleArray(submissions);
+    const { accessToken } = await client.get("authentication");
 
     if (matches.length !== 0) {
       const confirmDialog = window.confirm("This will recreate the bracket. Are you sure?");
-      if (!confirmDialog) return;
+      if (!confirmDialog) return setBracketLoading(false);
       for (let match of matches) {
         await client
           .service("matches")
@@ -65,100 +54,34 @@ export default function Winners(props) {
       }
     }
 
-    const isPowerOf2 = (num) => {
-      return (Math.log(num) / Math.log(2)) % 1 === 0;
-    };
-
-    //round up to nearest power of 2
-    const pow2ceil = (num) => {
-      let p = 2;
-      while ((num >>= 1)) {
-        p <<= 1;
-      }
-      return p;
-    };
-
-    let round = 1,
-      tmpMatches = [],
-      roundedSubmissions = isPowerOf2(submissions.length) ? submissions.length : pow2ceil(submissions.length);
-
-    for (let x = roundedSubmissions; x > 1; x -= x / 2) {
-      if (round === 1) {
-        for (let i = 0; i < x; i += 2) {
-          let currentSubmission = shuffledArray[i];
-          if (!currentSubmission) {
-            await client
-              .service("matches")
-              .create({
-                contest_id: contest.id,
-                team_a_id: -1,
-                team_b_id: -1,
-                round: round,
-              })
-              .then((data) => {
-                tmpMatches.push(data);
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-            continue;
-          }
-          let nextSubmission = shuffledArray[i + 1];
-          if (!nextSubmission) {
-            await client
-              .service("matches")
-              .create({
-                contest_id: contest.id,
-                team_a_id: currentSubmission.id,
-                team_b_id: -1,
-                winner_id: currentSubmission.id,
-                round: round,
-              })
-              .then((data) => {
-                tmpMatches.push(data);
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-            continue;
-          }
-          await client
-            .service("matches")
-            .create({
-              contest_id: contest.id,
-              team_a_id: currentSubmission.id,
-              team_b_id: nextSubmission.id,
-              round: round,
-            })
-            .then((data) => {
-              tmpMatches.push(data);
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-        }
-      } else {
-        for (let i = 0; i < x; i += 2) {
-          await client
-            .service("matches")
-            .create({
-              contest_id: contest.id,
-              team_a_id: -1,
-              team_b_id: -1,
-              round: round,
-            })
-            .then((data) => {
-              tmpMatches.push(data);
-            })
-            .catch((e) => {
-              console.error(e);
-            });
-        }
-      }
-      round++;
+    const sendSubmissions = [];
+    for (let submission of submissions) {
+      sendSubmissions.push({
+        misc: submission.user_id,
+        name: submission.display_name,
+      });
     }
 
-    setMatches(tmpMatches);
+    await fetch(`https://api.poke.gg/v1/challonge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        contest_id: contest.id,
+        name: contest.title,
+        participants: sendSubmissions,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) return;
+        setMatches(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   useEffect(() => {
@@ -167,8 +90,10 @@ export default function Winners(props) {
     const getSubmission = (id) => {
       let data;
       for (let submission of submissions) {
-        if (parseInt(submission.id) !== id) continue;
-        data = submission;
+        if (parseInt(submission.id) === id || parseInt(submission.user_id) === id) {
+          data = submission;
+          break;
+        }
       }
       return data;
     };
@@ -177,13 +102,19 @@ export default function Winners(props) {
       tmpRounds = [];
 
     for (let match of matches) {
-      if (match.round > maxRounds) maxRounds = match.round;
+      if (parseInt(match.round) > maxRounds) maxRounds = match.round;
     }
 
     for (let i = 1; i <= maxRounds; i++) {
       let seeds = [];
-      for (let match of matches) {
-        if (parseInt(match.round) !== i) continue;
+      matches.forEach((match) => {
+        if (parseInt(match.round) !== i) return;
+        const nextMatch = match.challonge_match_id
+          ? matches[matches.findIndex((matchArg) => matchArg.previous_a_match === match.challonge_match_id || matchArg.previous_b_match === match.challonge_match_id)]
+          : null;
+        const isTeamA = nextMatch?.previous_a_match === match.challonge_match_id;
+        const pairedMatch =
+          matches[matches.findIndex((matchArg) => (isTeamA ? matchArg.challonge_match_id === nextMatch?.previous_b_match : matchArg.challonge_match_id === nextMatch?.previous_a_match))];
         const team_a = getSubmission(match.team_a_id);
         const team_b = getSubmission(match.team_b_id);
 
@@ -202,8 +133,12 @@ export default function Winners(props) {
           ],
           winner: match.winner_id,
           match: match,
+          nextMatch: nextMatch,
+          isTeamA: isTeamA,
+          pairedMatch: pairedMatch,
+          useOldVersion: match.challonge_match_id === null,
         });
-      }
+      });
       tmpRounds.push({
         seeds: seeds,
       });

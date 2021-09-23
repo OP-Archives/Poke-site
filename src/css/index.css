@@ -1,5 +1,4 @@
 .root {
-  overflow: hidden !important;
   flex-direction: column !important;
   position: absolute !important;
   top: 0 !important;

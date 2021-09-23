@@ -77,8 +77,10 @@ export default function Winners(props) {
     const getSubmission = (id) => {
       let data;
       for (let submission of submissions) {
-        if (parseInt(submission.id) !== id) continue;
-        data = submission;
+        if (parseInt(submission.id) === id || parseInt(submission.user_id) === id) {
+          data = submission;
+          break;
+        }
       }
       return data;
     };
@@ -87,13 +89,19 @@ export default function Winners(props) {
       tmpRounds = [];
 
     for (let match of matches) {
-      if (match.round > maxRounds) maxRounds = match.round;
+      if (parseInt(match.round) > maxRounds) maxRounds = match.round;
     }
 
     for (let i = 1; i <= maxRounds; i++) {
       let seeds = [];
-      for (let match of matches) {
-        if (parseInt(match.round) !== i) continue;
+      matches.forEach((match) => {
+        if (parseInt(match.round) !== i) return;
+        const nextMatch = match.challonge_match_id
+          ? matches[matches.findIndex((matchArg) => matchArg.previous_a_match === match.challonge_match_id || matchArg.previous_b_match === match.challonge_match_id)]
+          : null;
+        const isTeamA = nextMatch?.previous_a_match === match.challonge_match_id;
+        const pairedMatch =
+          matches[matches.findIndex((matchArg) => (isTeamA ? matchArg.challonge_match_id === nextMatch?.previous_b_match : matchArg.challonge_match_id === nextMatch?.previous_a_match))];
         const team_a = getSubmission(match.team_a_id);
         const team_b = getSubmission(match.team_b_id);
 
@@ -112,8 +120,12 @@ export default function Winners(props) {
           ],
           winner: match.winner_id,
           match: match,
+          nextMatch: nextMatch,
+          isTeamA: isTeamA,
+          pairedMatch: pairedMatch,
+          useOldVersion: match.challonge_match_id === null,
         });
-      }
+      });
       tmpRounds.push({
         seeds: seeds,
       });
@@ -122,6 +134,8 @@ export default function Winners(props) {
     setRounds(tmpRounds);
     setBracketLoading(false);
   }, [matches, submissions]);
+
+  if (!matches || !rounds) return null;
 
   if (props.user === undefined)
     return (
