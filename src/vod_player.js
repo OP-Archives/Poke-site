@@ -260,7 +260,7 @@ class VodPlayer extends Component {
   onEnd = (evt) => {
     this.clearLoopTimeout();
     const nextPart = this.state.part + 1;
-    if (this.state.youtube_data[nextPart].id) {
+    if (this.state.youtube_data[nextPart]?.id) {
       this.setState({ part: nextPart });
       this.player.loadVideoById(this.state.youtube_data[nextPart].id);
     }
