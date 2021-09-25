@@ -577,7 +577,7 @@ class VodPlayer extends Component {
         </div>
       </div>
     ) : (
-      <Container maxWidth={false} disableGutters style={{ height: "100%", overflow: "hidden" }}>
+      <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
         <Box flexDirection={isMobile ? "column" : "row"} className={classes.playerParent}>
           <div style={{ width: "100%" }}>
             <Youtube

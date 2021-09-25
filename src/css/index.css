@@ -9,6 +9,7 @@
   flex-wrap: nowrap !important;
   color: #fff;
   font-family: "Roboto", sans-serif;
+  overflow: hidden;
 }
 
 ul {
