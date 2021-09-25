@@ -577,7 +577,7 @@ class VodPlayer extends Component {
         </div>
       </div>
     ) : (
-      <Container maxWidth={false} disableGutters style={{ height: "100%" }}>
+      <Container maxWidth={false} disableGutters style={{ height: "100%", overflow: "hidden" }}>
         <Box flexDirection={isMobile ? "column" : "row"} className={classes.playerParent}>
           <div style={{ width: "100%" }}>
             <Youtube
@@ -686,14 +686,9 @@ class VodPlayer extends Component {
               }
             >
               {chatLoading ? (
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginTop: isMobile ? "3rem" : "20vh",
-                  }}
-                >
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
                   <CircularProgress size="3rem" />
-                </div>
+                </Box>
               ) : (
                 <div className={classes.chat}>
                   <SimpleBar scrollableNodeProps={{ ref: this.chatRef }} className={classes.scroll}>
@@ -788,7 +783,6 @@ const useStyles = () => ({
     borderTopLeftRadius: "4px",
     borderTopRightRadius: "4px",
     width: "100%",
-    paddingBottom: "2.6rem",
   },
   marginRight: {
     marginRight: "1rem",

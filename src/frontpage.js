@@ -360,7 +360,7 @@ const useStyles = makeStyles({
   },
   hover: {
     "&:hover": {
-      boxShadow: "0 0 8px #43a047",
+      boxShadow: "0 0 8px #43a047ff",
     },
   },
   flexCenter: {
@@ -391,7 +391,7 @@ const useStyles = makeStyles({
     position: "relative",
     order: 1,
     "&:hover": {
-      boxShadow: "0 0 8px #fff",
+      boxShadow: "0 0 8px #43a047ff",
     },
   },
   image2: {
