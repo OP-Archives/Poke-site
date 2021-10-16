@@ -40,7 +40,7 @@ export default function Creation(props) {
     setComment(evt.target.value);
   };
 
-  const handleVideoLinkChange = (evt) => {
+  const handleLinkChange = (evt) => {
     setLinkError(false);
     const link = evt.target.value;
     const regex =
@@ -50,16 +50,26 @@ export default function Creation(props) {
         : props.contest.type === "song"
         ? //eslint-disable-next-line
           /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
+        : props.contest.type === "review"
+        ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:twitter\.com))(\/)(\S+)(\/)(\S+)$/
         : null;
     if (!regex.test(link)) {
       setLinkError(true);
-      setLinkErrorMsg(props.contest.type === "alert" ? "Youtube link is not valid.." : props.contest.type === "song" ? "Soundcloud link is not valid.." : "What is going on..");
+      setLinkErrorMsg(
+        props.contest.type === "alert"
+          ? "Youtube link is not valid.."
+          : props.contest.type === "song"
+          ? "Soundcloud link is not valid.."
+          : props.contest.type === "review"
+          ? "Twitter link is not valid..."
+          : "Something is wrong here..."
+      );
       setVideo(null);
       return;
     }
-    const videoSplit = link.split(regex);
+    const linkSplit = link.split(regex);
     setVideo({
-      id: props.contest.type === "alert" ? videoSplit[5] : props.contest.type === "song" ? videoSplit[7] : null,
+      id: props.contest.type === "alert" ? linkSplit[5] : props.contest.type === "song" ? linkSplit[7] : props.contest.type === "review" ? linkSplit[7] : null,
       link: link,
     });
   };
@@ -179,28 +189,30 @@ export default function Creation(props) {
             <></>
           )}
           <form className={classes.form} noValidate>
-            <TextField
-              inputProps={{
-                style: {
-                  backgroundColor: "hsla(0,0%,100%,.15)",
-                  color: "#fff",
-                },
-              }}
-              InputLabelProps={{
-                style: { color: "#fff" },
-              }}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              label="Title"
-              name="title"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              autoFocus
-              onChange={handleTitleChange}
-            />
+            {(props.contest.type === "song" || props.contest.type === "alert") && (
+              <TextField
+                inputProps={{
+                  style: {
+                    backgroundColor: "hsla(0,0%,100%,.15)",
+                    color: "#fff",
+                  },
+                }}
+                InputLabelProps={{
+                  style: { color: "#fff" },
+                }}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                label="Title"
+                name="title"
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                autoFocus
+                onChange={handleTitleChange}
+              />
+            )}
             {linkError ? (
               <Alert style={{ marginTop: "1rem" }} severity="error">
                 {linkErrorMsg}
@@ -222,14 +234,14 @@ export default function Creation(props) {
               margin="normal"
               required
               fullWidth
-              label={props.contest.type === "alert" ? "Youtube Link" : "Soundcloud Link"}
-              name={props.contest.type === "alert" ? "Youtube Link" : "Soundcloud Link"}
+              label={props.contest.type === "alert" ? "Youtube Link" : props.contest.type === "song" ? "Soundcloud Link" : "Tweet"}
+              name={props.contest.type === "alert" ? "Youtube Link" : props.contest.type === "song" ? "Soundcloud Link" : "Tweet"}
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
-              onChange={handleVideoLinkChange}
+              onChange={handleLinkChange}
             />
-            {props.contest.type === "song" ? (
+            {props.contest.type !== "alert" ? (
               <></>
             ) : (
               <>
@@ -262,7 +274,7 @@ export default function Creation(props) {
                 />
               </>
             )}
-            {props.contest.type === "song" ? (
+            {props.contest.type !== "alert" ? (
               <></>
             ) : (
               <>
@@ -302,29 +314,40 @@ export default function Creation(props) {
             ) : (
               <></>
             )}
-            <TextField
-              inputProps={{
-                style: {
-                  backgroundColor: "hsla(0,0%,100%,.15)",
-                  color: "#fff",
-                },
-              }}
-              InputLabelProps={{
-                style: { color: "#fff" },
-              }}
-              multiline
-              rows={4}
-              variant="filled"
-              margin="normal"
+            {(props.contest.type === "song" || props.contest.type === "alert") && (
+              <TextField
+                inputProps={{
+                  style: {
+                    backgroundColor: "hsla(0,0%,100%,.15)",
+                    color: "#fff",
+                  },
+                }}
+                InputLabelProps={{
+                  style: { color: "#fff" },
+                }}
+                multiline
+                rows={4}
+                variant="filled"
+                margin="normal"
+                fullWidth
+                label="Comment"
+                name="Comment"
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                onChange={handleCommentChange}
+              />
+            )}
+            <Button
+              type="submit"
               fullWidth
-              label="Comment"
-              name="Comment"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              onChange={handleCommentChange}
-            />
-            <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleSubmit} disabled={title.length === 0 || !video} style={{ color: "#fff" }}>
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={handleSubmit}
+              disabled={props.contest.type !== "review" ? title.length === 0 || !video : !video}
+              style={{ color: "#fff" }}
+            >
               Submit
             </Button>
           </form>

@@ -8,6 +8,7 @@ import Youtube from "react-youtube";
 import client from "./client";
 import { Redirect } from "react-router-dom";
 import WinnerUI from "./winnerUI";
+import { Tweet } from "react-twitter-widgets";
 
 export default function Manage(props) {
   const classes = useStyles();
@@ -532,7 +533,9 @@ export default function Manage(props) {
                               />
                             </div>
                           ) : (
-                            <></>
+                            <Box display="flex" flexDirection="column" width="100%">
+                              <Tweet tweetId={currentSubmission.video.id} options={{ align: "center" }} />
+                            </Box>
                           )}
                           <div className={classes.textBox}>
                             <Typography variant="h5" className={classes.text}>

@@ -133,6 +133,7 @@ export default function Creation(props) {
               >
                 <MenuItem value="alert">Alert</MenuItem>
                 <MenuItem value="song">Song</MenuItem>
+                <MenuItem value="review">Review</MenuItem>
               </Select>
             </FormControl>
             <Box display="flex">
