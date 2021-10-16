@@ -5,6 +5,7 @@ import client from "./client";
 import { Typography, Button, Box, Modal } from "@mui/material";
 import { Seed, SeedItem, SeedTeam } from "react-brackets";
 import { styled } from "@mui/system";
+import { Tweet } from "react-twitter-widgets";
 
 export default function CustomSeed(props) {
   const [modal, setModal] = useState(false);
@@ -145,6 +146,10 @@ export default function CustomSeed(props) {
                           },
                         }}
                       />
+                    ) : contest.type === "review" ? (
+                      <Box display="flex" flexDirection="column" width="100%">
+                        <Tweet tweetId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null} options={{ align: "center" }} />
+                      </Box>
                     ) : (
                       <></>
                     )}
@@ -236,6 +241,10 @@ export default function CustomSeed(props) {
                             },
                           }}
                         />
+                      ) : contest.type === "review" ? (
+                        <Box display="flex" flexDirection="column" width="100%">
+                          <Tweet tweetId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null} options={{ align: "center" }} />
+                        </Box>
                       ) : (
                         <></>
                       )}
