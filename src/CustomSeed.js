@@ -2,7 +2,7 @@ import Youtube from "react-youtube";
 import SimpleBar from "simplebar-react";
 import React, { useState } from "react";
 import client from "./client";
-import { Typography, Button, Box, Modal } from "@mui/material";
+import { Typography, Button, Box, Modal, Link } from "@mui/material";
 import { Seed, SeedItem, SeedTeam } from "react-brackets";
 import { styled } from "@mui/system";
 import { Tweet } from "react-twitter-widgets";
@@ -52,12 +52,20 @@ export default function CustomSeed(props) {
       return handleClose();
     }
 
+    const isTeamA = nextMatch.previous_a_match === matchData.challonge_match_id;
+
     await client
       .service("matches")
-      .patch(nextMatch.id, {
-        team_a_id: nextMatch.team_a_id === -1 ? (nextMatch.previous_a_match === matchData.challonge_match_id ? winner.user_id : -1) : nextMatch.team_a_id,
-        team_b_id: nextMatch.team_b_id === -1 ? (nextMatch.previous_b_match === matchData.challonge_match_id ? winner.user_id : -1) : nextMatch.team_b_id,
-      })
+      .patch(
+        nextMatch.id,
+        isTeamA
+          ? {
+              team_a_id: winner.user_id,
+            }
+          : {
+              team_b_id: winner.user_id,
+            }
+      )
       .then((data) => {
         for (let x = 0; x < newMatches.length; x++) {
           if (parseInt(newMatches[x].id) !== parseInt(data.id)) continue;
@@ -163,14 +171,21 @@ export default function CustomSeed(props) {
                       variant="body2"
                       className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
                     >{`${seed.teams[0].submission ? seed.teams[0].submission.display_name : null}`}</Typography>
-                    <a href={seed.teams[0].submission ? seed.teams[0].submission.video.link : null} target="_blank" rel="noreferrer noopener">
+                    <Link
+                      underline="hover"
+                      href={seed.teams[0].submission ? seed.teams[0].submission.video.link : null}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      variant="caption"
+                      color="textSecondary"
+                    >
                       <Typography
                         variant="caption"
                         className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
                       >
                         {`${seed.teams[0].submission ? seed.teams[0].submission.video.link : null}`}
                       </Typography>
-                    </a>
+                    </Link>
                     <div style={{ marginTop: "0.5rem" }}>
                       <Typography
                         variant="caption"
@@ -258,14 +273,22 @@ export default function CustomSeed(props) {
                         variant="body2"
                         className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
                       >{`${seed.teams[1].submission ? seed.teams[1].submission.display_name : null}`}</Typography>
-                      <a href={seed.teams[1].submission ? seed.teams[1].submission.video.link : null} target="_blank" rel="noreferrer noopener">
+                      <Link
+                        underline="hover"
+                        href={seed.teams[1].submission ? seed.teams[1].submission.video.link : null}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        variant="caption"
+                        color="textSecondary"
+                      >
                         <Typography
                           variant="caption"
                           className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
                         >
                           {`${seed.teams[1].submission ? seed.teams[1].submission.video.link : null}`}
                         </Typography>
-                      </a>
+                      </Link>
+
                       <div style={{ marginTop: "0.5rem" }}>
                         <Typography
                           variant="caption"
