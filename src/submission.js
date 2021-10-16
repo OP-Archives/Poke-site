@@ -42,7 +42,7 @@ export default function Creation(props) {
 
   const handleLinkChange = (evt) => {
     setLinkError(false);
-    const link = evt.target.value;
+    let link = evt.target.value;
     const regex =
       props.contest.type === "alert"
         ? //eslint-disable-next-line
@@ -67,6 +67,7 @@ export default function Creation(props) {
       setVideo(null);
       return;
     }
+    if (props.contest.type === "review" && link.indexOf("?") !== -1) link = link.substring(0, link.indexOf("?"));
     const linkSplit = link.split(regex);
     setVideo({
       id: props.contest.type === "alert" ? linkSplit[5] : props.contest.type === "song" ? linkSplit[7] : props.contest.type === "review" ? linkSplit[7] : null,
