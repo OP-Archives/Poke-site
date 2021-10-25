@@ -176,7 +176,7 @@ export default function Creation(props) {
 
   return (
     <SimpleBar className={classes.parent}>
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%" backgroundColor="#1d1d1d" padding="1rem">
         <div style={{ textAlign: "center" }}>
           <img alt="" src={logo} height="auto" width="100%" />
           <Typography variant="h4" className={classes.title}>
@@ -361,7 +361,6 @@ export default function Creation(props) {
 const useStyles = makeStyles(() => ({
   parent: {
     height: "100%",
-    padding: "1rem",
   },
   title: {
     fontFamily: "Anton",

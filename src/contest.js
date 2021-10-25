@@ -482,7 +482,6 @@ const useStyles = makeStyles({
   modalContent: {
     position: "absolute",
     width: "400px",
-    backgroundColor: "#1d1d1d",
     outline: "none",
   },
   modal: {
