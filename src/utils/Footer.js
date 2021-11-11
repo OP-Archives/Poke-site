@@ -19,9 +19,6 @@ const Footer = styled((props) => (
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-left: 2rem;
-  margin-right: 2rem;
-  margin-top: 5rem;
 `;
 
 export default Footer;

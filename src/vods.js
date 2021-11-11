@@ -6,6 +6,8 @@ import ListIcon from "@mui/icons-material/List";
 import Logo from "./assets/jammin.gif";
 import ErrorBoundary from "./ErrorBoundary.js";
 import AdSense from "react-adsense";
+import CustomLink from "./utils/CustomLink";
+import Footer from "./utils/Footer";
 
 const limit = 50;
 
@@ -76,9 +78,9 @@ export default function Vods(props) {
         >
           {vod.youtube.map((data, index) => {
             return (
-              <Link key={data.id} href={`/${data.type === "live" ? "live" : "vods"}/${props.vod.id}?part=${index + 1}`} style={{ textDecoration: "none" }}>
+              <CustomLink key={data.id} href={`/${data.type === "live" ? "live" : "vods"}/${props.vod.id}?part=${index + 1}`}>
                 <MenuItem className={classes.item}>Part {index + 1}</MenuItem>
-              </Link>
+              </CustomLink>
             );
           })}
         </Menu>
@@ -105,9 +107,9 @@ export default function Vods(props) {
                   }}
                 >
                   <div style={{ marginBottom: "0.1rem" }}>
-                    <Link underline="hover" className={classes.title} href={`/${containsLiveVods ? "live" : "vods"}/${vod.id}`} variant="caption" color="textSecondary">
+                    <CustomLink className={classes.title} href={`/${containsLiveVods ? "live" : "vods"}/${vod.id}`} variant="caption" color="textSecondary">
                       {vod.title}
-                    </Link>
+                    </CustomLink>
                   </div>
                 </div>
               </div>
@@ -235,6 +237,7 @@ export default function Vods(props) {
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
           {totalPages !== null && <Pagination count={totalPages} disabled={totalPages <= 1} color="primary" page={page} onChange={handlePageChange} />}
         </Box>
+        <Footer />
       </SimpleBar>
     </Container>
   );
@@ -248,11 +251,11 @@ const useStyles = makeStyles(() => ({
     height: "100%",
   },
   root: {
-    marginLeft: "2rem",
     marginTop: "2rem",
     display: "flex",
     flexWrap: "wrap",
     height: "100%",
+    justifyContent: "center",
   },
   center: {
     textAlign: "center",
