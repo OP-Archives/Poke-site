@@ -147,7 +147,7 @@ export default function Vods(props) {
     setLoading(true);
     setPage(value);
 
-    fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=${limit}&$skip=${value * limit}&$sort[createdAt]=-1`, {
+    fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=${limit}&$skip=${(value - 1) * limit}&$sort[createdAt]=-1`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
