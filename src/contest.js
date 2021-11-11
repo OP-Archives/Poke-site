@@ -11,6 +11,7 @@ import Submission from "./submission";
 import Edit from "./edit";
 import ErrorBoundary from "./ErrorBoundary.js";
 import AdSense from "react-adsense";
+import Footer from "./utils/Footer";
 
 export default function Contest(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
@@ -306,6 +307,7 @@ export default function Contest(props) {
           ) : (
             <></>
           )}
+          <Footer />
         </div>
       </SimpleBar>
     </div>
@@ -315,7 +317,6 @@ export default function Contest(props) {
 const useStyles = makeStyles({
   parent: {
     textAlign: "center",
-    marginTop: "3rem",
     height: "calc(100% - 5rem)",
     width: "100%",
   },
@@ -327,10 +328,12 @@ const useStyles = makeStyles({
     maxHeight: "300px",
   },
   container: {
+    marginTop: "3rem",
     paddingRight: "35rem",
     paddingLeft: "35rem",
   },
   mobileContainer: {
+    marginTop: "3rem",
     paddingRight: "1rem",
     paddingLeft: "1rem",
   },

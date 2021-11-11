@@ -1,3 +1,11 @@
+ul {
+  border: 0;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+
 .background {
   background-repeat: no-repeat;
   background-size: cover;

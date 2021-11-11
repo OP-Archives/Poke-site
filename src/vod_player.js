@@ -30,10 +30,11 @@ class VodPlayer extends Component {
     super(props);
 
     this.BADGES_TWITCH_URL = "https://badges.twitch.tv/v1/badges/global/display?language=en";
-    this.BASE_TWITCH_CDN = "https://static-cdn.jtvnw.net/";
-    this.BASE_FFZ_EMOTE_API = "https://api.frankerfacez.com/v1/";
-    this.BASE_BTTV_EMOTE_API = "https://api.betterttv.net/3/";
-    this.BASE_BTTV_CDN = "https://cdn.betterttv.net/";
+    this.BASE_TWITCH_CDN = "https://static-cdn.jtvnw.net";
+    this.BASE_FFZ_EMOTE_API = "https://api.frankerfacez.com/v1";
+    this.BASE_BTTV_EMOTE_API = "https://api.betterttv.net/3";
+    this.BASE_BTTV_CDN = "https://cdn.betterttv.net";
+    this.BASE_7TV_EMOTE_API = "https://api.7tv.app/v2";
     this.vodId = props.match.params.vodId;
     this.twitchId = props.twitchId;
     this.player = null;
@@ -67,6 +68,7 @@ class VodPlayer extends Component {
     this.loadFFZEmotes(this.twitchId);
     this.loadBTTVGlobalEmotes(this.twitchId);
     this.loadBTTVChannelEmotes(this.twitchId);
+    this.load7TVEmotes();
     this.totalYoutubeDuration = 0;
     for (let video of this.state.youtube_data) {
       this.totalYoutubeDuration += video.duration;
@@ -114,7 +116,7 @@ class VodPlayer extends Component {
   };
 
   loadBTTVGlobalEmotes = () => {
-    fetch(`${this.BASE_BTTV_EMOTE_API}cached/emotes/global`, {
+    fetch(`${this.BASE_BTTV_EMOTE_API}/cached/emotes/global`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -127,7 +129,7 @@ class VodPlayer extends Component {
   };
 
   loadBTTVChannelEmotes = (twitchId) => {
-    fetch(`${this.BASE_BTTV_EMOTE_API}cached/users/twitch/${twitchId}`, {
+    fetch(`${this.BASE_BTTV_EMOTE_API}/cached/users/twitch/${twitchId}`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -140,12 +142,25 @@ class VodPlayer extends Component {
   };
 
   loadFFZEmotes = (twitchId) => {
-    fetch(`${this.BASE_FFZ_EMOTE_API}room/id/${twitchId}`, {
+    fetch(`${this.BASE_FFZ_EMOTE_API}/room/id/${twitchId}`, {
       method: "GET",
     })
       .then((response) => response.json())
       .then((data) => {
         this.FFZEmotes = data.sets[data.room.set].emoticons;
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
+  load7TVEmotes = () => {
+    fetch(`${this.BASE_7TV_EMOTE_API}/users/${this.channel}/emotes`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        this.SevenTVEmotes = data;
       })
       .catch((e) => {
         console.error(e);
@@ -350,10 +365,10 @@ class VodPlayer extends Component {
             key={this.badgesCount++}
             crossOrigin="anonymous"
             className={this.props.classes.badges}
-            src={`${this.BASE_TWITCH_CDN}badges/v1/${twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_1x : twitchBadge.versions[0].image_url_1x}`}
-            srcSet={`${this.BASE_TWITCH_CDN}badges/v1/${twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_1x : twitchBadge.versions[0].image_url_1x} 1x, ${
+            src={`${this.BASE_TWITCH_CDN}/badges/v1/${twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_1x : twitchBadge.versions[0].image_url_1x}`}
+            srcSet={`${this.BASE_TWITCH_CDN}/badges/v1/${twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_1x : twitchBadge.versions[0].image_url_1x} 1x, ${
               this.BASE_TWITCH_CDN
-            }badges/v1/${twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_2x : twitchBadge.versions[0].image_url_2x} 2x, ${this.BASE_TWITCH_CDN}badges/v1/${
+            }/badges/v1/${twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_2x : twitchBadge.versions[0].image_url_2x} 2x, ${this.BASE_TWITCH_CDN}/badges/v1/${
               twitchBadge.versions[badge.version] ? twitchBadge.versions[badge.version].image_url_4x : twitchBadge.versions[0].image_url_4x
             } 4x`}
             alt=""
@@ -403,8 +418,8 @@ class VodPlayer extends Component {
                   <div key={this.messageCount++} style={{ display: "inline" }}>
                     <img
                       className={this.props.classes.chatEmote}
-                      src={`${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/1x`}
-                      srcSet={`${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/1x 1x, ${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/2x 2x, ${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/3x 4x`}
+                      src={`${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/1x`}
+                      srcSet={`${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/1x 1x, ${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/2x 2x, ${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/3x 4x`}
                       alt=""
                     />
                     {` `}
@@ -424,8 +439,30 @@ class VodPlayer extends Component {
                   <div key={this.messageCount++} style={{ display: "inline" }}>
                     <img
                       className={this.props.classes.chatEmote}
-                      src={`${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/1x`}
-                      srcSet={`${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/1x 1x, ${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/2x 2x, ${this.BASE_BTTV_CDN}emote/${bttv_emote.id}/3x 4x`}
+                      src={`${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/1x`}
+                      srcSet={`${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/1x 1x, ${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/2x 2x, ${this.BASE_BTTV_CDN}/emote/${bttv_emote.id}/3x 4x`}
+                      alt=""
+                    />
+                    {` `}
+                  </div>
+                );
+                break;
+              }
+            }
+            if (found) continue;
+          }
+
+          if (this.SevenTVEmotes) {
+            for (let sevenTVEmote of this.SevenTVEmotes) {
+              if (message === sevenTVEmote.name) {
+                found = true;
+                textFragments.push(
+                  <div key={this.messageCount++} style={{ display: "inline" }}>
+                    <img
+                      crossOrigin="anonymous"
+                      className={this.props.classes.chatEmote}
+                      src={`${sevenTVEmote.urls[0][1]}`}
+                      srcSet={`${sevenTVEmote.urls[0][1]} 1x, ${sevenTVEmote.urls[1][1]} 2x, ${sevenTVEmote.urls[2][1]} 3x, ${sevenTVEmote.urls[3][1]} 4x`}
                       alt=""
                     />
                     {` `}
@@ -445,10 +482,10 @@ class VodPlayer extends Component {
             <img
               crossOrigin="anonymous"
               className={this.props.classes.chatEmote}
-              src={`${this.BASE_TWITCH_CDN}emoticons/v2/${messageFragment.emoticon.emoticon_id}/default/dark/1.0`}
+              src={`${this.BASE_TWITCH_CDN}/emoticons/v2/${messageFragment.emoticon.emoticon_id}/default/dark/1.0`}
               srcSet={
                 messageFragment.emoticon.emoticon_set_id
-                  ? `${this.BASE_TWITCH_CDN}emoticons/v2/${messageFragment.emoticon.emoticon_set_id}/default/dark/1.0 1x, ${this.BASE_TWITCH_CDN}emoticons/v2/${messageFragment.emoticon.emoticon_set_id}/default/dark/2.0 2x`
+                  ? `${this.BASE_TWITCH_CDN}/emoticons/v2/${messageFragment.emoticon.emoticon_set_id}/default/dark/1.0 1x, ${this.BASE_TWITCH_CDN}/emoticons/v2/${messageFragment.emoticon.emoticon_set_id}/default/dark/2.0 2x`
                   : ""
               }
               alt=""
