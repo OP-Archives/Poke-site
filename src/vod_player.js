@@ -693,7 +693,7 @@ class VodPlayer extends Component {
               defaultSize={
                 isMobile
                   ? {
-                      height: "350px",
+                      height: "50%",
                       width: "100%",
                     }
                   : {
@@ -701,7 +701,7 @@ class VodPlayer extends Component {
                       height: "100%",
                     }
               }
-              maxHeight={isMobile ? "350px" : "100%"}
+              maxHeight={isMobile ? "50%" : "100%"}
               minHeight={isMobile ? "100px" : "100%"}
               minWidth={isMobile ? "100%" : "340px"}
               enable={
