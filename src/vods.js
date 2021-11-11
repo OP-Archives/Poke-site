@@ -94,7 +94,7 @@ export default function Vods(props) {
         const containsLiveVods = vod.youtube.some((data) => data.type === "live");
         vod.youtube = vod.youtube.filter((data) => (containsLiveVods ? data.type === "live" : data.type === "vod"));
         return (
-          <div key={vod.id} style={{ width: isMobile ? "6rem" : "18rem" }} className={classes.paper}>
+          <div key={vod.id} style={{ width: isMobile ? "10rem" : "18rem", maxWidth: isMobile ? "100%" : "30%" }} className={classes.paper}>
             <div className={classes.lower}>
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <div
@@ -279,7 +279,6 @@ const useStyles = makeStyles(() => ({
     color: "#fff",
   },
   paper: {
-    maxWidth: "30%",
     flex: "0 0 auto",
     padding: "0 .5rem",
     display: "flex",
