@@ -121,6 +121,7 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.status >= 400) return;
         this.BTTVGlobalEmotes = data;
       })
       .catch((e) => {
@@ -134,6 +135,7 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.status >= 400) return;
         this.BTTVEmotes = data.sharedEmotes.concat(data.channelEmotes);
       })
       .catch((e) => {
@@ -147,6 +149,7 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.status >= 400) return;
         this.FFZEmotes = data.sets[data.room.set].emoticons;
       })
       .catch((e) => {
@@ -160,6 +163,7 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.status >= 400) return;
         this.SevenTVEmotes = data;
       })
       .catch((e) => {
@@ -176,6 +180,7 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.status >= 400) return;
         this.badgeSets = data.badge_sets;
       })
       .catch((e) => {
@@ -192,6 +197,7 @@ class VodPlayer extends Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        if (data.status >= 400) return;
         this.channelBadges = data;
       })
       .catch((e) => {
