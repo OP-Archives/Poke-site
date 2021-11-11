@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import SimpleBar from "simplebar-react";
-import { Box, Typography, useMediaQuery, Link } from "@mui/material";
+import { Box, Typography, useMediaQuery, Link, Paper } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
@@ -9,6 +9,7 @@ import merch4 from "./assets/merch/merch4.png";
 import ErrorBoundary from "./ErrorBoundary.js";
 import AdSense from "react-adsense";
 import Footer from "./utils/Footer";
+import CustomLink from "./utils/CustomLink";
 
 const merchImages = [
   {
@@ -64,12 +65,12 @@ export default function Frontpage(props) {
   }, [classes, channel]);
 
   useEffect(() => {
-    if (!vodList) return;
-    if (vodList.length === 0) return;
+    if (!vodList && vodList.length === 0) return;
+    const changedVodList = isMobile ? vodList.slice(0, 2) : vodList.slice(0, 3);
     setVods(
-      vodList.map((vod, i) => {
+      changedVodList.map((vod, i) => {
         return (
-          <div key={vod.id} style={{ width: isMobile ? "6rem" : "18rem" }} className={classes.paper}>
+          <div key={vod.id} style={{ width: isMobile ? "10rem" : "18rem", maxWidth: isMobile ? "100%" : "30%" }} className={classes.paper}>
             <div className={classes.lower}>
               <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <div
@@ -82,15 +83,9 @@ export default function Frontpage(props) {
                   }}
                 >
                   <div style={{ marginBottom: "0.1rem" }}>
-                    <Link
-                      underline="hover"
-                      className={classes.title2}
-                      href={`/${vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}
-                      variant="caption"
-                      color="textSecondary"
-                    >
+                    <CustomLink className={classes.title2} href={`/${vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vods"}/${vod.id}`} variant="caption" color="textSecondary">
                       {vod.title}
-                    </Link>
+                    </CustomLink>
                   </div>
                 </div>
               </div>
@@ -101,16 +96,12 @@ export default function Frontpage(props) {
               </Link>
               <div className={classes.corners}>
                 <div className={classes.bottomLeft}>
-                  <Typography variant="caption" className={classes.cornerText}>
-                    {`${vod.date}`}
-                  </Typography>
+                  <Typography variant="caption">{`${vod.date}`}</Typography>
                 </div>
               </div>
               <div className={classes.corners}>
                 <div className={classes.bottomRight}>
-                  <Typography variant="caption" className={classes.cornerText}>
-                    {`${vod.duration}`}
-                  </Typography>
+                  <Typography variant="caption">{`${vod.duration}`}</Typography>
                 </div>
               </div>
             </div>
@@ -155,72 +146,54 @@ export default function Frontpage(props) {
             )}
           </ErrorBoundary>
         </div>
-        <div className={classes.wrapper}>
-          <div className={classes.column}>
-            <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
-              <Box display="flex" flexDirection="column" width={`${isMobile ? "100%" : "50%"}`}>
-                <div className={classes.container}>
-                  <div className={classes.row}>
-                    <div className={classes.form}>
-                      <Box display="flex" flexWrap="wrap" justifyContent="center">
-                        <div className={`${classes.header} ${classes.linkText}`}>
-                          <Link underline="hover" href="/vods">
-                            <Typography variant="h6">Most Recent Vods</Typography>
-                          </Link>
-                        </div>
-                      </Box>
-                      <Box display="flex" marginTop="1rem">
-                        {vods}
-                      </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: 6 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
+            <Paper sx={{ padding: "1rem" }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 2 }}>
+                <CustomLink href="/vods">
+                  <Typography variant="h6">Most Recent Vods</Typography>
+                </CustomLink>
+              </Box>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>{vods}</Box>
+            </Paper>
+          </Box>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: 6 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
+            <Paper sx={{ padding: "1rem" }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 1 }}>
+                <CustomLink href="https://metathreads.com/collections/pokelawls" target="_blank" rel="noopener noreferrer">
+                  <Typography variant="h6">Merch</Typography>
+                </CustomLink>
+              </Box>
+              <Box display="flex" flexWrap="nowrap">
+                {merchImages.map((item, index) => {
+                  return (
+                    <div key={index} className={classes.hover}>
+                      <a href={item.link} target="_blank" rel="noreferrer noopener">
+                        <img alt="" key={index} src={item.image} className={classes.image} />
+                      </a>
                     </div>
-                  </div>
-                </div>
+                  );
+                })}
               </Box>
-            </Box>
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <Box display="flex" flexDirection="column" width={`${isMobile ? "100%" : "50%"}`}>
-                <div className={classes.container}>
-                  <div className={classes.row}>
-                    <div className={classes.form}>
-                      <Box display="flex" flexWrap="wrap" justifyContent="center">
-                        <div className={`${classes.header} ${classes.linkText}`}>
-                          <Link underline="hover" href="https://metathreads.com/collections/pokelawls" target="_blank" rel="noopener noreferrer">
-                            <Typography variant="h6">Merch</Typography>
-                          </Link>
-                        </div>
-                      </Box>
-                      <Box display="flex" flexWrap="nowrap">
-                        {merchImages.map((item, index) => {
-                          return (
-                            <div key={index} className={classes.hover}>
-                              <a href={item.link} target="_blank" rel="noreferrer noopener">
-                                <img alt="" key={index} src={item.image} className={classes.image} />
-                              </a>
-                            </div>
-                          );
-                        })}
-                      </Box>
-                    </div>
-                  </div>
-                </div>
-              </Box>
-            </Box>
-            <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column">
-              <Box display="flex" flexDirection="column" width={`${isMobile ? "100%" : "50%"}`}>
-                <iframe
-                  title="Player"
-                  width="100%"
-                  height="160"
-                  scrolling="no"
-                  frameBorder="no"
-                  allow="autoplay"
-                  src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/910917202&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
-                />
-              </Box>
-            </Box>
-          </div>
-          <Footer />
-        </div>
+            </Paper>
+          </Box>
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: 6 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
+            <iframe
+              title="Player"
+              width="100%"
+              height="160"
+              scrolling="no"
+              frameBorder="no"
+              allow="autoplay"
+              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/910917202&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+            />
+          </Box>
+        </Box>
+        <Footer />
       </SimpleBar>
     </Box>
   );
@@ -235,106 +208,6 @@ const useStyles = makeStyles({
     flexDirection: "column",
     flexGrow: 1,
   },
-  wrapper: {
-    position: "relative",
-    marginLeft: "2rem",
-    marginRight: "2rem",
-  },
-  column: {
-    maxWidth: "200rem",
-    margin: "0 auto",
-    marginTop: "5rem",
-  },
-  header: {
-    marginBottom: "0.5rem",
-    fontWeight: "600",
-    alignSelf: "start",
-  },
-  title: {
-    marginTop: "2rem",
-  },
-  navigation: {
-    color: "#3c70ff",
-    "&:hover": {
-      opacity: "0.7",
-    },
-  },
-  mobile: {
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "sapce-evenly",
-    textAlign: "center",
-    flexWrap: "wrap",
-  },
-  notMobile: {
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "space-evenly",
-    textAlign: "center",
-  },
-  feature: {
-    maxWidth: "190px",
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "column",
-    marginRight: "2rem",
-    marginLeft: "2rem",
-  },
-  featureMobile: {
-    flex: "1 1 33%",
-    marginBottom: "2rem",
-    width: "18%",
-    maxWidth: "190px",
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "column",
-    marginRight: "2rem",
-    marginLeft: "2rem",
-  },
-  svg: {
-    fill: "#2079ff",
-    fontSize: "5rem",
-  },
-  featureText: {
-    alignItems: "center",
-    display: "flex",
-    marginTop: "0.5rem",
-    flexDirection: "column",
-  },
-  bold: {
-    fontWeight: "600",
-  },
-  alt: {
-    marginTop: "0.5rem",
-    color: "hsl(0 0% 100%/.8)",
-  },
-  row: {
-    padding: "1rem",
-  },
-  form: {
-    flexGrow: 1,
-    position: "relative",
-  },
-  container: {
-    backgroundColor: "#1d1d1d",
-    borderLeft: "1px solid hsla(0,0%,100%,.1)",
-    borderRight: "1px solid hsla(0,0%,100%,.1)",
-    borderTop: "1px solid hsla(0,0%,100%,.1)",
-    borderBottom: "1px solid hsla(0,0%,100%,.1)",
-    borderBottomRightRadius: "4px",
-    borderBottomLeftRadius: "4px",
-    borderTopLeftRadius: "4px",
-    borderTopRightRadius: "4px",
-    marginBottom: "3rem",
-    paddingBottom: "1.5rem",
-  },
-  linkText: {
-    textDecoration: `none`,
-    color: `#fff`,
-    "&:hover": {
-      opacity: "50%",
-    },
-  },
   image: {
     marginRight: "2rem",
     marginTop: "2rem",
@@ -346,15 +219,7 @@ const useStyles = makeStyles({
       boxShadow: "0 0 8px #43a047ff",
     },
   },
-  flexCenter: {
-    justifyContent: "center",
-    alignContent: "center",
-  },
-  center: {
-    textAlign: "center",
-  },
   paper: {
-    maxWidth: "30%",
     flex: "0 0 auto",
     padding: "0 .5rem",
     display: "flex",
