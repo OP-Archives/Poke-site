@@ -1,6 +1,5 @@
 import React from "react";
-import { AppBar, Toolbar, List, ListItem, ListItemText, Typography, Divider, IconButton, Drawer, useMediaQuery, Box, Link } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { AppBar, Toolbar, List, ListItem, ListItemText, Typography, Divider, IconButton, Drawer, useMediaQuery, Box } from "@mui/material";
 import Logo from "./assets/jammin.gif";
 import Menu from "@mui/icons-material/Menu";
 import discord from "./assets/discord.png";
@@ -9,6 +8,7 @@ import soundcloud from "./assets/soundcloud.png";
 import reddit from "./assets/reddit.png";
 import youtube from "./assets/youtube.png";
 import twitch from "./assets/twitch.png";
+import CustomLink from "./utils/CustomLink";
 
 const mainLinks = [
   { title: `Home`, path: `/` },
@@ -26,10 +26,7 @@ const socialLinks = [
 ];
 
 export default function Navbar(props) {
-  const { window } = props;
   const isMobile = useMediaQuery("(max-width: 800px)");
-  const mobileClasses = mobileStyles();
-  const classes = useStyles();
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const handleDrawerToggle = () => {
@@ -38,83 +35,53 @@ export default function Navbar(props) {
 
   const drawer = (
     <div>
-      <div className={mobileClasses.toolbar} />
-      <Box alignItems="center" flexGrow={1} flexShrink={1} width="100%" justifyContent="center" display="flex" marginBottom="1rem">
-        <div
-          style={{
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+      <Box sx={{ alignItems: "stretch", justifyContent: "center", display: "flex", flexShrink: 1, flexGrow: 1, mb: 1, mt: 1 }}>
+        <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <a href="/">
             <img alt="" height="45px" src={Logo} />
           </a>
-        </div>
+        </Box>
       </Box>
-      <Divider classes={{ root: mobileClasses.divider }} />
+      <Divider />
       <List>
         {mainLinks.map(({ title, path }) => (
-          <ListItem key={title} component="a" href={path} className={mobileClasses.linkText}>
+          <ListItem key={title} component={CustomLink} href={path}>
             <ListItemText primary={title} />
           </ListItem>
         ))}
       </List>
-      <Divider classes={{ root: mobileClasses.divider }} />
+      <Divider />
       <List>
         {socialLinks.map(({ title, path }) => (
-          <ListItem key={title} component="a" href={path} target="_blank" rel="noreferrer noopener" className={mobileClasses.linkText}>
+          <ListItem key={title} component={CustomLink} href={path} target="_blank" rel="noreferrer noopener">
             <ListItemText primary={title} />
           </ListItem>
         ))}
       </List>
-      <Divider classes={{ root: mobileClasses.divider }} />
-      <div style={{ marginTop: "1rem" }}>
-        <Typography variant="caption" className={mobileClasses.content} style={{ padding: "14px" }}>
-          <a href="https://twitter.com/overpowered" target="_blank" rel="noreferrer noopener" className={mobileClasses.linkText}>
-            Made by OP with 💜
-          </a>
-        </Typography>
-      </div>
+      <Divider />
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
-
   return isMobile ? (
-    <div style={{ display: "flex" }}>
-      <AppBar position="static" color="inherit" className={mobileClasses.appBar}>
+    <Box sx={{ display: "flex" }}>
+      <AppBar position="static" color="inherit">
         <Toolbar>
-          <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} className={mobileClasses.menuButton}>
+          <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle}>
             <Menu />
           </IconButton>
-          <Box alignItems="center" flexGrow={1} flexShrink={1} width="100%" justifyContent="center" display="flex">
-            <div
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+          <Box sx={{ alignItems: "stretch", justifyContent: "center", display: "flex", flexShrink: 1, flexGrow: 1, mb: 1, mt: 1 }}>
+            <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
               <a href="/">
                 <img alt="" height="45px" src={Logo} />
               </a>
-            </div>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
-      <nav className={mobileClasses.drawer} aria-label="navigation">
+      <nav aria-label="navigation">
         <Drawer
-          container={container}
-          variant="temporary"
-          anchor={"left"}
           open={drawerOpen}
           onClose={handleDrawerToggle}
-          classes={{
-            paper: mobileClasses.drawerPaper,
-          }}
           ModalProps={{
             keepMounted: true,
           }}
@@ -122,182 +89,75 @@ export default function Navbar(props) {
           {drawer}
         </Drawer>
       </nav>
-    </div>
+    </Box>
   ) : (
-    <div className={classes.navDisplayFlex}>
-      <Box alignItems="stretch" display="flex" flexWrap="nowrap" height="100%" width="100%">
-        <Box alignItems="stretch" justifyContent="flex-start" width="100%" display="flex" flexShrink={1} flexGrow={1} flexWrap="nowrap">
-          <Box marginLeft="1rem" display="flex" justifyContent="space-between" flexDirection="row" height="100%">
-            <div className={classes.linkButton}>
-              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                <a href="https://twitter.com/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <img alt="" height="auto" width="35px" src={twitter} />
-                </a>
-              </Box>
-            </div>
-            <div className={classes.linkButton}>
-              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                <a href="https://discord.gg/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <img alt="" height="auto" width="45px" src={discord} />
-                </a>
-              </Box>
-            </div>
-            <div className={classes.linkButton}>
-              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                <a href="https://soundcloud.com/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <img alt="" height="auto" width="45px" src={soundcloud} />
-                </a>
-              </Box>
-            </div>
-            <div className={classes.linkButton}>
-              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                <a href="https://reddit.com/r/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <img alt="" height="auto" width="42px" src={reddit} />
-                </a>
-              </Box>
-            </div>
-            <div className={classes.linkButton}>
-              <Box height="100%" display="flex" justifyContent="center" alignItems="center">
-                <a href="https://youtube.com/c/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <img alt="" height="auto" width="45px" src={youtube} />
-                </a>
-              </Box>
-            </div>
-          </Box>
-        </Box>
-        <Box alignItems="center" flexGrow={1} flexShrink={1} width="100%" justifyContent="center" display="flex">
-          <div
-            style={{
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <a href="/">
-              <img alt="" height="45px" src={Logo} />
+    <Box sx={{ display: "flex", backgroundColor: "#1d1d1d", alignItems: "stretch", flexWrap: "nowrap" }}>
+      <Box sx={{ alignItems: "stretch", justifyContent: "flex-start", width: "100%", display: "flex", flexShrink: 1, flexGrow: 1, flexWrap: "nowrap" }}>
+        <Box sx={{ ml: 1, display: "flex", justifyContent: "space-between", flexDirection: "row", height: "100%" }}>
+          <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", mr: 0.5 }}>
+            <a href="https://twitter.com/pokelawls" target="_blank" rel="noopener noreferrer">
+              <img alt="" height="auto" width="35px" src={twitter} />
             </a>
-          </div>
-        </Box>
-        <Box alignItems="center" display="flex" flexGrow={1} flexShrink={1} width="100%" justifyContent="flex-end" marginRight="1rem">
-          <Box display="flex" marginRight="1rem">
-            <Link underline="hover" href="/contest">
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <Box marginLeft="1rem">
-                  <Typography>Contest</Typography>
-                </Box>
-              </Box>
-            </Link>
           </Box>
-          <Box display="flex" marginRight="1rem">
-            <Link underline="hover" href="/vods">
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <Box marginLeft="1rem">
-                  <Typography>Vods</Typography>
-                </Box>
-              </Box>
-            </Link>
+          <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", mr: 0.5 }}>
+            <a href="https://discord.gg/pokelawls" target="_blank" rel="noopener noreferrer">
+              <img alt="" height="auto" width="45px" src={discord} />
+            </a>
           </Box>
-          <div className={classes.linkButton}>
-            <Box height="100%">
-              <Link underline="hover" href="https://twitch.tv/pokelawls" target="_blank" rel="noopener noreferrer">
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  <img alt="" height="auto" width="38px" src={twitch} />
-                  <Box marginLeft="0.3rem">
-                    <Typography>Watch me Live</Typography>
-                  </Box>
-                </Box>
-              </Link>
-            </Box>
-          </div>
+          <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", mr: 0.5 }}>
+            <a href="https://soundcloud.com/pokelawls" target="_blank" rel="noopener noreferrer">
+              <img alt="" height="auto" width="45px" src={soundcloud} />
+            </a>
+          </Box>
+          <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", mr: 0.5 }}>
+            <a href="https://reddit.com/r/pokelawls" target="_blank" rel="noopener noreferrer">
+              <img alt="" height="auto" width="42px" src={reddit} />
+            </a>
+          </Box>
+          <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", mr: 0.5 }}>
+            <a href="https://youtube.com/c/pokelawls" target="_blank" rel="noopener noreferrer">
+              <img alt="" height="auto" width="45px" src={youtube} />
+            </a>
+          </Box>
         </Box>
       </Box>
-    </div>
+      <Box sx={{ alignItems: "center", display: "flex", flexGrow: 1, flexShrink: 1, width: "100%", justifyContent: "center" }}>
+        <Box sx={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <a href="/">
+            <img alt="" height="45px" src={Logo} />
+          </a>
+        </Box>
+      </Box>
+      <Box sx={{ alignItems: "center", display: "flex", flexGrow: 1, flexShrink: 1, width: "100%", justifyContent: "flex-end", mr: 1 }}>
+        <Box sx={{ display: "flex", mr: 1 }}>
+          <CustomLink href="/contest">
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Box sx={{ ml: 1 }}>
+                <Typography>Contest</Typography>
+              </Box>
+            </Box>
+          </CustomLink>
+        </Box>
+        <Box sx={{ display: "flex", mr: 1 }}>
+          <CustomLink href="/vods">
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <Box sx={{ ml: 1 }}>
+                <Typography>Vods</Typography>
+              </Box>
+            </Box>
+          </CustomLink>
+        </Box>
+        <Box sx={{ display: "flex", ml: 1, mr: 1 }}>
+          <CustomLink href="https://twitch.tv/pokelawls" target="_blank" rel="noopener noreferrer">
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <img alt="" height="auto" width="38px" src={twitch} />
+              <Box sx={{ ml: 1 }}>
+                <Typography>Watch me Live</Typography>
+              </Box>
+            </Box>
+          </CustomLink>
+        </Box>
+      </Box>
+    </Box>
   );
 }
-
-const mobileStyles = makeStyles(() => ({
-  appBar: {
-    boxShadow: "none",
-    backgroundColor: "inherit",
-  },
-  divider: {
-    backgroundColor: "#868686",
-  },
-  drawer: {
-    width: "10rem",
-    flexShrink: 0,
-  },
-  menuButton: {
-    marginRight: "16px",
-    color: "#fff",
-  },
-  drawerPaper: {
-    width: "10rem",
-    backgroundColor: "#0e0e10",
-    color: "#fff",
-  },
-  content: {
-    flexGrow: 1,
-    padding: "24px",
-  },
-  linkText: {
-    textDecoration: `none`,
-    color: `#fff`,
-    "&:hover": {
-      opacity: "50%",
-    },
-  },
-}));
-
-const useStyles = makeStyles({
-  navDisplayFlex: {
-    display: `flex`,
-    width: "100%",
-    height: "3rem",
-    flexShrink: 0,
-    zIndex: 1000,
-    backgroundColor: "#1d1d1d",
-  },
-  button: {
-    marginLeft: "0.5rem",
-    color: `#fff`,
-    "&:hover": {
-      opacity: "0.7",
-    },
-    textDecoration: `none`,
-    textTransform: "none",
-  },
-  primaryButton: {
-    backgroundColor: "#3c70ff",
-    marginRight: "0.5rem",
-    "&:hover": {
-      backgroundColor: "#3c70ff",
-    },
-  },
-  secondaryButton: {
-    backgroundColor: "#333536",
-    "&:hover": {
-      backgroundColor: "#333536",
-    },
-  },
-  alertButton: {
-    backgroundColor: "#e01d1d",
-    "&:hover": {
-      backgroundColor: "#e01d1d",
-    },
-  },
-  linkButton: {
-    marginLeft: "0.3rem",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-  },
-  linkText: {
-    textDecoration: `none`,
-    color: `#fff`,
-    "&:hover": {
-      opacity: "50%",
-    },
-  },
-});

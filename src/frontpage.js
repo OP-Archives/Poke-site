@@ -8,6 +8,7 @@ import merch3 from "./assets/merch/merch3.png";
 import merch4 from "./assets/merch/merch4.png";
 import ErrorBoundary from "./ErrorBoundary.js";
 import AdSense from "react-adsense";
+import Footer from "./utils/Footer";
 
 const merchImages = [
   {
@@ -218,16 +219,7 @@ export default function Frontpage(props) {
               </Box>
             </Box>
           </div>
-          <div className={classes.footer}>
-            <div style={{ marginTop: "0.5rem" }}>
-              <Typography variant="caption" className={classes.alt}>
-                Pokelawls ©
-              </Typography>
-            </div>
-            <Link underline="hover" href="/vods" color="textSecondary">
-              <Typography variant="caption">made by OP with 💜</Typography>
-            </Link>
-          </div>
+          <Footer />
         </div>
       </SimpleBar>
     </Box>
@@ -315,15 +307,6 @@ const useStyles = makeStyles({
   alt: {
     marginTop: "0.5rem",
     color: "hsl(0 0% 100%/.8)",
-  },
-  footer: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: "2rem",
-    marginRight: "2rem",
-    marginTop: "5rem",
   },
   row: {
     padding: "1rem",
