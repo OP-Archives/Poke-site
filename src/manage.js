@@ -9,6 +9,7 @@ import client from "./client";
 import { Redirect } from "react-router-dom";
 import WinnerUI from "./winnerUI";
 import { Tweet } from "react-twitter-widgets";
+import Footer from "./utils/Footer";
 
 export default function Manage(props) {
   const classes = useStyles();
@@ -661,11 +662,7 @@ export default function Manage(props) {
                   )}
                 </>
               )}
-              <div style={{ marginTop: "2rem" }}>
-                <Link underline="hover" href="/vods" color="textSecondary">
-                  <Typography variant="caption">made by OP with 💜</Typography>
-                </Link>
-              </div>
+              <Footer />
             </Box>
           </div>
         </div>

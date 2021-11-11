@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Box, CircularProgress, useMediaQuery, Link } from "@mui/material";
+import { Box, CircularProgress, useMediaQuery } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "./assets/jammin.gif";
@@ -7,6 +7,7 @@ import logo from "./assets/contestlogo.png";
 import client from "./client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
+import Footer from "./utils/Footer";
 
 export default function Winners(props) {
   const classes = useStyles();
@@ -172,11 +173,7 @@ export default function Winners(props) {
                   )}
                 </Box>
               </Box>
-              <div style={{ marginTop: "2rem" }}>
-                <Link underline="hover" href="/vods" color="textSecondary">
-                  <Typography variant="caption">made by OP with 💜</Typography>
-                </Link>
-              </div>
+              <Footer />
             </Box>
           </div>
         </div>
