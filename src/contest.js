@@ -149,7 +149,7 @@ export default function Contest(props) {
                       props.user.type === "admin" || props.user.type === "mod" ? (
                         <>
                           <Box sx={{ mr: 2 }}>
-                            <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" className={classes.adminBtn} color="error">
+                            <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" color="error">
                               Manage
                             </Button>
                           </Box>
