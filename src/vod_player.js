@@ -877,6 +877,9 @@ const useStyles = () => ({
   title: {
     color: "#fff",
     overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    display: "block",
   },
 });
 
