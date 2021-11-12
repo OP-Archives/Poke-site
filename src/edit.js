@@ -7,7 +7,7 @@ import logo from "./assets/contestlogo.png";
 import { Alert } from "@mui/material";
 import client from "./client";
 
-export default function Creation(props) {
+export default function Edit(props) {
   const classes = useStyles();
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(undefined);

@@ -62,14 +62,28 @@ export default function Contest(props) {
           <Button onClick={handleOpen} variant="contained" color="secondary">
             Edit
           </Button>
-        ) : (
+        ) : props.type === "Submit" ? (
           <Button disabled={!props.contest.submission || !props.user} onClick={handleOpen} variant="contained">
             Submit
           </Button>
+        ) : props.type === "Modify" ? (
+          <Button disabled={!props.contest.submission || !props.user} onClick={handleOpen} variant="contained">
+            Modify
+          </Button>
+        ) : (
+          <></>
         )}
         <Modal open={modal} onClose={handleClose}>
           <div className={`${classes.modalContent} ${classes.modal}`}>
-            {props.type === "Submit" ? <Submission user={props.user} contest={props.contest} /> : props.type === "Edit" ? <Edit user={props.user} contest={props.contest} /> : <></>}
+            {props.type === "Submit" ? (
+              <Submission user={props.user} contest={props.contest} type={"Submission"} />
+            ) : props.type === "Edit" ? (
+              <Edit user={props.user} contest={props.contest} />
+            ) : props.type === "Modify" ? (
+              <Submission user={props.user} contest={props.contest} submission={props.submission} type={"Modify"} />
+            ) : (
+              <></>
+            )}
           </div>
         </Modal>
       </>
@@ -91,6 +105,19 @@ export default function Contest(props) {
           .then((data) => {
             contest.submissionTotal = data.length;
           });
+
+        if (props.user)
+          await client
+            .service("submissions")
+            .find({
+              query: {
+                contest_id: contest.id,
+                user_id: props.user.id,
+              },
+            })
+            .then((data) => {
+              contest.userSubmission = data[0];
+            });
       }
     };
 
@@ -165,7 +192,11 @@ export default function Contest(props) {
                       <></>
                     )}
                     <Box sx={{ mr: 2 }}>
-                      <IsolatedModal type={"Submit"} user={props.user} contest={data} />
+                      {data.userSubmission ? (
+                        <IsolatedModal type={"Modify"} user={props.user} contest={data} submission={data.userSubmission} />
+                      ) : (
+                        <IsolatedModal type={"Submit"} user={props.user} contest={data} />
+                      )}
                     </Box>
                   </Box>
                 </Box>

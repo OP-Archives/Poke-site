@@ -65,60 +65,74 @@ export default function App() {
       <CssBaseline />
       <BrowserRouter>
         <Switch>
-          <Parent>
-            <Route
-              exact
-              path="/"
-              render={(props) => (
-                <>
-                  <Navbar {...props} />
-                  <Frontpage channel={channel} {...props} />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path="/vods"
-              render={(props) => (
-                <>
-                  <Navbar {...props} />
-                  <Vods {...props} channel={channel} twitchId={twitchId} />
-                </>
-              )}
-            />
-            <Route exact path="/vods/:vodId" render={(props) => <VodPlayer {...props} channel={channel} type={"vod"} twitchId={twitchId} />} />
-            <Route exact path="/live/:vodId" render={(props) => <VodPlayer {...props} channel={channel} type={"live"} twitchId={twitchId} />} />
-            <Route
-              exact
-              path="/contest"
-              render={(props) => (
-                <>
-                  <Navbar {...props} />
-                  <Contest {...props} user={user} />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path="/contest/:contestId/manage"
-              render={(props) => (
-                <>
-                  <Navbar {...props} />
-                  <Manage {...props} user={user} />
-                </>
-              )}
-            />
-            <Route
-              exact
-              path="/contest/:contestId/winners"
-              render={(props) => (
-                <>
-                  <Navbar {...props} />
-                  <Winners {...props} user={user} />
-                </>
-              )}
-            />
-          </Parent>
+          <Route
+            exact
+            path="/"
+            render={(props) => (
+              <Parent>
+                <Navbar {...props} />
+                <Frontpage channel={channel} {...props} />
+              </Parent>
+            )}
+          />
+          <Route
+            exact
+            path="/vods"
+            render={(props) => (
+              <Parent>
+                <Navbar {...props} />
+                <Vods {...props} channel={channel} twitchId={twitchId} />
+              </Parent>
+            )}
+          />
+          <Route
+            exact
+            path="/vods/:vodId"
+            render={(props) => (
+              <Parent>
+                <VodPlayer {...props} channel={channel} type={"vod"} twitchId={twitchId} />
+              </Parent>
+            )}
+          />
+          <Route
+            exact
+            path="/live/:vodId"
+            render={(props) => (
+              <Parent>
+                <VodPlayer {...props} channel={channel} type={"live"} twitchId={twitchId} />
+              </Parent>
+            )}
+          />
+          <Route
+            exact
+            path="/contest"
+            render={(props) => (
+              <Parent>
+                <Navbar {...props} />
+                <Contest {...props} user={user} />
+              </Parent>
+            )}
+          />
+          <Route
+            exact
+            path="/contest/:contestId/manage"
+            render={(props) => (
+              <Parent>
+                <Navbar {...props} />
+                <Manage {...props} user={user} />
+              </Parent>
+            )}
+          />
+          <Route
+            exact
+            path="/contest/:contestId/winners"
+            render={(props) => (
+              <Parent>
+                <Navbar {...props} />
+                <Winners {...props} user={user} />
+              </Parent>
+            )}
+          />
         </Switch>
       </BrowserRouter>
     </ThemeProvider>

@@ -24,6 +24,7 @@ export default function Creation(props) {
   const [startErrorMsg, setStartErrorMsg] = useState(undefined);
   const [endError, setEndError] = useState(false);
   const [endErrorMsg, setEndErrorMsg] = useState(undefined);
+  const { type, submission } = props;
 
   const handleTitleChange = (evt) => {
     setTitle(evt.target.value);
@@ -162,6 +163,32 @@ export default function Creation(props) {
       });
   };
 
+  const handleModify = (evt) => {
+    if (evt) evt.preventDefault();
+    if (!submission) return;
+    let tmpVideo = {
+      id: video.id,
+      link: video.link,
+      start: start !== undefined ? start : null,
+      end: end !== undefined ? end : null,
+    };
+    return client
+      .service("submissions")
+      .patch(submission.id, {
+        video: tmpVideo,
+        comment: comment,
+        title: title,
+      })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch((e) => {
+        console.error(e);
+        setError(true);
+        setErrorMsg(e.message);
+      });
+  };
+
   if (props.user === undefined)
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100%">
@@ -180,7 +207,7 @@ export default function Creation(props) {
         <div style={{ textAlign: "center" }}>
           <img alt="" src={logo} height="auto" width="100%" />
           <Typography variant="h4" className={classes.title}>
-            {`${props.contest.title} Submission`}
+            {`${props.contest.title} ${type === "Modify" ? "Modify Submission" : "Submission"}`}
           </Typography>
           {error ? (
             <Alert style={{ marginTop: "1rem" }} severity="error">
@@ -339,18 +366,33 @@ export default function Creation(props) {
                 onChange={handleCommentChange}
               />
             )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleSubmit}
-              disabled={props.contest.type !== "review" ? title.length === 0 || !video : !video}
-              style={{ color: "#fff" }}
-            >
-              Submit
-            </Button>
+            {type === "Modify" ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={handleModify}
+                disabled={props.contest.type !== "review" ? title.length === 0 || !video : !video}
+                style={{ color: "#fff" }}
+              >
+                Modify
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={handleSubmit}
+                disabled={props.contest.type !== "review" ? title.length === 0 || !video : !video}
+                style={{ color: "#fff" }}
+              >
+                Submit
+              </Button>
+            )}
           </form>
         </div>
       </Box>
