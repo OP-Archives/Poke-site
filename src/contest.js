@@ -106,7 +106,7 @@ export default function Contest(props) {
             contest.submissionTotal = data.length;
           });
 
-        if (props.user)
+        if (props.user && contest.active)
           await client
             .service("submissions")
             .find({
@@ -152,7 +152,7 @@ export default function Contest(props) {
                     ) : (
                       <></>
                     )}
-                    <Button component={Link} href={`/contest/${data.id}/winners`} variant="contained" className={classes.btn}>
+                    <Button component={Link} href={`/contest/${data.id}/winners`} variant="contained">
                       Winners
                     </Button>
                   </Box>
@@ -300,7 +300,7 @@ export default function Contest(props) {
                     <Box display="flex">
                       {props.user.type === "admin" || props.user.type === "mod" ? (
                         <>
-                          <Button variant="contained" className={classes.btn} onClick={handleCreateModalOpen}>
+                          <Button variant="contained" onClick={handleCreateModalOpen}>
                             Create Contest
                           </Button>
                           <Modal open={createModal} onClose={handleCreateModalClose} aria-labelledby="Create Contest" aria-describedby="Create a Contest">
