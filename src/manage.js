@@ -495,7 +495,7 @@ export default function Manage(props) {
                           </Button>
                         </div>
                         <div className={classes.player}>
-                          {contest.type === "song" ? (
+                          {contest.type === "song" && (
                             <Box display="flex" flexDirection="column" width="100%">
                               <iframe
                                 title="Player"
@@ -510,7 +510,9 @@ export default function Manage(props) {
                                 )}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
                               />
                             </Box>
-                          ) : contest.type === "alert" ? (
+                          )}
+
+                          {contest.type === "alert" && (
                             <div
                               style={{
                                 backgroundColor: "black",
@@ -535,11 +537,37 @@ export default function Manage(props) {
                                 onReady={onReady}
                               />
                             </div>
-                          ) : (
+                          )}
+
+                          {contest.type === "clips" && (
+                            <div
+                              style={{
+                                backgroundColor: "black",
+                                height: "500px",
+                                width: "800px",
+                              }}
+                              onClick={handlePlayerClick}
+                            >
+                              {showPlayer && (
+                                <iframe
+                                  title={currentSubmission.video.id}
+                                  src={`https://clips.twitch.tv/embed?clip=${currentSubmission.video.id}&parent=${window.location.hostname}`}
+                                  height="500px"
+                                  width="800px"
+                                  allowFullScreen={true}
+                                  preload="auto"
+                                  frameBorder="0"
+                                />
+                              )}
+                            </div>
+                          )}
+
+                          {contest.type === "review" && (
                             <Box display="flex" flexDirection="column" width="100%">
                               <Tweet tweetId={currentSubmission.video.id} options={{ align: "center" }} />
                             </Box>
                           )}
+
                           <div className={classes.textBox}>
                             <Typography variant="h5" className={classes.text}>
                               {`${currentSubmission.title}`}

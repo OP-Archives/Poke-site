@@ -112,7 +112,7 @@ export default function CustomSeed(props) {
           </SeedItem>
         </SingleSeed>
       )}
-      {seed.teams[0].submission || seed.teams[1].submission ? (
+      {(seed.teams[0].submission || seed.teams[1].submission) && (
         <Modal open={modal} onClose={handleClose}>
           <div className={`${classes.modalContent} ${classes.modal}`}>
             <SimpleBar className={classes.modalParent}>
@@ -125,7 +125,7 @@ export default function CustomSeed(props) {
                     >{`Submission ID: ${seed.teams[0].submission ? seed.teams[0].submission.id : null}`}</Typography>
                   </div>
                   <Box marginTop="1rem">
-                    {contest.type === "song" ? (
+                    {contest.type === "song" && (
                       <Box display="flex" flexDirection="column" width="100%">
                         <iframe
                           title="Player"
@@ -139,7 +139,9 @@ export default function CustomSeed(props) {
                           }&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
                         />
                       </Box>
-                    ) : contest.type === "alert" ? (
+                    )}
+
+                    {contest.type === "alert" && (
                       <Youtube
                         videoId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
                         id="player"
@@ -154,12 +156,24 @@ export default function CustomSeed(props) {
                           },
                         }}
                       />
-                    ) : contest.type === "review" ? (
+                    )}
+
+                    {contest.type === "review" && (
                       <Box display="flex" flexDirection="column" width="100%">
                         <Tweet tweetId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null} options={{ align: "center" }} />
                       </Box>
-                    ) : (
-                      <></>
+                    )}
+
+                    {contest.type === "clips" && (
+                      <iframe
+                        title={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
+                        src={`https://clips.twitch.tv/embed?clip=${seed.teams[0].submission ? seed.teams[0].submission.video.id : null}&parent=${window.location.hostname}`}
+                        height="240px"
+                        width="426px"
+                        allowFullScreen={true}
+                        preload="auto"
+                        frameBorder="0"
+                      />
                     )}
                   </Box>
                   <Box marginTop="1rem" display="flex" justifyContent="center" alignItems="center" flexDirection="column">
@@ -195,7 +209,7 @@ export default function CustomSeed(props) {
                         {`${seed.teams[0].submission ? (seed.teams[0].submission.comment.length === 0 ? "..." : seed.teams[0].submission.comment) : null}`}
                       </Typography>
                     </div>
-                    {!props.public && seed.teams[0].submission ? (
+                    {!props.public && seed.teams[0].submission && (
                       <div style={{ marginTop: "1rem" }}>
                         <Button
                           variant="outlined"
@@ -208,8 +222,6 @@ export default function CustomSeed(props) {
                           Winner
                         </Button>
                       </div>
-                    ) : (
-                      <></>
                     )}
                   </Box>
                 </Box>
@@ -227,7 +239,7 @@ export default function CustomSeed(props) {
                       >{`Submission ID: ${seed.teams[1].submission ? seed.teams[1].submission.id : null}`}</Typography>
                     </div>
                     <Box marginTop="1rem">
-                      {contest.type === "song" ? (
+                      {contest.type === "song" && (
                         <Box display="flex" flexDirection="column" width="100%">
                           <iframe
                             title="Player"
@@ -241,7 +253,9 @@ export default function CustomSeed(props) {
                             }&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
                           />
                         </Box>
-                      ) : contest.type === "alert" ? (
+                      )}
+
+                      {contest.type === "alert" && (
                         <Youtube
                           videoId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
                           id="player"
@@ -256,12 +270,24 @@ export default function CustomSeed(props) {
                             },
                           }}
                         />
-                      ) : contest.type === "review" ? (
+                      )}
+
+                      {contest.type === "review" && (
                         <Box display="flex" flexDirection="column" width="100%">
                           <Tweet tweetId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null} options={{ align: "center" }} />
                         </Box>
-                      ) : (
-                        <></>
+                      )}
+
+                      {contest.type === "clips" && (
+                        <iframe
+                          title={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
+                          src={`https://clips.twitch.tv/embed?clip=${seed.teams[1].submission ? seed.teams[1].submission.video.id : null}&parent=${window.location.hostname}`}
+                          height="240px"
+                          width="426px"
+                          allowFullScreen={true}
+                          preload="auto"
+                          frameBorder="0"
+                        />
                       )}
                     </Box>
                     <Box marginTop="1rem" display="flex" justifyContent="center" alignItems="center" flexDirection="column">
@@ -298,7 +324,7 @@ export default function CustomSeed(props) {
                           {`${seed.teams[1].submission ? (seed.teams[1].submission.comment.length === 0 ? "..." : seed.teams[1].submission.comment) : null}`}
                         </Typography>
                       </div>
-                      {!props.public ? (
+                      {!props.public && (
                         <div style={{ marginTop: "1rem" }}>
                           <Button
                             variant="outlined"
@@ -311,8 +337,6 @@ export default function CustomSeed(props) {
                             Winner
                           </Button>
                         </div>
-                      ) : (
-                        <></>
                       )}
                     </Box>
                   </Box>
@@ -321,8 +345,6 @@ export default function CustomSeed(props) {
             </SimpleBar>
           </div>
         </Modal>
-      ) : (
-        <></>
       )}
     </>
   );

@@ -72,12 +72,10 @@ export default function Creation(props) {
           <Typography variant="h4" className={classes.title}>
             Create
           </Typography>
-          {error ? (
+          {error && (
             <Alert style={{ marginTop: "1rem" }} severity="error">
               {errorMsg}
             </Alert>
-          ) : (
-            <></>
           )}
           <form className={classes.form} noValidate>
             <TextField
@@ -127,6 +125,7 @@ export default function Creation(props) {
                 <MenuItem value="alert">Alert</MenuItem>
                 <MenuItem value="song">Song</MenuItem>
                 <MenuItem value="review">Review</MenuItem>
+                <MenuItem value="clips">Clips</MenuItem>
               </Select>
             </FormControl>
             <Box display="flex">

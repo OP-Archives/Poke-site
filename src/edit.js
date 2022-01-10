@@ -90,12 +90,10 @@ export default function Edit(props) {
           <Typography variant="h4" className={classes.title}>
             {`Edit ${props.contest.title}`}
           </Typography>
-          {error ? (
+          {error && (
             <Alert style={{ marginTop: "1rem" }} severity="error">
               {errorMsg}
             </Alert>
-          ) : (
-            <></>
           )}
           <form className={classes.form} noValidate>
             <TextField
@@ -129,6 +127,7 @@ export default function Edit(props) {
                 <MenuItem value="alert">Alert</MenuItem>
                 <MenuItem value="song">Song</MenuItem>
                 <MenuItem value="review">Review</MenuItem>
+                <MenuItem value="clips">Clips</MenuItem>
               </Select>
             </FormControl>
             <Box display="flex">

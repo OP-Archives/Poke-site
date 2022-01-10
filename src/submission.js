@@ -53,7 +53,10 @@ export default function Creation(props) {
           /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
         : props.contest.type === "review"
         ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:twitter\.com))(\/)(\S+)(\/)(\S+)$/
+        : props.contest.type === "clips"
+        ? /https:\/\/(?:clips|www)\.twitch\.tv\/(?:(?:[a-z]+)\/clip\/)?(\S+)$/
         : null;
+
     if (!regex.test(link)) {
       setLinkError(true);
       setLinkErrorMsg(
@@ -62,7 +65,9 @@ export default function Creation(props) {
           : props.contest.type === "song"
           ? "Soundcloud link is not valid.."
           : props.contest.type === "review"
-          ? "Twitter link is not valid..."
+          ? "Twitter link is not valid.."
+          : props.contest.type === "clips"
+          ? "Twitch clip link is not valid.."
           : "Something is wrong here..."
       );
       setVideo(null);
@@ -71,7 +76,7 @@ export default function Creation(props) {
     if (props.contest.type === "review" && link.indexOf("?") !== -1) link = link.substring(0, link.indexOf("?"));
     const linkSplit = link.split(regex);
     setVideo({
-      id: props.contest.type === "alert" ? linkSplit[5] : props.contest.type === "song" ? linkSplit[7] : props.contest.type === "review" ? linkSplit[7] : null,
+      id: props.contest.type === "alert" ? linkSplit[5] : props.contest.type === "song" ? linkSplit[7] : props.contest.type === "review" ? linkSplit[7] : props.contest.type === "clips" ? linkSplit[1] : null,
       link: link,
     });
   };
@@ -217,7 +222,7 @@ export default function Creation(props) {
             <></>
           )}
           <form className={classes.form} noValidate>
-            {(props.contest.type === "song" || props.contest.type === "alert") && (
+            {(props.contest.type === "song" || props.contest.type === "alert" || props.contest.type === "clips") && (
               <TextField
                 inputProps={{
                   style: {
@@ -241,12 +246,10 @@ export default function Creation(props) {
                 onChange={handleTitleChange}
               />
             )}
-            {linkError ? (
+            {linkError && (
               <Alert style={{ marginTop: "1rem" }} severity="error">
                 {linkErrorMsg}
               </Alert>
-            ) : (
-              <></>
             )}
             <TextField
               inputProps={{
@@ -262,8 +265,18 @@ export default function Creation(props) {
               margin="normal"
               required
               fullWidth
-              label={props.contest.type === "alert" ? "Youtube Link" : props.contest.type === "song" ? "Soundcloud Link" : "Tweet"}
-              name={props.contest.type === "alert" ? "Youtube Link" : props.contest.type === "song" ? "Soundcloud Link" : "Tweet"}
+              label={
+                props.contest.type === "alert"
+                  ? "Youtube Link"
+                  : props.contest.type === "song"
+                  ? "Soundcloud Link"
+                  : props.contest.type === "review"
+                  ? "Tweet"
+                  : props.contest.type === "clips"
+                  ? "Twitch Clip Link"
+                  : ""
+              }
+              name={props.contest.type === "alert" ? "Youtube Link" : props.contest.type === "song" ? "Soundcloud Link" : props.contest.type === "clips" ? "Twitch Clip Link" : ""}
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
@@ -273,12 +286,10 @@ export default function Creation(props) {
               <></>
             ) : (
               <>
-                {startError ? (
+                {startError && (
                   <Alert style={{ marginTop: "1rem" }} severity="error">
                     {startErrorMsg}
                   </Alert>
-                ) : (
-                  <></>
                 )}
                 <TextField
                   inputProps={{
@@ -302,16 +313,12 @@ export default function Creation(props) {
                 />
               </>
             )}
-            {props.contest.type !== "alert" ? (
-              <></>
-            ) : (
+            {props.contest.type === "alert" && (
               <>
-                {endError ? (
+                {endError && (
                   <Alert style={{ marginTop: "1rem" }} severity="error">
                     {endErrorMsg}
                   </Alert>
-                ) : (
-                  <></>
                 )}
                 <TextField
                   inputProps={{
@@ -335,12 +342,10 @@ export default function Creation(props) {
                 />
               </>
             )}
-            {commentError ? (
+            {commentError && (
               <Alert style={{ marginTop: "1rem" }} severity="error">
                 {commentErrorMsg}
               </Alert>
-            ) : (
-              <></>
             )}
             {(props.contest.type === "song" || props.contest.type === "alert") && (
               <TextField
