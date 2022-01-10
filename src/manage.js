@@ -6,12 +6,14 @@ import loadingLogo from "./assets/jammin.gif";
 import logo from "./assets/contestlogo.png";
 import Youtube from "react-youtube";
 import client from "./client";
-import { Redirect } from "react-router-dom";
 import WinnerUI from "./winnerUI";
 import { Tweet } from "react-twitter-widgets";
 import Footer from "./utils/Footer";
+import Redirect from "./utils/Redirect";
+import { useParams } from "react-router-dom";
 
 export default function Manage(props) {
+  const params = useParams();
   const classes = useStyles();
   const isMobile = useMediaQuery("(max-width: 800px)");
   const [player, setPlayer] = useState(undefined);
@@ -27,7 +29,7 @@ export default function Manage(props) {
   const [showPlayer, setShowPlayer] = useState(false);
   const [contest, setContest] = useState(null);
   const [submissionIdInput, setSubmissionIdInput] = useState(null);
-  const contestId = props.match.params.contestId;
+  const contestId = params.contestId;
 
   useEffect(() => {
     document.title = `Contest ${contestId} - Poke`;

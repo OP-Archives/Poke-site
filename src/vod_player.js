@@ -6,6 +6,7 @@ import SimpleBar from "simplebar-react";
 import canAutoPlay from "can-autoplay";
 import Logo from "./assets/jammin.gif";
 import { Resizable } from "re-resizable";
+import { useLocation, useParams } from "react-router-dom";
 
 /**
  * TODO:
@@ -35,7 +36,7 @@ class VodPlayer extends Component {
     this.BASE_BTTV_EMOTE_API = "https://api.betterttv.net/3";
     this.BASE_BTTV_CDN = "https://cdn.betterttv.net";
     this.BASE_7TV_EMOTE_API = "https://api.7tv.app/v2";
-    this.vodId = props.match.params.vodId;
+    this.vodId = props.vodId;
     this.twitchId = props.twitchId;
     this.player = null;
     this.chatRef = React.createRef();
@@ -61,7 +62,7 @@ class VodPlayer extends Component {
   }
 
   async componentDidMount() {
-    document.title = `${this.props.match.params.vodId} Vod - ${this.channel.charAt(0).toUpperCase() + this.channel.slice(1)}`;
+    document.title = `${this.props.vodId} Vod - ${this.channel.charAt(0).toUpperCase() + this.channel.slice(1)}`;
     await this.fetchVodData();
     this.loadBadges();
     this.loadChannelBadges(this.twitchId);
@@ -883,6 +884,12 @@ const useStyles = () => ({
   },
 });
 
+const withRouter = (WrappedComponent) => (props) => {
+  const params = useParams();
+  const location = useLocation();
+  return <WrappedComponent {...props} vodId={params.vodId} location={location} />;
+};
+
 const withMediaQuery =
   (...args) =>
   (Component) =>
@@ -891,4 +898,4 @@ const withMediaQuery =
     return <Component isMobile={mediaQuery} {...props} />;
   };
 
-export default withStyles(useStyles)(withMediaQuery("(max-width: 600px)")(VodPlayer));
+  export default withStyles(useStyles)(withMediaQuery("(max-width: 600px)")(withRouter(VodPlayer)));

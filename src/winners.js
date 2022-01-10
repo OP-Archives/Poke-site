@@ -8,8 +8,10 @@ import client from "./client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
 import Footer from "./utils/Footer";
+import { useParams } from "react-router-dom";
 
 export default function Winners(props) {
+  const params = useParams();
   const classes = useStyles();
   const isMobile = useMediaQuery("(max-width: 800px)");
   const [matches, setMatches] = useState(undefined);
@@ -17,7 +19,7 @@ export default function Winners(props) {
   const [contest, setContest] = useState(undefined);
   const [rounds, setRounds] = useState(null);
   const [bracketLoading, setBracketLoading] = useState(true);
-  const contestId = props.match.params.contestId;
+  const contestId = params.contestId;
 
   useEffect(() => {
     document.title = `Contest ${contestId} - Poke`;

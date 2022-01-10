@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 import { CssBaseline, styled } from "@mui/material";
 import { green } from "@mui/material/colors";
@@ -64,76 +64,76 @@ export default function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <BrowserRouter>
-        <Switch>
+        <Routes>
           <Route
             exact
             path="/"
-            render={(props) => (
+            element={
               <Parent>
-                <Navbar {...props} />
-                <Frontpage channel={channel} {...props} />
+                <Navbar />
+                <Frontpage channel={channel} />
               </Parent>
-            )}
+            }
           />
           <Route
             exact
             path="/vods"
-            render={(props) => (
+            element={
               <Parent>
-                <Navbar {...props} />
-                <Vods {...props} channel={channel} twitchId={twitchId} />
+                <Navbar />
+                <Vods channel={channel} twitchId={twitchId} />
               </Parent>
-            )}
+            }
           />
           <Route
             exact
             path="/vods/:vodId"
-            render={(props) => (
+            element={
               <Parent>
-                <VodPlayer {...props} channel={channel} type={"vod"} twitchId={twitchId} />
+                <VodPlayer channel={channel} type={"vod"} twitchId={twitchId} />
               </Parent>
-            )}
+            }
           />
           <Route
             exact
             path="/live/:vodId"
-            render={(props) => (
+            element={
               <Parent>
-                <VodPlayer {...props} channel={channel} type={"live"} twitchId={twitchId} />
+                <VodPlayer channel={channel} type={"live"} twitchId={twitchId} />
               </Parent>
-            )}
+            }
           />
           <Route
             exact
             path="/contest"
-            render={(props) => (
+            element={
               <Parent>
-                <Navbar {...props} />
-                <Contest {...props} user={user} />
+                <Navbar />
+                <Contest user={user} />
               </Parent>
-            )}
+            }
           />
           <Route
             exact
             path="/contest/:contestId/manage"
-            render={(props) => (
+            element={
               <Parent>
-                <Navbar {...props} />
-                <Manage {...props} user={user} />
+                <Navbar />
+                <Manage user={user} />
               </Parent>
-            )}
+            }
           />
           <Route
             exact
             path="/contest/:contestId/winners"
-            render={(props) => (
+            element={
               <Parent>
-                <Navbar {...props} />
-                <Winners {...props} user={user} />
+                <Navbar />
+                <Winners user={user} />
               </Parent>
-            )}
+            }
           />
-        </Switch>
+        </Routes>
       </BrowserRouter>
     </ThemeProvider>
   );
