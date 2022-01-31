@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Typography, Button, Box, CircularProgress, useMediaQuery, Switch, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
@@ -30,6 +30,8 @@ export default function Manage(props) {
   const [contest, setContest] = useState(null);
   const [submissionIdInput, setSubmissionIdInput] = useState(null);
   const contestId = params.contestId;
+  const idTimeout = useRef(null);
+  const arrayTimeout = useRef(null);
 
   useEffect(() => {
     document.title = `Contest ${contestId} - Poke`;
@@ -335,15 +337,18 @@ export default function Manage(props) {
 
   const handleArrayIndexChange = (evt) => {
     if (isNaN(evt.target.value)) return;
-    const index = evt.target.value - 1;
-    if (!submissions[index]) return;
+    if (arrayTimeout.current) clearTimeout(arrayTimeout.current);
+    arrayTimeout.current = setTimeout(() => {
+      const index = evt.target.value - 1;
+      if (!submissions[index]) return;
 
-    setShowPlayer(false);
-    setCurrentIndex(index);
-    setCurrentSubmission(submissions[index]);
-    if (contest.type === "alert") {
-      cueVideo(submissions[index].video.id, submissions[index].video.start, submissions[index].video.end);
-    }
+      setShowPlayer(false);
+      setCurrentIndex(index);
+      setCurrentSubmission(submissions[index]);
+      if (contest.type === "alert") {
+        cueVideo(submissions[index].video.id, submissions[index].video.start, submissions[index].video.end);
+      }
+    }, 250);
   };
 
   useEffect(() => {
@@ -370,13 +375,20 @@ export default function Manage(props) {
       if (contest.type === "alert") {
         cueVideo(submissions[index].video.id, submissions[index].video.start, submissions[index].video.end);
       }
-    }, 300);
+    }, 250);
 
     return () => clearTimeout(delayDebounceFn);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submissionIdInput]);
 
   const handleFocus = (e) => e.target.select();
+
+  const onIdChange = (e) => {
+    if (idTimeout.current) clearTimeout(idTimeout.current);
+    idTimeout.current = setTimeout(() => {
+      setSubmissionIdInput(e.target.value);
+    }, 250);
+  };
 
   if (props.user === undefined || contestExists === null)
     return (
@@ -450,7 +462,6 @@ export default function Manage(props) {
                             </Typography>
                           </Box>
                           <input
-                            key={currentSubmission.id}
                             type="text"
                             className={`${classes.arrayInput} ${classes.input}`}
                             autoCapitalize="off"
@@ -458,7 +469,7 @@ export default function Manage(props) {
                             autoComplete="off"
                             defaultValue={currentSubmission.id}
                             onFocus={handleFocus}
-                            onChange={(e) => setSubmissionIdInput(e.target.value)}
+                            onChange={onIdChange}
                           />
                         </Box>
                         <Box

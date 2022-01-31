@@ -150,8 +150,8 @@ export default function Creation(props) {
     return client
       .service("submissions")
       .create({
-        contest_id: props.contest.id,
-        user_id: props.user.id,
+        contestId: props.contest.id,
+        userId: props.user.id,
         username: props.user.username,
         display_name: props.user.display_name,
         video: tmpVideo,

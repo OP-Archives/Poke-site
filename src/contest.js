@@ -33,8 +33,8 @@ export default function Contest(props) {
             },
           },
         })
-        .then((data) => {
-          setContests(data.data);
+        .then((res) => {
+          setContests(res.data);
         });
     };
     fetchContests();
@@ -93,64 +93,39 @@ export default function Contest(props) {
   useEffect(() => {
     if (!contests) return;
 
-    const fetchSubmissionLength = async () => {
-      for (let contest of contests) {
-        await client
-          .service("submissions")
-          .find({
-            query: {
-              contest_id: contest.id,
-            },
-          })
-          .then((data) => {
-            contest.submissionTotal = data.length;
-          });
-
-        if (props.user && contest.active)
-          await client
-            .service("submissions")
-            .find({
-              query: {
-                contest_id: contest.id,
-                user_id: props.user.id,
-              },
-            })
-            .then((data) => {
-              contest.userSubmission = data[0];
-            });
+    for (let contest of contests) {
+      if (!props.user) return;
+      for (let submission of contest.submissions) {
+        if (props.user.id === submission.userId) {
+          contest.userSubmission = submission;
+          break;
+        }
       }
-    };
+    }
 
     const transFormContests = async () => {
-      await fetchSubmissionLength();
       const prevContestsData = contests.filter((contest) => !contest.active);
       setPrevContests(
-        prevContestsData.map((data, index) => {
+        prevContestsData.map((data, _) => {
           return (
             <div key={data.id} className={classes.contestContainer}>
               <div className={classes.inner}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Typography variant="h5" className={classes.title}>
-                    {`${data.title} - ${data.submissionTotal} Submissions`}
+                    {`${data.title} - ${data.submissions.length} Submissions`}
                   </Typography>
                   <Box display="flex">
-                    {props.user ? (
-                      props.user.type === "admin" || props.user.type === "mod" ? (
-                        <>
-                          <Box sx={{ mr: 2 }}>
-                            <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" color="error">
-                              Manage
-                            </Button>
-                          </Box>
-                          <Box sx={{ mr: 2 }}>
-                            <IsolatedModal type={"Edit"} user={props.user} contest={data} />
-                          </Box>
-                        </>
-                      ) : (
-                        <></>
-                      )
-                    ) : (
-                      <></>
+                    {props.user && (props.user.type === "admin" || props.user.type === "mod") && (
+                      <>
+                        <Box sx={{ mr: 2 }}>
+                          <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" color="error">
+                            Manage
+                          </Button>
+                        </Box>
+                        <Box sx={{ mr: 2 }}>
+                          <IsolatedModal type={"Edit"} user={props.user} contest={data} />
+                        </Box>
+                      </>
                     )}
                     <Button component={Link} href={`/contest/${data.id}/winners`} variant="contained">
                       Winners
@@ -164,32 +139,26 @@ export default function Contest(props) {
       );
       const ongoingContestData = contests.filter((contest) => contest.active);
       setOngoingContests(
-        ongoingContestData.map((data, index) => {
+        ongoingContestData.map((data, _) => {
           return (
             <div key={data.id} className={classes.ongoingContestContainer}>
               <div className={classes.inner}>
                 <Box display="flex" alignItems="center" justifyContent="space-between">
                   <Typography variant="h5" className={classes.title}>
-                    {`${data.title} - ${data.submissionTotal} Submissions`}
+                    {`${data.title} - ${data.submissions.length} Submissions`}
                   </Typography>
                   <Box display="flex">
-                    {props.user ? (
-                      props.user.type === "admin" || props.user.type === "mod" ? (
-                        <>
-                          <Box sx={{ mr: 2 }}>
-                            <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" color="error">
-                              Manage
-                            </Button>
-                          </Box>
-                          <Box sx={{ mr: 2 }}>
-                            <IsolatedModal type={"Edit"} user={props.user} contest={data} />
-                          </Box>
-                        </>
-                      ) : (
-                        <></>
-                      )
-                    ) : (
-                      <></>
+                    {props.user && (props.user.type === "admin" || props.user.type === "mod") && (
+                      <>
+                        <Box sx={{ mr: 2 }}>
+                          <Button component={Link} href={`/contest/${data.id}/manage`} variant="contained" color="error">
+                            Manage
+                          </Button>
+                        </Box>
+                        <Box sx={{ mr: 2 }}>
+                          <IsolatedModal type={"Edit"} user={props.user} contest={data} />
+                        </Box>
+                      </>
                     )}
                     <Box sx={{ mr: 2 }}>
                       {data.userSubmission ? (
@@ -218,7 +187,7 @@ export default function Contest(props) {
     setCreateModal(false);
   };
 
-  if (props.user === undefined)
+  if (props.user === undefined || contests === undefined)
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100%">
         <div style={{ textAlign: "center" }}>
@@ -298,7 +267,7 @@ export default function Contest(props) {
                     </Button>
                   ) : (
                     <Box display="flex">
-                      {props.user.type === "admin" || props.user.type === "mod" ? (
+                      {(props.user.type === "admin" || props.user.type === "mod") && (
                         <>
                           <Button variant="contained" onClick={handleCreateModalOpen}>
                             Create Contest
@@ -309,8 +278,6 @@ export default function Contest(props) {
                             </div>
                           </Modal>
                         </>
-                      ) : (
-                        <></>
                       )}
                     </Box>
                   )}
@@ -318,25 +285,21 @@ export default function Contest(props) {
               </div>
             </div>
           </div>
-          {ongoingContests.length > 0 ? (
+          {ongoingContests.length > 0 && (
             <>
               <Typography variant="h3" className={classes.title} style={{ marginBottom: "1rem", color: "green" }}>
                 CONTESTS
               </Typography>
               {ongoingContests}
             </>
-          ) : (
-            <></>
           )}
-          {prevContests.length > 0 ? (
+          {prevContests.length > 0 && (
             <>
               <Typography variant="h3" className={classes.title} style={{ marginBottom: "1rem", color: "#ff0000" }}>
                 PREVIOUS CONTESTS
               </Typography>
               {prevContests}
             </>
-          ) : (
-            <></>
           )}
           <Footer />
         </div>
