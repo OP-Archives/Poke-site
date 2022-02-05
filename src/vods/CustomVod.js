@@ -48,7 +48,8 @@ export default function Vod(props) {
 
   useEffect(() => {
     if (!vod) return;
-    setDrive(vod.drive.filter((data) => data.type === "live"));
+    const useType = vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vod";
+    setDrive(vod.drive.filter((data) => data.type === useType));
     setChapter(vod.chapters ? vod.chapters[0] : null);
     return;
   }, [vod, type, location.search]);
