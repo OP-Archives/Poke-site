@@ -1,7 +1,7 @@
 import Youtube from "react-youtube";
 import SimpleBar from "simplebar-react";
 import React, { useState } from "react";
-import client from "./client";
+import client from "../client";
 import { Typography, Button, Box, Modal, Link } from "@mui/material";
 import { Seed, SeedItem, SeedTeam } from "react-brackets";
 import { styled } from "@mui/system";
@@ -125,7 +125,7 @@ export default function CustomSeed(props) {
                     >{`Submission ID: ${seed.teams[0].submission ? seed.teams[0].submission.id : null}`}</Typography>
                   </div>
                   <Box marginTop="1rem">
-                    {contest.type === "song" && (
+                    {contest && contest.type === "song" && (
                       <Box display="flex" flexDirection="column" width="100%">
                         <iframe
                           title="Player"
@@ -141,7 +141,7 @@ export default function CustomSeed(props) {
                       </Box>
                     )}
 
-                    {contest.type === "alert" && (
+                    {contest && contest.type === "alert" && (
                       <Youtube
                         videoId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
                         id="player"
@@ -158,13 +158,13 @@ export default function CustomSeed(props) {
                       />
                     )}
 
-                    {contest.type === "review" && (
+                    {contest && contest.type === "review" && (
                       <Box display="flex" flexDirection="column" width="100%">
                         <Tweet tweetId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null} options={{ align: "center" }} />
                       </Box>
                     )}
 
-                    {contest.type === "clips" && (
+                    {contest && contest.type === "clips" && (
                       <iframe
                         title={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
                         src={`https://clips.twitch.tv/embed?clip=${seed.teams[0].submission ? seed.teams[0].submission.video.id : null}&parent=${window.location.hostname}`}
@@ -239,7 +239,7 @@ export default function CustomSeed(props) {
                       >{`Submission ID: ${seed.teams[1].submission ? seed.teams[1].submission.id : null}`}</Typography>
                     </div>
                     <Box marginTop="1rem">
-                      {contest.type === "song" && (
+                      {contest && contest.type === "song" && (
                         <Box display="flex" flexDirection="column" width="100%">
                           <iframe
                             title="Player"
@@ -255,7 +255,7 @@ export default function CustomSeed(props) {
                         </Box>
                       )}
 
-                      {contest.type === "alert" && (
+                      {contest && contest.type === "alert" && (
                         <Youtube
                           videoId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
                           id="player"
@@ -272,13 +272,13 @@ export default function CustomSeed(props) {
                         />
                       )}
 
-                      {contest.type === "review" && (
+                      {contest && contest.type === "review" && (
                         <Box display="flex" flexDirection="column" width="100%">
                           <Tweet tweetId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null} options={{ align: "center" }} />
                         </Box>
                       )}
 
-                      {contest.type === "clips" && (
+                      {contest && contest.type === "clips" && (
                         <iframe
                           title={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
                           src={`https://clips.twitch.tv/embed?clip=${seed.teams[1].submission ? seed.teams[1].submission.video.id : null}&parent=${window.location.hostname}`}

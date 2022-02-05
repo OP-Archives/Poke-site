@@ -6,7 +6,7 @@ import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
 import merch4 from "./assets/merch/merch4.png";
-import ErrorBoundary from "./ErrorBoundary.js";
+import ErrorBoundary from "./utils/ErrorBoundary";
 import AdSense from "react-adsense";
 import Footer from "./utils/Footer";
 import CustomLink from "./utils/CustomLink";
@@ -31,15 +31,15 @@ const merchImages = [
 ];
 
 export default function Frontpage(props) {
+  const { channel, VODS_API_BASE } = props;
   const classes = useStyles();
   const isMobile = useMediaQuery("(max-width: 800px)");
-  const channel = props.channel;
   const [vodList, setVodList] = React.useState([]);
   const [vods, setVods] = React.useState([]);
 
   useEffect(() => {
     const fetchVods = async () => {
-      await fetch(`https://archive.overpowered.tv/${channel}/vods?$limit=10&$sort[createdAt]=-1`, {
+      await fetch(`${VODS_API_BASE}/vods?$limit=10&$sort[createdAt]=-1`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -47,7 +47,6 @@ export default function Frontpage(props) {
       })
         .then((response) => response.json())
         .then((data) => {
-          //don't display vods without a video link
           setVodList(
             data.data
               .filter((vod) => {
@@ -62,7 +61,7 @@ export default function Frontpage(props) {
     };
     fetchVods();
     return;
-  }, [classes, channel]);
+  }, [classes, channel, VODS_API_BASE]);
 
   useEffect(() => {
     if (!vodList && vodList.length === 0) return;
@@ -151,7 +150,7 @@ export default function Frontpage(props) {
             <Paper sx={{ padding: "1rem" }}>
               <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 2 }}>
                 <CustomLink href="/vods">
-                  <Typography variant="h6">Most Recent Vods</Typography>
+                  <Typography variant="h6">Recent Vods</Typography>
                 </CustomLink>
               </Box>
               <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>{vods}</Box>

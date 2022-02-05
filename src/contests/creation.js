@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Typography, Button, Box, CircularProgress, TextField, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
-import loadingLogo from "./assets/jammin.gif";
-import logo from "./assets/contestlogo.png";
+import loadingLogo from "../assets/jammin.gif";
+import logo from "../assets/contestlogo.png";
 import { Alert } from "@mui/material";
-import client from "./client";
+import client from "../client";
 
 export default function Creation(props) {
   const classes = useStyles();

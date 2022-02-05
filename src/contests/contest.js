@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useMediaQuery, Box, Typography, Button, CircularProgress, Link, Modal } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import logo from "./assets/contestlogo.png";
+import logo from "../assets/contestlogo.png";
 import SimpleBar from "simplebar-react";
-import sip from "./assets/sip.png";
-import loadingLogo from "./assets/jammin.gif";
-import client from "./client";
+import sip from "../assets/sip.png";
+import loadingLogo from "../assets/jammin.gif";
+import client from "../client";
 import Creation from "./creation";
 import Submission from "./submission";
 import Edit from "./edit";
-import ErrorBoundary from "./ErrorBoundary.js";
+import ErrorBoundary from "../utils/ErrorBoundary";
 import AdSense from "react-adsense";
-import Footer from "./utils/Footer";
+import Footer from "../utils/Footer";
 
 export default function Contest(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");

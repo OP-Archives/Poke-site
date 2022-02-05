@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { Typography, Button, Box, CircularProgress, useMediaQuery, Switch, Link } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
-import loadingLogo from "./assets/jammin.gif";
-import logo from "./assets/contestlogo.png";
+import loadingLogo from "../assets/jammin.gif";
+import logo from "../assets/contestlogo.png";
 import Youtube from "react-youtube";
-import client from "./client";
+import client from "../client";
 import WinnerUI from "./winnerUI";
 import { Tweet } from "react-twitter-widgets";
-import Footer from "./utils/Footer";
-import Redirect from "./utils/Redirect";
+import Footer from "../utils/Footer";
+import Redirect from "../utils/Redirect";
 import { useParams } from "react-router-dom";
 
 export default function Manage(props) {

@@ -1,61 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Box, CircularProgress, useMediaQuery } from "@mui/material";
+import { Button, Box, CircularProgress } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import SimpleBar from "simplebar-react";
-import loadingLogo from "./assets/jammin.gif";
-import logo from "./assets/contestlogo.png";
-import client from "./client";
+import client from "../client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
-import Footer from "./utils/Footer";
-import { useParams } from "react-router-dom";
 
 export default function Winners(props) {
-  const params = useParams();
   const classes = useStyles();
-  const isMobile = useMediaQuery("(max-width: 800px)");
   const [matches, setMatches] = useState(undefined);
-  const [submissions, setSubmissions] = useState(undefined);
-  const [contest, setContest] = useState(undefined);
   const [rounds, setRounds] = useState(null);
   const [bracketLoading, setBracketLoading] = useState(true);
-  const contestId = params.contestId;
+  const submissions = props.submissions;
+  const contest = props.contest;
 
   useEffect(() => {
-    document.title = `Contest ${contestId} - Poke`;
-    const fetchSubmissions = async () => {
-      await client
-        .service("submissions")
-        .find({
-          query: {
-            contest_id: contestId,
-          },
-        })
-        .then((data) => {
-          const filteredSubmissions = data.filter((submission) => submission.winner);
-          setSubmissions(filteredSubmissions);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    };
-    const fetchContest = async () => {
-      await client
-        .service("contests")
-        .get(contestId)
-        .then((data) => {
-          setContest(data);
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    };
     const fetchMatches = async () => {
       await client
         .service("matches")
         .find({
           query: {
-            contest_id: contestId,
+            contest_id: contest.id,
             $sort: {
               id: 1,
             },
@@ -68,14 +32,60 @@ export default function Winners(props) {
           setMatches(undefined);
         });
     };
-    fetchContest();
     fetchMatches();
-    fetchSubmissions();
     return;
-  }, [contestId]);
+  }, [contest.id]);
+
+  const createMatches = async (evt) => {
+    if (!matches) return;
+    setBracketLoading(true);
+    const { accessToken } = await client.get("authentication");
+
+    if (matches.length !== 0) {
+      const confirmDialog = window.confirm("This will recreate the bracket. Are you sure?");
+      if (!confirmDialog) return setBracketLoading(false);
+      for (let match of matches) {
+        await client
+          .service("matches")
+          .remove(match.id)
+          .catch((e) => {
+            console.error(e);
+          });
+      }
+    }
+
+    const sendSubmissions = [];
+    for (let submission of submissions) {
+      sendSubmissions.push({
+        misc: submission.user_id,
+        name: submission.display_name,
+      });
+    }
+
+    await fetch(`https://api.poke.gg/v1/challonge`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        contest_id: contest.id,
+        name: contest.title,
+        participants: sendSubmissions,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) return;
+        setMatches(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   useEffect(() => {
-    if (!matches || !submissions) return;
+    if (!matches) return;
 
     const getSubmission = (id) => {
       let data;
@@ -140,90 +150,28 @@ export default function Winners(props) {
 
   if (!matches || !rounds) return null;
 
-  if (props.user === undefined)
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-        <div style={{ textAlign: "center" }}>
-          <div>
-            <img alt="" src={loadingLogo} height="auto" width="75%" />
-          </div>
-          <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
-        </div>
-      </Box>
-    );
-
-  if (!matches || !rounds) return null;
-
   return (
-    <SimpleBar className={classes.parent}>
-      <div className={isMobile ? classes.mobileContainer : classes.container}>
-        <div className={classes.box}>
-          <div className={classes.inner}>
-            <Box display="block" textAlign="center">
-              <img src={logo} className={classes.banner} alt="" />
-              <Box marginTop="3rem">
-                <Box marginTop="3rem">
-                  {bracketLoading ? (
-                    <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
-                  ) : (
-                    <Bracket
-                      rounds={rounds}
-                      renderSeedComponent={(props) => {
-                        return <CustomSeed {...props} public={true} classes={classes} contest={contest} matches={matches} setMatches={setMatches} />;
-                      }}
-                    />
-                  )}
-                </Box>
-              </Box>
-              <Footer />
-            </Box>
-          </div>
-        </div>
-      </div>
-    </SimpleBar>
+    <Box marginTop="3rem">
+      <Button variant="outlined" onClick={createMatches} className={classes.button}>
+        Create Bracket
+      </Button>
+      <Box marginTop="3rem">
+        {bracketLoading ? (
+          <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
+        ) : (
+          <Bracket
+            rounds={rounds}
+            renderSeedComponent={(props) => {
+              return <CustomSeed {...props} classes={classes} contest={contest} matches={matches} setMatches={setMatches} />;
+            }}
+          />
+        )}
+      </Box>
+    </Box>
   );
 }
 
 const useStyles = makeStyles(() => ({
-  parent: {
-    height: "calc(100% - 5rem)",
-  },
-  banner: {
-    maxHeight: "300px",
-  },
-  container: {
-    paddingRight: "25rem",
-    paddingLeft: "25rem",
-    marginTop: "2rem",
-  },
-  mobileContainer: {
-    paddingRight: "1rem",
-    paddingLeft: "1rem",
-  },
-  box: {
-    backgroundColor: "#1d1d1d",
-    borderLeft: "1px solid hsla(0,0%,100%,.1)",
-    borderRight: "1px solid hsla(0,0%,100%,.1)",
-    borderTop: "1px solid hsla(0,0%,100%,.1)",
-    borderBottom: "1px solid hsla(0,0%,100%,.1)",
-    borderBottomRightRadius: "4px",
-    borderBottomLeftRadius: "4px",
-    borderTopLeftRadius: "4px",
-    borderTopRightRadius: "4px",
-    marginBottom: "3rem",
-    paddingBottom: "1.5rem",
-  },
-  inner: {
-    padding: "1rem",
-    flexGrow: 1,
-    position: "relative",
-  },
-  title: {
-    color: "rgb(255, 255, 255)",
-    fontFamily: "Anton",
-    textTransform: "uppercase",
-    fontWeight: "550",
-  },
   button: {
     color: "#fff",
     backgroundColor: "#008230",
