@@ -152,6 +152,7 @@ export default function Chat(props) {
     if (!playerRef.current) return 0;
     let time = 0;
     for (let video of props.youtube) {
+      if (!video.part) break;
       if (video.part >= props.part.part) break;
       time += video.duration;
     }

@@ -41,6 +41,8 @@ export default function YoutubePlayer(props) {
       if (!result) playerRef.current.mute();
     });
 
+    if (!youtube[0].part) return playerRef.current.loadVideoById(youtube[0].id, part.duration);
+
     const index = youtube.findIndex((data) => data.part === part.part);
     if (index !== -1) playerRef.current.loadVideoById(youtube[index].id, part.duration);
   };

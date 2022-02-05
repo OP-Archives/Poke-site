@@ -101,7 +101,7 @@ export default function App() {
             path="/vods/:vodId"
             element={
               <Parent>
-                <YoutubeVod channel={channel} twitchId={twitchId} type="live" VODS_API_BASE={VODS_API_BASE} />
+                <YoutubeVod channel={channel} twitchId={twitchId} type="vod" VODS_API_BASE={VODS_API_BASE} />
               </Parent>
             }
           />
@@ -119,7 +119,7 @@ export default function App() {
             path="/youtube/:vodId"
             element={
               <Parent>
-                <YoutubeVod channel={channel} twitchId={twitchId} type="live" VODS_API_BASE={VODS_API_BASE} />
+                <YoutubeVod channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />
               </Parent>
             }
           />

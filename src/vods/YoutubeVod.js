@@ -49,8 +49,14 @@ export default function Vod(props) {
 
   useEffect(() => {
     if (!vod) return;
-    setYoutube(vod.youtube.filter((data) => data.type === type));
-    setDrive(vod.drive.filter((data) => data.type === type));
+    if (!type) {
+      const useType = vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vod";
+      setYoutube(vod.youtube.filter((data) => data.type === useType));
+      setDrive(vod.drive.filter((data) => data.type === useType));
+    } else {
+      setYoutube(vod.youtube.filter((data) => data.type === type));
+      setDrive(vod.drive.filter((data) => data.type === type));
+    }
     const search = new URLSearchParams(location.search);
     let duration = search.get("duration") !== null ? parseInt(search.get("duration")) : 0;
     let tmpPart = search.get("part") !== null ? parseInt(search.get("part")) : 1;
@@ -152,7 +158,19 @@ export default function Vod(props) {
           </Collapse>
         </Box>
         {isMobile && <Divider />}
-        <Chat isMobile={isMobile} vodId={vodId} playerRef={playerRef} playing={playing} delay={delay} youtube={youtube} part={part} setPart={setPart} twitchId={twitchId} channel={channel} VODS_API_BASE={VODS_API_BASE} />
+        <Chat
+          isMobile={isMobile}
+          vodId={vodId}
+          playerRef={playerRef}
+          playing={playing}
+          delay={delay}
+          youtube={youtube}
+          part={part}
+          setPart={setPart}
+          twitchId={twitchId}
+          channel={channel}
+          VODS_API_BASE={VODS_API_BASE}
+        />
       </Box>
     </Box>
   );
