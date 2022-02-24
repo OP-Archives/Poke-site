@@ -138,7 +138,7 @@ export default function Vod(props) {
                     {youtube.map((data, i) => {
                       return (
                         <MenuItem key={data.id} value={i}>
-                          {data.part}
+                          {data.part || i+1}
                         </MenuItem>
                       );
                     })}
