@@ -523,7 +523,7 @@ export default function Manage(props) {
                             </Box>
                           )}
 
-                          {contest.type === "alert" && currentSubmission.video.source === "youtube" && (
+                          {contest.type === "alert" && (currentSubmission.video.source === "youtube" || !currentSubmission.video.source) && (
                             <div
                               style={{
                                 backgroundColor: "black",
