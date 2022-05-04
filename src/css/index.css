@@ -37,3 +37,8 @@ a:hover {
 *:focus {
   outline: none;
 }
+
+.tiktok-iframe {
+  border: 0;
+  display: block;
+}

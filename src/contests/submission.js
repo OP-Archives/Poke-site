@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Typography, Button, Box, CircularProgress, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Typography, Button, Box, CircularProgress, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SimpleBar from "simplebar-react";
 import loadingLogo from "../assets/jammin.gif";
@@ -24,6 +24,8 @@ export default function Creation(props) {
   const [startErrorMsg, setStartErrorMsg] = useState(undefined);
   const [endError, setEndError] = useState(false);
   const [endErrorMsg, setEndErrorMsg] = useState(undefined);
+  const [source, setSource] = useState(1);
+  const [link, setLink] = useState("");
   const { type, submission } = props;
 
   const handleTitleChange = (evt) => {
@@ -42,44 +44,67 @@ export default function Creation(props) {
   };
 
   const handleLinkChange = (evt) => {
+    setLink(evt.target.value);
+  };
+
+  useEffect(() => {
+    if(link.length === 0) return;
     setLinkError(false);
-    let link = evt.target.value;
     const regex =
-      props.contest.type === "alert"
+      props.contest.type === "alert" && source === 1
         ? //eslint-disable-next-line
           /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/
-        : props.contest.type === "song"
+        : props.contest.type === "alert" && source === 2
+        ? /tiktok\.com(.*)\/video\/(\d+)/
+        : props.contest.type === "song" && source === 1
         ? //eslint-disable-next-line
           /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
-        : props.contest.type === "review"
+        : props.contest.type === "review" && source === 1
         ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:twitter\.com))(\/)(\S+)(\/)(\S+)$/
-        : props.contest.type === "clips"
+        : props.contest.type === "clips" && source === 1
         ? /https:\/\/(?:clips|www)\.twitch\.tv\/(?:(?:[a-z]+)\/clip\/)?(\S+)$/
         : null;
 
     if (!regex.test(link)) {
       setLinkError(true);
-      setLinkErrorMsg(
-        props.contest.type === "alert"
-          ? "Youtube link is not valid.."
-          : props.contest.type === "song"
-          ? "Soundcloud link is not valid.."
-          : props.contest.type === "review"
-          ? "Twitter link is not valid.."
-          : props.contest.type === "clips"
-          ? "Twitch clip link is not valid.."
-          : "Something is wrong here..."
-      );
+      setLinkErrorMsg("Link is not valid!");
       setVideo(null);
       return;
     }
-    if (props.contest.type === "review" && link.indexOf("?") !== -1) link = link.substring(0, link.indexOf("?"));
-    const linkSplit = link.split(regex);
+
+    let newLink = link.valueOf();
+
+    if (props.contest.type === "review" && link.indexOf("?") !== -1) newLink = link.substring(0, link.indexOf("?"));
+    const linkSplit = newLink.split(regex);
+    console.log(linkSplit);
     setVideo({
-      id: props.contest.type === "alert" ? linkSplit[5] : props.contest.type === "song" ? linkSplit[7] : props.contest.type === "review" ? linkSplit[7] : props.contest.type === "clips" ? linkSplit[1] : null,
+      id:
+        props.contest.type === "alert" && source === 1
+          ? linkSplit[5]
+          : props.contest.type === "alert" && source === 2
+          ? linkSplit[2]
+          : props.contest.type === "song" && source === 1
+          ? linkSplit[7]
+          : props.contest.type === "review" && source === 1
+          ? linkSplit[7]
+          : props.contest.type === "clips" && source === 1
+          ? linkSplit[1]
+          : null,
       link: link,
+      source:
+        props.contest.type === "alert" && source === 1
+          ? "youtube"
+          : props.contest.type === "alert" && source === 2
+          ? "tiktok"
+          : props.contest.type === "song" && source === 1
+          ? "soundcloud"
+          : props.contest.type === "review" && source === 1
+          ? "twitter"
+          : props.contest.type === "clips" && source === 1
+          ? "twitch"
+          : null,
     });
-  };
+  }, [link, props.contest.type, source]);
 
   const startChange = (evt) => {
     setStartError(false);
@@ -144,6 +169,7 @@ export default function Creation(props) {
     let tmpVideo = {
       id: video.id,
       link: video.link,
+      source: video.source,
       start: start !== undefined ? start : null,
       end: end !== undefined ? end : null,
     };
@@ -174,6 +200,7 @@ export default function Creation(props) {
     let tmpVideo = {
       id: video.id,
       link: video.link,
+      source: video.source,
       start: start !== undefined ? start : null,
       end: end !== undefined ? end : null,
     };
@@ -192,6 +219,10 @@ export default function Creation(props) {
         setError(true);
         setErrorMsg(e.message);
       });
+  };
+
+  const handleSource = (event) => {
+    setSource(event.target.value);
   };
 
   if (props.user === undefined)
@@ -214,12 +245,10 @@ export default function Creation(props) {
           <Typography variant="h4" className={classes.title}>
             {`${props.contest.title} ${type === "Modify" ? "Modify Submission" : "Submission"}`}
           </Typography>
-          {error ? (
+          {error && (
             <Alert style={{ marginTop: "1rem" }} severity="error">
               {errorMsg}
             </Alert>
-          ) : (
-            <></>
           )}
           <form className={classes.form} noValidate>
             {(props.contest.type === "song" || props.contest.type === "alert" || props.contest.type === "clips") && (
@@ -251,6 +280,39 @@ export default function Creation(props) {
                 {linkErrorMsg}
               </Alert>
             )}
+            {props.contest.type === "alert" && (
+              <FormControl fullWidth>
+                <InputLabel id="source-label">Source</InputLabel>
+                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                  <MenuItem value={1}>Youtube</MenuItem>
+                  <MenuItem value={2}>Tiktok</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+            {props.contest.type === "song" && (
+              <FormControl fullWidth>
+                <InputLabel id="source-label">Source</InputLabel>
+                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                  <MenuItem value={1}>Soundcloud</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+            {props.contest.type === "review" && (
+              <FormControl fullWidth>
+                <InputLabel id="source-label">Source</InputLabel>
+                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                  <MenuItem value={1}>Twitter</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+            {props.contest.type === "clips" && (
+              <FormControl fullWidth>
+                <InputLabel id="source-label">Source</InputLabel>
+                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                  <MenuItem value={1}>Twitch</MenuItem>
+                </Select>
+              </FormControl>
+            )}
             <TextField
               inputProps={{
                 style: {
@@ -265,26 +327,14 @@ export default function Creation(props) {
               margin="normal"
               required
               fullWidth
-              label={
-                props.contest.type === "alert"
-                  ? "Youtube Link"
-                  : props.contest.type === "song"
-                  ? "Soundcloud Link"
-                  : props.contest.type === "review"
-                  ? "Tweet"
-                  : props.contest.type === "clips"
-                  ? "Twitch Clip Link"
-                  : ""
-              }
-              name={props.contest.type === "alert" ? "Youtube Link" : props.contest.type === "song" ? "Soundcloud Link" : props.contest.type === "clips" ? "Twitch Clip Link" : ""}
+              label={"Link"}
+              name={"Link"}
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
               onChange={handleLinkChange}
             />
-            {props.contest.type !== "alert" ? (
-              <></>
-            ) : (
+            {props.contest.type === "alert" && source === 1 && (
               <>
                 {startError && (
                   <Alert style={{ marginTop: "1rem" }} severity="error">
@@ -313,7 +363,7 @@ export default function Creation(props) {
                 />
               </>
             )}
-            {props.contest.type === "alert" && (
+            {props.contest.type === "alert" && source === 1 && (
               <>
                 {endError && (
                   <Alert style={{ marginTop: "1rem" }} severity="error">

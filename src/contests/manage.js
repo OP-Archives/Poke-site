@@ -523,7 +523,7 @@ export default function Manage(props) {
                             </Box>
                           )}
 
-                          {contest.type === "alert" && (
+                          {contest.type === "alert" && currentSubmission.video.source === "youtube" && (
                             <div
                               style={{
                                 backgroundColor: "black",
@@ -546,6 +546,32 @@ export default function Manage(props) {
                                   },
                                 }}
                                 onReady={onReady}
+                              />
+                            </div>
+                          )}
+
+                          {contest.type === "alert" && currentSubmission.video.source === "tiktok" && (
+                            <div
+                              className="tiktok-container"
+                              style={{
+                                backgroundColor: "black",
+                                height: "500px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+                              }}
+                              onClick={handlePlayerClick}
+                            >
+                              <iframe
+                                className={showPlayer ? "tiktok-iframe" : classes.hidden}
+                                title="Player"
+                                width="300px"
+                                height="500px"
+                                scrolling="no"
+                                frameBorder="no"
+                                allowFullScreen
+                                src={`https://tiktok.com/embed/${currentSubmission.video.id}`}
                               />
                             </div>
                           )}
