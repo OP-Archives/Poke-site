@@ -263,7 +263,7 @@ export default function Manage(props) {
     if (confirmDialog) {
       await client
         .service("users")
-        .patch(currentSubmission.user_id, {
+        .patch(currentSubmission.userId, {
           banned: true,
         })
         .then(() => {})

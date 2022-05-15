@@ -57,7 +57,7 @@ export default function Winners(props) {
     const sendSubmissions = [];
     for (let submission of submissions) {
       sendSubmissions.push({
-        misc: submission.user_id,
+        misc: submission.userId,
         name: submission.display_name,
       });
     }
@@ -90,7 +90,7 @@ export default function Winners(props) {
     const getSubmission = (id) => {
       let data;
       for (let submission of submissions) {
-        if (parseInt(submission.id) === id || parseInt(submission.user_id) === id) {
+        if (parseInt(submission.id) === id || parseInt(submission.userId) === id) {
           data = submission;
           break;
         }

@@ -60,10 +60,10 @@ export default function CustomSeed(props) {
         nextMatch.id,
         isTeamA
           ? {
-              team_a_id: winner.user_id,
+              team_a_id: winner.userId,
             }
           : {
-              team_b_id: winner.user_id,
+              team_b_id: winner.userId,
             }
       )
       .then((data) => {
