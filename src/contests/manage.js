@@ -73,7 +73,7 @@ export default function Manage(props) {
   };
 
   const cueVideo = (id, start, end, argPlayer = false) => {
-    if (!player) {
+    if (argPlayer) {
       if (start !== null && end !== null)
         return argPlayer.cueVideoById({
           videoId: id,

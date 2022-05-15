@@ -53,7 +53,7 @@ export default function Creation(props) {
     const regex =
       props.contest.type === "alert" && source === 1
         ? //eslint-disable-next-line
-          /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/)?)([\w\-]+)(\S+)?$/
+          /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/|clip\/)?)([\w\-]+)(\S+)?$/
         : props.contest.type === "alert" && source === 2
         ? /tiktok\.com(.*)\/video\/(\d+)/
         : props.contest.type === "song" && source === 1
@@ -76,7 +76,6 @@ export default function Creation(props) {
 
     if (props.contest.type === "review" && link.indexOf("?") !== -1) newLink = link.substring(0, link.indexOf("?"));
     const linkSplit = newLink.split(regex);
-    console.log(linkSplit);
     setVideo({
       id:
         props.contest.type === "alert" && source === 1
