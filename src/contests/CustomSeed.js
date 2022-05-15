@@ -82,6 +82,8 @@ export default function CustomSeed(props) {
     handleClose();
   };
 
+  console.log(seed);
+
   return (
     <>
       {seed.useOldVersion ? (
@@ -141,7 +143,7 @@ export default function CustomSeed(props) {
                       </Box>
                     )}
 
-                    {contest && contest.type === "alert" && (
+                    {contest && contest.type === "alert" && seed.teams[0].submission && (seed.teams[0].submission.video.source === "youtube" || !seed.teams[0].submission.video.source) && (
                       <Youtube
                         videoId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
                         id="player"
@@ -156,6 +158,30 @@ export default function CustomSeed(props) {
                           },
                         }}
                       />
+                    )}
+
+                    {contest && contest.type === "alert" && seed.teams[0].submission && seed.teams[0].submission.video.source === "tiktok" && (
+                      <div
+                        className="tiktok-container"
+                        style={{
+                          height: "500px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "100%",
+                        }}
+                      >
+                        <iframe
+                          className="tiktok-iframe"
+                          title="Player"
+                          width="300px"
+                          height="500px"
+                          scrolling="no"
+                          frameBorder="no"
+                          allowFullScreen
+                          src={`https://tiktok.com/embed/${seed.teams[0].submission.video.id}`}
+                        />
+                      </div>
                     )}
 
                     {contest && contest.type === "review" && (
@@ -255,7 +281,7 @@ export default function CustomSeed(props) {
                         </Box>
                       )}
 
-                      {contest && contest.type === "alert" && (
+                      {contest && contest.type === "alert" && seed.teams[1].submission && (seed.teams[1].submission.video.source === "youtube" || !seed.teams[1].submission.video.source) && (
                         <Youtube
                           videoId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
                           id="player"
@@ -270,6 +296,30 @@ export default function CustomSeed(props) {
                             },
                           }}
                         />
+                      )}
+
+                      {contest && contest.type === "alert" && seed.teams[1].submission && seed.teams[1].submission.video.source === "tiktok" && (
+                        <div
+                          className="tiktok-container"
+                          style={{
+                            height: "500px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <iframe
+                            className="tiktok-iframe"
+                            title="Player"
+                            width="300px"
+                            height="500px"
+                            scrolling="no"
+                            frameBorder="no"
+                            allowFullScreen
+                            src={`https://tiktok.com/embed/${seed.teams[1].submission.video.id}`}
+                          />
+                        </div>
                       )}
 
                       {contest && contest.type === "review" && (
