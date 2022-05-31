@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import SimpleBar from "simplebar-react";
-import { Box, Typography, useMediaQuery, Link, Paper } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, Typography, useMediaQuery, Paper, Grid } from "@mui/material";
 import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
@@ -10,31 +9,30 @@ import ErrorBoundary from "./utils/ErrorBoundary";
 import AdSense from "react-adsense";
 import Footer from "./utils/Footer";
 import CustomLink from "./utils/CustomLink";
+import Vod from "./vods/Vod";
 
 const merchImages = [
   {
     image: merch1,
-    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-smoke-black-tee",
+    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-smoke-black-tee",
   },
   {
     image: merch2,
-    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-black-tee",
+    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-kisses-black-tee",
   },
   {
     image: merch3,
-    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-white-tee",
+    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-kisses-white-tee",
   },
   {
     image: merch4,
-    link: "https://metathreads.com/collections/pokelawls/products/pokelawls-kisses-black-hoodie",
+    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-kisses-black-hoodie",
   },
 ];
 
 export default function Frontpage(props) {
   const { channel, VODS_API_BASE } = props;
-  const classes = useStyles();
   const isMobile = useMediaQuery("(max-width: 800px)");
-  const [vodList, setVodList] = React.useState([]);
   const [vods, setVods] = React.useState([]);
 
   useEffect(() => {
@@ -46,9 +44,9 @@ export default function Frontpage(props) {
         },
       })
         .then((response) => response.json())
-        .then((data) => {
-          setVodList(
-            data.data
+        .then((response) => {
+          setVods(
+            response.data
               .filter((vod) => {
                 return vod.youtube.length !== 0;
               })
@@ -61,125 +59,76 @@ export default function Frontpage(props) {
     };
     fetchVods();
     return;
-  }, [classes, channel, VODS_API_BASE]);
+  }, [channel, VODS_API_BASE]);
 
-  useEffect(() => {
-    if (!vodList && vodList.length === 0) return;
-    const changedVodList = isMobile ? vodList.slice(0, 2) : vodList.slice(0, 3);
-    setVods(
-      changedVodList.map((vod, i) => {
-        return (
-          <div key={vod.id} style={{ width: isMobile ? "10rem" : "18rem", maxWidth: isMobile ? "100%" : "30%" }} className={classes.paper}>
-            <div className={classes.lower}>
-              <div style={{ display: "flex", flexWrap: "nowrap" }}>
-                <div
-                  style={{
-                    flexGrow: 1,
-                    flexShrink: 1,
-                    width: "100%",
-                    order: 2,
-                    minWidth: 0,
-                  }}
-                >
-                  <div style={{ marginBottom: "0.1rem" }}>
-                    <CustomLink className={classes.title2} href={`/${vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vods"}/${vod.id}`} variant="caption" color="textSecondary">
-                      {vod.title}
-                    </CustomLink>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className={classes.imageBox}>
-              <Link href={`/${vod.youtube.some((youtube) => youtube.type === "live") ? "live" : "vods"}/${vod.id}`}>
-                <img alt="" src={vod.thumbnail_url} className={classes.image2} />
-              </Link>
-              <div className={classes.corners}>
-                <div className={classes.bottomLeft}>
-                  <Typography variant="caption">{`${vod.date}`}</Typography>
-                </div>
-              </div>
-              <div className={classes.corners}>
-                <div className={classes.bottomRight}>
-                  <Typography variant="caption">{`${vod.duration}`}</Typography>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })
-    );
-    return;
-  }, [vodList, classes, isMobile]);
+  if (vods.length === 0) return <></>;
+
+  const vodsToUse = isMobile ? vods.slice(0, 2) : vods.slice(0, 3);
 
   return (
-    <Box className={classes.root}>
-      <SimpleBar style={{ height: "100%" }}>
-        <div id="top-ad-banner" className={classes.topAdBanner}>
-          <ErrorBoundary>
-            {isMobile ? (
-              <AdSense.Google
-                key="top-ad"
-                client="ca-pub-8093490837210586"
-                slot="3667265818"
-                style={{
-                  border: "0px",
-                  verticalAlign: "bottom",
-                  width: "300px",
-                  height: "100px",
-                }}
-                format=""
-              />
-            ) : (
-              <AdSense.Google
-                key="top-ad"
-                client="ca-pub-8093490837210586"
-                slot="3667265818"
-                style={{
-                  border: "0px",
-                  verticalAlign: "bottom",
-                  width: "728px",
-                  height: "90px",
-                }}
-                format=""
-              />
-            )}
-          </ErrorBoundary>
-        </div>
-        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: 6 }}>
+    <SimpleBar style={{ minHeight: 0 }}>
+      <Box sx={{ display: "flex", mt: 1, justifyContent: "center" }}>
+        <ErrorBoundary>
+          <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
+        </ErrorBoundary>
+      </Box>
+      <Box sx={{ p: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
-            <Paper sx={{ padding: "1rem" }}>
+            <Paper sx={{ p: 1, width: "100%" }}>
               <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 2 }}>
                 <CustomLink href="/vods">
-                  <Typography variant="h6">Recent Vods</Typography>
+                  <Typography variant="h6" color="primary">
+                    Recent Vods
+                  </Typography>
                 </CustomLink>
               </Box>
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>{vods}</Box>
+              <Grid container spacing={2} sx={{ mt: 1, justifyContent: "center" }}>
+                {vodsToUse.map((vod, i) => (
+                  <Vod key={vod.id} gridSize={4} vod={vod} isMobile={isMobile} />
+                ))}
+              </Grid>
             </Paper>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: 6 }}>
+      </Box>
+      <Box sx={{ p: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
-            <Paper sx={{ padding: "1rem" }}>
+            <Paper sx={{ p: 1 }}>
               <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 1 }}>
-                <CustomLink href="https://metathreads.com/collections/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <Typography variant="h6">Merch</Typography>
+                <CustomLink href="https://dotexe.com/collections/pokelawls" target="_blank" rel="noopener noreferrer">
+                  <Typography variant="h6" color="primary">
+                    Merch
+                  </Typography>
                 </CustomLink>
               </Box>
               <Box display="flex" flexWrap="nowrap">
                 {merchImages.map((item, index) => {
                   return (
-                    <div key={index} className={classes.hover}>
+                    <Box
+                      key={index}
+                      sx={{
+                        overflow: "hidden",
+                        position: "relative",
+                        "&:hover": {
+                          boxShadow: "0 0 8px #fff",
+                        },
+                      }}
+                    >
                       <a href={item.link} target="_blank" rel="noreferrer noopener">
-                        <img alt="" key={index} src={item.image} className={classes.image} />
+                        <img alt="" key={index} src={item.image} height="100%" width="100%" />
                       </a>
-                    </div>
+                    </Box>
                   );
                 })}
               </Box>
             </Paper>
           </Box>
         </Box>
-        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: 6 }}>
+      </Box>
+      <Box sx={{ p: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
             <iframe
               title="Player"
@@ -192,93 +141,8 @@ export default function Frontpage(props) {
             />
           </Box>
         </Box>
-        <Footer />
-      </SimpleBar>
-    </Box>
+      </Box>
+      <Footer />
+    </SimpleBar>
   );
 }
-
-const useStyles = makeStyles({
-  root: {
-    display: "flex",
-    height: "calc(100% - 5rem)",
-    overflow: "hidden",
-    width: "100%",
-    flexDirection: "column",
-    flexGrow: 1,
-  },
-  image: {
-    marginRight: "2rem",
-    marginTop: "2rem",
-    maxWidth: "100%",
-    maxHeight: "100%",
-  },
-  hover: {
-    "&:hover": {
-      boxShadow: "0 0 8px #43a047ff",
-    },
-  },
-  paper: {
-    flex: "0 0 auto",
-    padding: "0 .5rem",
-    display: "flex",
-    flexDirection: "column",
-  },
-  title2: {
-    color: "#fff",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    display: "block",
-  },
-  imageBox: {
-    overflow: "hidden",
-    height: 0,
-    paddingTop: "56.25%",
-    position: "relative",
-    order: 1,
-    "&:hover": {
-      boxShadow: "0 0 8px #43a047ff",
-    },
-  },
-  image2: {
-    verticalAlign: "top",
-    maxWidth: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-  },
-  lower: {
-    order: 2,
-    marginTop: "1rem",
-    marginBottom: "1rem",
-  },
-  corners: {
-    pointerEvents: "none",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-  },
-  bottomLeft: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    marginLeft: "5px",
-  },
-  bottomRight: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    marginRight: "5px",
-  },
-  topAdBanner: {
-    textAlign: "center",
-    marginBottom: "0px",
-    marginTop: "30px",
-    border: "0pt none",
-  },
-});

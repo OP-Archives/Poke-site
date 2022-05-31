@@ -3,32 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@feathersjs/client": "^4.5.12",
-    "@mui/icons-material": "^5.2.5",
-    "@mui/material": "^5.2.7",
-    "@mui/styled-engine-sc": "^5.1.0",
-    "@mui/styles": "^5.2.3",
-    "@rehooks/component-size": "^1.0.3",
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
-    "@testing-library/user-event": "^13.5.0",
+    "@feathersjs/client": "^4.5.15",
+    "@mui/icons-material": "^5.8.0",
+    "@mui/material": "^5.8.1",
+    "@mui/styled-engine-sc": "^5.8.0",
     "can-autoplay": "^3.0.2",
-    "humanize-duration": "^3.27.1",
-    "re-resizable": "^6.9.1",
-    "react": "^17.0.2",
+    "humanize-duration": "^3.27.2",
+    "react": "^18.1.0",
     "react-adsense": "^0.1.0",
     "react-brackets": "^0.4.6",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^6.2.1",
-    "react-scripts": "5.0.0",
+    "react-dom": "^18.1.0",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "5.0.1",
     "react-twitter-widgets": "^1.10.0",
-    "react-youtube": "^7.14.0",
-    "simplebar-react": "^2.3.6",
+    "react-youtube": "^9.0.2",
+    "simplebar-react": "^2.4.1",
     "socket.io-client": "^2.4.0",
-    "styled-components": "^5.3.3",
-    "video.js": "^7.17.0",
+    "styled-components": "^5.3.5",
+    "video.js": "^7.19.2",
     "videojs-hotkeys": "^0.2.27",
-    "web-vitals": "^2.1.3"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -55,9 +49,9 @@
     ]
   },
   "devDependencies": {
-    "babel-plugin-import": "^1.13.3",
+    "babel-plugin-import": "^1.13.5",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.1.11"
+    "react-app-rewired": "^2.2.1"
   }
 }
