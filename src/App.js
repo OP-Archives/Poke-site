@@ -134,7 +134,7 @@ export default function App() {
           />
           <Route
             exact
-            path="/contest"
+            path="/contests"
             element={
               <Parent>
                 <Navbar />
@@ -144,7 +144,7 @@ export default function App() {
           />
           <Route
             exact
-            path="/contest/:contestId/manage"
+            path="/contests/:contestId/manage"
             element={
               <Parent>
                 <Navbar />
@@ -154,7 +154,7 @@ export default function App() {
           />
           <Route
             exact
-            path="/contest/:contestId/winners"
+            path="/contests/:contestId/winners"
             element={
               <Parent>
                 <Navbar />
