@@ -4,7 +4,7 @@ import { CssBaseline, styled } from "@mui/material";
 import { green } from "@mui/material/colors";
 import Frontpage from "./frontpage";
 import Vods from "./vods/vods";
-import Navbar from "./navbar";
+import Navbar from "./navbar/navbar";
 import Contest from "./contests/contest";
 import Manage from "./contests/manage";
 import Winners from "./contests/winners";
