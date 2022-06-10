@@ -5,7 +5,7 @@ import { green } from "@mui/material/colors";
 import Frontpage from "./frontpage";
 import Vods from "./vods/vods";
 import Navbar from "./navbar/navbar";
-import Contest from "./contests/contest";
+import Contests from "./contests/Contests";
 import Manage from "./contests/manage";
 import Winners from "./contests/winners";
 import client from "./client";
@@ -138,7 +138,7 @@ export default function App() {
             element={
               <Parent>
                 <Navbar />
-                <Contest user={user} />
+                <Contests user={user} />
               </Parent>
             }
           />

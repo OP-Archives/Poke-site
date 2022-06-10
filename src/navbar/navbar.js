@@ -71,7 +71,7 @@ export default function Navbar() {
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
               {socials.map(({ path, icon }) => (
-                <Box sx={{ mr: 2 }}>
+                <Box key={path} sx={{ mr: 2 }}>
                   <CustomLink href={path} rel="noopener noreferrer" target="_blank">
                     {icon}
                   </CustomLink>

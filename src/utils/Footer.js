@@ -8,7 +8,7 @@ const Footer = styled((props) => (
         {`Pokelawls © ${new Date().getFullYear()}`}
       </Typography>
     </div>
-    <CustomLink href="https://twitter.com/overpowered">
+    <CustomLink href="https://twitter.com/overpowered" rel="noopener noreferrer" target="_blank">
       <Typography variant="caption" color="textSecondary">
         made by OP with 💜
       </Typography>
