@@ -58,8 +58,8 @@ export default function DrawerComponent() {
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
         <List>
           {mainLinks.map(({ title, path, icon }) => (
-            <>
-              <ListItem key={title} onClick={() => setDrawerOpen(false)}>
+            <Box key={title}>
+              <ListItem onClick={() => setDrawerOpen(false)}>
                 <ListItemIcon>{icon}</ListItemIcon>
                 <ListItemText>
                   <Link color="primary" href={path}>
@@ -68,12 +68,12 @@ export default function DrawerComponent() {
                 </ListItemText>
               </ListItem>
               <Divider />
-            </>
+            </Box>
           ))}
           <Divider />
           <Box sx={{ display: "flex", p: 2 }}>
             {socials.map(({ path, icon }) => (
-              <Box sx={{ mr: 2 }}>
+              <Box key={path} sx={{ mr: 2 }}>
                 <Link href={path} rel="noopener noreferrer" target="_blank">
                   {icon}
                 </Link>
