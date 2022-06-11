@@ -72,7 +72,7 @@ export default function App() {
             path="*"
             element={
               <Parent>
-                <NotFound />
+                <NotFound channel={channel} />
               </Parent>
             }
           />
