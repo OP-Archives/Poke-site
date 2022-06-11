@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { Typography, Button, Box, CircularProgress, TextField, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Typography, Button, Box, TextField, Switch, FormControl, Select, MenuItem } from "@mui/material";
 import SimpleBar from "simplebar-react";
-import loadingLogo from "../assets/jammin.gif";
 import logo from "../assets/contestlogo.png";
 import { Alert } from "@mui/material";
 import client from "../client";
+import Loading from "../utils/Loading";
 
 export default function Creation(props) {
-  const classes = useStyles();
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(undefined);
   const [title, setTitle] = useState("");
@@ -20,11 +18,11 @@ export default function Creation(props) {
     setTitle(evt.target.value);
   };
 
-  const handleActiveChange = (evt) => {
+  const handleActiveChange = (_) => {
     setActive(!active);
   };
 
-  const handleSubmissionChange = (evt) => {
+  const handleSubmissionChange = (_) => {
     setSubmission(!submission);
   };
 
@@ -52,42 +50,23 @@ export default function Creation(props) {
     setType(event.target.value);
   };
 
-  if (props.user === undefined)
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-        <div style={{ textAlign: "center" }}>
-          <div>
-            <img alt="" src={loadingLogo} height="auto" width="75%" />
-          </div>
-          <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
-        </div>
-      </Box>
-    );
+  if (props.user === undefined) return <Loading />;
 
   return (
-    <SimpleBar className={classes.parent}>
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%" backgroundColor="#1d1d1d" padding="1rem">
+    <SimpleBar style={{ minHeight: 0 }}>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%" padding="1rem">
         <div style={{ textAlign: "center" }}>
-          <img alt="" src={logo} height="auto" width="100%" />
-          <Typography variant="h4" className={classes.title}>
-            Create
+          <img alt="" src={logo} sx={{ height: "auto", width: "100%" }} />
+          <Typography variant="h4" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>
+            Create Contest
           </Typography>
           {error && (
-            <Alert style={{ marginTop: "1rem" }} severity="error">
+            <Alert sx={{ mt: 1 }} severity="error">
               {errorMsg}
             </Alert>
           )}
-          <form className={classes.form} noValidate>
+          <form noValidate>
             <TextField
-              inputProps={{
-                style: {
-                  backgroundColor: "hsla(0,0%,100%,.15)",
-                  color: "#fff",
-                },
-              }}
-              InputLabelProps={{
-                style: { color: "#fff" },
-              }}
               variant="outlined"
               margin="normal"
               required
@@ -100,67 +79,23 @@ export default function Creation(props) {
               autoFocus
               onChange={handleTitleChange}
             />
-            <FormControl className={classes.formControl}>
-              <InputLabel className={classes.label} id="select-label">
-                Type
-              </InputLabel>
-              <Select
-                labelId="select-label"
-                value={type}
-                onChange={handleTypeChange}
-                autoWidth
-                className={classes.dropdownSelect}
-                MenuProps={{
-                  classes: { paper: classes.dropdownStyle },
-                }}
-                classes={{
-                  root: classes.dropdownRoot,
-                }}
-                inputProps={{
-                  classes: {
-                    icon: classes.dropdownIcon,
-                  },
-                }}
-              >
+            <FormControl fullWidth sx={{ mt: 1 }}>
+              <Select value={type} onChange={handleTypeChange} autoWidth>
                 <MenuItem value="alert">Alert</MenuItem>
                 <MenuItem value="song">Song</MenuItem>
                 <MenuItem value="review">Review</MenuItem>
                 <MenuItem value="clips">Clips</MenuItem>
               </Select>
             </FormControl>
-            <Box display="flex">
-              <Switch
-                checked={active}
-                onChange={handleActiveChange}
-                classes={{
-                  track: classes.switch_track,
-                  switchBase: classes.switch_base,
-                  colorPrimary: classes.switch_primary,
-                }}
-              />
-              <div style={{ marginTop: "0.4rem" }}>
-                <Typography variant="body1" className={classes.textLabel}>
-                  Active Contest
-                </Typography>
-              </div>
+            <Box sx={{ mt: 1, display: "flex", alignItems: "center" }}>
+              <Switch checked={active} onChange={handleActiveChange} />
+              <Typography variant="body1">Active Contest</Typography>
             </Box>
-            <Box display="flex">
-              <Switch
-                checked={submission}
-                onChange={handleSubmissionChange}
-                classes={{
-                  track: classes.switch_track,
-                  switchBase: classes.switch_base,
-                  colorPrimary: classes.switch_primary,
-                }}
-              />
-              <div style={{ marginTop: "0.4rem" }}>
-                <Typography variant="body1" className={classes.textLabel}>
-                  Allow Submissions
-                </Typography>
-              </div>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Switch checked={submission} onChange={handleSubmissionChange} />
+              <Typography variant="body1">Allow Submissions</Typography>
             </Box>
-            <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit} onClick={handleCreate} disabled={title.length === 0} style={{ color: "#fff" }}>
+            <Button type="submit" fullWidth variant="contained" color="primary" onClick={handleCreate} disabled={title.length === 0} sx={{ mt: 1 }}>
               Create
             </Button>
           </form>
@@ -169,83 +104,3 @@ export default function Creation(props) {
     </SimpleBar>
   );
 }
-
-const useStyles = makeStyles(() => ({
-  parent: {
-    height: "100%",
-    padding: "1rem",
-  },
-  title: {
-    fontFamily: "Anton",
-    fontWeight: "550",
-    color: "rgb(255, 255, 255)",
-    textTransform: "uppercase",
-  },
-  form: {
-    width: "100%",
-    marginTop: "1rem",
-  },
-  submit: {
-    marginTop: "1rem",
-    backgroundColor: "#008230",
-    "&:hover": {
-      backgroundColor: "#008230",
-      opacity: "0.7",
-    },
-  },
-  textLabel: {
-    color: "#fff",
-  },
-  switch_track: {
-    backgroundColor: "#fff",
-  },
-  switch_base: {
-    color: "#c2ffc7",
-    "&.Mui-disabled": {
-      color: "#e886a9",
-    },
-    "&.Mui-checked": {
-      color: "#c2ffc7",
-    },
-    "&.Mui-checked + .MuiSwitch-track": {
-      backgroundColor: "#4CAF50",
-    },
-  },
-  switch_primary: {
-    color: "#4CAF50",
-    "&.Mui-checked": {
-      color: "#4CAF50",
-    },
-    "&.Mui-checked + .MuiSwitch-track": {
-      backgroundColor: "#4CAF50",
-    },
-  },
-  formControl: {
-    margin: "1rem",
-    display: "flex",
-  },
-  label: {
-    color: "#fff",
-    "&.Mui-focused": {
-      color: "#fff",
-    },
-  },
-  dropdownStyle: {
-    color: "#fff",
-    backgroundColor: "#1d1d1d",
-  },
-  dropdownRoot: {
-    color: "#fff",
-  },
-  dropdownSelect: {
-    "&:before": {
-      borderColor: "#fff",
-    },
-    "&:after": {
-      borderColor: "#fff",
-    },
-  },
-  dropdownIcon: {
-    fill: "#fff",
-  },
-}));

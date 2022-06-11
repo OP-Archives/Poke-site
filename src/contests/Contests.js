@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useMediaQuery, Box, Typography, Button, Modal, SvgIcon, Paper } from "@mui/material";
+import { useMediaQuery, Box, Typography, Button, SvgIcon, Paper } from "@mui/material";
 import logo from "../assets/contestlogo.png";
 import SimpleBar from "simplebar-react";
 import client from "../client";
-import Creation from "./creation";
 import ErrorBoundary from "../utils/ErrorBoundary";
 import AdSense from "react-adsense";
 import Footer from "../utils/Footer";
@@ -16,11 +15,10 @@ export default function Contests(props) {
   const isMobile = useMediaQuery("(max-width: 800px)");
   const [contests, setContests] = useState(undefined);
   const [submittedContests, setSubmittedContests] = useState([]);
-  const [createModal, setCreateModal] = React.useState(false);
   const { user } = props;
 
   useEffect(() => {
-    document.title = "Contest - Poke";
+    document.title = "Contests - Poke";
     const fetchContests = async () => {
       await client
         .service("contests")
@@ -62,14 +60,6 @@ export default function Contests(props) {
     window.location.href = OAUTH_LOGIN;
   };
 
-  const handleCreateModalOpen = () => {
-    setCreateModal(true);
-  };
-
-  const handleCreateModalClose = () => {
-    setCreateModal(false);
-  };
-
   if (user === undefined || contests === undefined) return <Loading />;
 
   const prevContests = contests.filter((contest) => !contest.active);
@@ -108,18 +98,7 @@ export default function Contests(props) {
                       </Button>
                     )}
 
-                    {user && (user.type === "admin" || user.type === "mod") && (
-                      <Box display="flex">
-                        <Button variant="contained" onClick={handleCreateModalOpen}>
-                          Create Contest
-                        </Button>
-                        <Modal open={createModal} onClose={handleCreateModalClose}>
-                          <Box>
-                            <Creation user={user} />
-                          </Box>
-                        </Modal>
-                      </Box>
-                    )}
+                    {user && (user.type === "admin" || user.type === "mod") && <IsolatedModal type={"Creation"} user={user} />}
                   </Box>
                 </Box>
               </Paper>
