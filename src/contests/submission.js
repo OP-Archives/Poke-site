@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Box, CircularProgress, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Typography, Button, Box, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 import SimpleBar from "simplebar-react";
-import loadingLogo from "../assets/jammin.gif";
 import logo from "../assets/contestlogo.png";
 import { Alert } from "@mui/material";
 import client from "../client";
+import Loading from "../utils/Loading";
 
 export default function Creation(props) {
-  const classes = useStyles();
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState(undefined);
   const [title, setTitle] = useState("");
@@ -26,7 +24,7 @@ export default function Creation(props) {
   const [endErrorMsg, setEndErrorMsg] = useState(undefined);
   const [source, setSource] = useState(1);
   const [link, setLink] = useState("");
-  const { type, submission } = props;
+  const { type, submission, contest, user } = props;
 
   const handleTitleChange = (evt) => {
     setTitle(evt.target.value);
@@ -48,20 +46,20 @@ export default function Creation(props) {
   };
 
   useEffect(() => {
-    if(link.length === 0) return;
+    if (link.length === 0) return;
     setLinkError(false);
     const regex =
-      props.contest.type === "alert" && source === 1
+      contest.type === "alert" && source === 1
         ? //eslint-disable-next-line
           /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/|shorts\/|clip\/)?)([\w\-]+)(\S+)?$/
-        : props.contest.type === "alert" && source === 2
+        : contest.type === "alert" && source === 2
         ? /tiktok\.com(.*)\/video\/(\d+)/
-        : props.contest.type === "song" && source === 1
+        : contest.type === "song" && source === 1
         ? //eslint-disable-next-line
           /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:soundcloud\.com|snd.sc))(\/)(\S+)(\/)(\S+)$/
-        : props.contest.type === "review" && source === 1
+        : contest.type === "review" && source === 1
         ? /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:twitter\.com))(\/)(\S+)(\/)(\S+)$/
-        : props.contest.type === "clips" && source === 1
+        : contest.type === "clips" && source === 1
         ? /https:\/\/(?:clips|www)\.twitch\.tv\/(?:(?:[a-z]+)\/clip\/)?(\S+)$/
         : null;
 
@@ -74,36 +72,36 @@ export default function Creation(props) {
 
     let newLink = link.valueOf();
 
-    if (props.contest.type === "review" && link.indexOf("?") !== -1) newLink = link.substring(0, link.indexOf("?"));
+    if (contest.type === "review" && link.indexOf("?") !== -1) newLink = link.substring(0, link.indexOf("?"));
     const linkSplit = newLink.split(regex);
     setVideo({
       id:
-        props.contest.type === "alert" && source === 1
+        contest.type === "alert" && source === 1
           ? linkSplit[5]
-          : props.contest.type === "alert" && source === 2
+          : contest.type === "alert" && source === 2
           ? linkSplit[2]
-          : props.contest.type === "song" && source === 1
+          : contest.type === "song" && source === 1
           ? linkSplit[7]
-          : props.contest.type === "review" && source === 1
+          : contest.type === "review" && source === 1
           ? linkSplit[7]
-          : props.contest.type === "clips" && source === 1
+          : contest.type === "clips" && source === 1
           ? linkSplit[1]
           : null,
       link: link,
       source:
-        props.contest.type === "alert" && source === 1
+        contest.type === "alert" && source === 1
           ? "youtube"
-          : props.contest.type === "alert" && source === 2
+          : contest.type === "alert" && source === 2
           ? "tiktok"
-          : props.contest.type === "song" && source === 1
+          : contest.type === "song" && source === 1
           ? "soundcloud"
-          : props.contest.type === "review" && source === 1
+          : contest.type === "review" && source === 1
           ? "twitter"
-          : props.contest.type === "clips" && source === 1
+          : contest.type === "clips" && source === 1
           ? "twitch"
           : null,
     });
-  }, [link, props.contest.type, source]);
+  }, [link, contest, source]);
 
   const startChange = (evt) => {
     setStartError(false);
@@ -175,10 +173,10 @@ export default function Creation(props) {
     return client
       .service("submissions")
       .create({
-        contestId: props.contest.id,
-        userId: props.user.id,
-        username: props.user.username,
-        display_name: props.user.display_name,
+        contestId: contest.id,
+        userId: user.id,
+        username: user.username,
+        display_name: user.display_name,
         video: tmpVideo,
         comment: comment,
         title: title,
@@ -224,259 +222,129 @@ export default function Creation(props) {
     setSource(event.target.value);
   };
 
-  if (props.user === undefined)
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-        <div style={{ textAlign: "center" }}>
-          <div>
-            <img alt="" src={loadingLogo} height="auto" width="75%" />
-          </div>
-          <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
-        </div>
-      </Box>
-    );
+  if (user === undefined) return <Loading />;
 
   return (
-    <SimpleBar className={classes.parent}>
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%" backgroundColor="#1d1d1d" padding="1rem">
-        <div style={{ textAlign: "center" }}>
-          <img alt="" src={logo} height="auto" width="100%" />
-          <Typography variant="h4" className={classes.title}>
-            {`${props.contest.title} ${type === "Modify" ? "Modify Submission" : "Submission"}`}
-          </Typography>
-          {error && (
-            <Alert style={{ marginTop: "1rem" }} severity="error">
-              {errorMsg}
-            </Alert>
-          )}
-          <form className={classes.form} noValidate>
-            {(props.contest.type === "song" || props.contest.type === "alert" || props.contest.type === "clips") && (
-              <TextField
-                inputProps={{
-                  style: {
-                    backgroundColor: "hsla(0,0%,100%,.15)",
-                    color: "#fff",
-                  },
-                }}
-                InputLabelProps={{
-                  style: { color: "#fff" },
-                }}
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                label="Title"
-                name="title"
-                autoComplete="off"
-                autoCapitalize="off"
-                autoCorrect="off"
-                autoFocus
-                onChange={handleTitleChange}
-              />
-            )}
-            {linkError && (
-              <Alert style={{ marginTop: "1rem" }} severity="error">
-                {linkErrorMsg}
-              </Alert>
-            )}
-            {props.contest.type === "alert" && (
-              <FormControl fullWidth>
-                <InputLabel id="source-label">Source</InputLabel>
-                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                  <MenuItem value={1}>Youtube</MenuItem>
-                  <MenuItem value={2}>Tiktok</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-            {props.contest.type === "song" && (
-              <FormControl fullWidth>
-                <InputLabel id="source-label">Source</InputLabel>
-                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                  <MenuItem value={1}>Soundcloud</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-            {props.contest.type === "review" && (
-              <FormControl fullWidth>
-                <InputLabel id="source-label">Source</InputLabel>
-                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                  <MenuItem value={1}>Twitter</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-            {props.contest.type === "clips" && (
-              <FormControl fullWidth>
-                <InputLabel id="source-label">Source</InputLabel>
-                <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                  <MenuItem value={1}>Twitch</MenuItem>
-                </Select>
-              </FormControl>
-            )}
+    <SimpleBar style={{ minHeight: 0 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+        <img alt="" src={logo} sx={{ height: "auto", width: "100%" }} />
+        <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 1 }}>{`Contest ID: ${contest.id}`}</Typography>
+        <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>{`${contest.title}`}</Typography>
+        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 1 }} color="primary">
+          {type === "Modify" ? "Modify Submission" : "Submission"}
+        </Typography>
+        {error && (
+          <Alert sx={{ mt: 1 }} severity="error">
+            {errorMsg}
+          </Alert>
+        )}
+        <form noValidate>
+          {(contest.type === "song" || contest.type === "alert" || contest.type === "clips") && (
             <TextField
-              inputProps={{
-                style: {
-                  backgroundColor: "hsla(0,0%,100%,.15)",
-                  color: "#fff",
-                },
-              }}
-              InputLabelProps={{
-                style: { color: "#fff" },
-              }}
+              sx={{ mt: 1 }}
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              label={"Link"}
-              name={"Link"}
+              label="Title"
+              name="title"
               autoComplete="off"
               autoCapitalize="off"
               autoCorrect="off"
-              onChange={handleLinkChange}
+              autoFocus
+              onChange={handleTitleChange}
             />
-            {props.contest.type === "alert" && source === 1 && (
-              <>
-                {startError && (
-                  <Alert style={{ marginTop: "1rem" }} severity="error">
-                    {startErrorMsg}
-                  </Alert>
-                )}
-                <TextField
-                  inputProps={{
-                    style: {
-                      backgroundColor: "hsla(0,0%,100%,.15)",
-                      color: "#fff",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: { color: "#fff" },
-                  }}
-                  variant="filled"
-                  margin="normal"
-                  fullWidth
-                  label="Start Timestamp (optional)"
-                  name="Start"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  onChange={startChange}
-                />
-              </>
-            )}
-            {props.contest.type === "alert" && source === 1 && (
-              <>
-                {endError && (
-                  <Alert style={{ marginTop: "1rem" }} severity="error">
-                    {endErrorMsg}
-                  </Alert>
-                )}
-                <TextField
-                  inputProps={{
-                    style: {
-                      backgroundColor: "hsla(0,0%,100%,.15)",
-                      color: "#fff",
-                    },
-                  }}
-                  InputLabelProps={{
-                    style: { color: "#fff" },
-                  }}
-                  variant="filled"
-                  margin="normal"
-                  fullWidth
-                  label="End Timestamp (optional)"
-                  name="End"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  onChange={endChange}
-                />
-              </>
-            )}
-            {commentError && (
-              <Alert style={{ marginTop: "1rem" }} severity="error">
-                {commentErrorMsg}
-              </Alert>
-            )}
-            {(props.contest.type === "song" || props.contest.type === "alert") && (
-              <TextField
-                inputProps={{
-                  style: {
-                    backgroundColor: "hsla(0,0%,100%,.15)",
-                    color: "#fff",
-                  },
-                }}
-                InputLabelProps={{
-                  style: { color: "#fff" },
-                }}
-                multiline
-                rows={4}
-                variant="filled"
-                margin="normal"
-                fullWidth
-                label="Comment"
-                name="Comment"
-                autoComplete="off"
-                autoCapitalize="off"
-                autoCorrect="off"
-                onChange={handleCommentChange}
-              />
-            )}
-            {type === "Modify" ? (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                onClick={handleModify}
-                disabled={props.contest.type !== "review" ? title.length === 0 || !video : !video}
-                style={{ color: "#fff" }}
-              >
-                Modify
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                onClick={handleSubmit}
-                disabled={props.contest.type !== "review" ? title.length === 0 || !video : !video}
-                style={{ color: "#fff" }}
-              >
-                Submit
-              </Button>
-            )}
-          </form>
-        </div>
+          )}
+          {linkError && (
+            <Alert sx={{ mt: 1 }} severity="error">
+              {linkErrorMsg}
+            </Alert>
+          )}
+          {contest.type === "alert" && (
+            <FormControl fullWidth required sx={{ mt: 1 }}>
+              <InputLabel id="source-label">Source</InputLabel>
+              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                <MenuItem value={1}>Youtube</MenuItem>
+                <MenuItem value={2}>Tiktok</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          {contest.type === "song" && (
+            <FormControl fullWidth required sx={{ mt: 1 }}>
+              <InputLabel id="source-label">Source</InputLabel>
+              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                <MenuItem value={1}>Soundcloud</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          {contest.type === "review" && (
+            <FormControl fullWidth required sx={{ mt: 1 }}>
+              <InputLabel id="source-label">Source</InputLabel>
+              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                <MenuItem value={1}>Twitter</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          {contest.type === "clips" && (
+            <FormControl fullWidth required sx={{ mt: 1 }}>
+              <InputLabel id="source-label">Source</InputLabel>
+              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+                <MenuItem value={1}>Twitch</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+          <TextField variant="outlined" margin="normal" required fullWidth label={"Link"} name={"Link"} autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={handleLinkChange} />
+          {contest.type === "alert" && source === 1 && (
+            <>
+              {startError && (
+                <Alert sx={{ mt: 1 }} severity="error">
+                  {startErrorMsg}
+                </Alert>
+              )}
+              <TextField variant="filled" margin="normal" fullWidth label="Start Timestamp (optional)" name="Start" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={startChange} />
+            </>
+          )}
+          {contest.type === "alert" && source === 1 && (
+            <>
+              {endError && (
+                <Alert sx={{ mt: 1 }} severity="error">
+                  {endErrorMsg}
+                </Alert>
+              )}
+              <TextField variant="filled" margin="normal" fullWidth label="End Timestamp (optional)" name="End" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={endChange} />
+            </>
+          )}
+          {commentError && (
+            <Alert sx={{ mt: 1 }} severity="error">
+              {commentErrorMsg}
+            </Alert>
+          )}
+          {(contest.type === "song" || contest.type === "alert") && (
+            <TextField
+              multiline
+              rows={4}
+              variant="filled"
+              margin="normal"
+              fullWidth
+              label="Comment"
+              name="Comment"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              onChange={handleCommentChange}
+            />
+          )}
+          {type === "Modify" ? (
+            <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleModify} disabled={contest.type !== "review" ? title.length === 0 || !video : !video}>
+              Modify
+            </Button>
+          ) : (
+            <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleSubmit} disabled={contest.type !== "review" ? title.length === 0 || !video : !video}>
+              Submit
+            </Button>
+          )}
+        </form>
       </Box>
     </SimpleBar>
   );
 }
-
-const useStyles = makeStyles(() => ({
-  parent: {
-    height: "100%",
-  },
-  title: {
-    fontFamily: "Anton",
-    fontWeight: "550",
-    color: "rgb(255, 255, 255)",
-    textTransform: "uppercase",
-  },
-  form: {
-    width: "100%",
-    marginTop: "1rem",
-  },
-  submit: {
-    marginTop: "1rem",
-    backgroundColor: "#008230",
-    "&:hover": {
-      backgroundColor: "#008230",
-      opacity: "0.7",
-    },
-  },
-  textLabel: {
-    color: "#fff",
-  },
-}));

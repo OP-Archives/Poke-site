@@ -54,52 +54,50 @@ export default function Creation(props) {
 
   return (
     <SimpleBar style={{ minHeight: 0 }}>
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%" padding="1rem">
-        <div style={{ textAlign: "center" }}>
-          <img alt="" src={logo} sx={{ height: "auto", width: "100%" }} />
-          <Typography variant="h4" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>
-            Create Contest
-          </Typography>
-          {error && (
-            <Alert sx={{ mt: 1 }} severity="error">
-              {errorMsg}
-            </Alert>
-          )}
-          <form noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              label="Title"
-              name="title"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              autoFocus
-              onChange={handleTitleChange}
-            />
-            <FormControl fullWidth sx={{ mt: 1 }}>
-              <Select value={type} onChange={handleTypeChange} autoWidth>
-                <MenuItem value="alert">Alert</MenuItem>
-                <MenuItem value="song">Song</MenuItem>
-                <MenuItem value="review">Review</MenuItem>
-                <MenuItem value="clips">Clips</MenuItem>
-              </Select>
-            </FormControl>
-            <Box sx={{ mt: 1, display: "flex", alignItems: "center" }}>
-              <Switch checked={active} onChange={handleActiveChange} />
-              <Typography variant="body1">Active Contest</Typography>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Switch checked={submission} onChange={handleSubmissionChange} />
-              <Typography variant="body1">Allow Submissions</Typography>
-            </Box>
-            <Button type="submit" fullWidth variant="contained" color="primary" onClick={handleCreate} disabled={title.length === 0} sx={{ mt: 1 }}>
-              Create
-            </Button>
-          </form>
-        </div>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+        <img alt="" src={logo} sx={{ height: "auto", width: "100%" }} />
+        <Typography variant="h4" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>
+          Create Contest
+        </Typography>
+        {error && (
+          <Alert sx={{ mt: 1 }} severity="error">
+            {errorMsg}
+          </Alert>
+        )}
+        <form noValidate>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            label="Title"
+            name="title"
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            autoFocus
+            onChange={handleTitleChange}
+          />
+          <FormControl fullWidth sx={{ mt: 1 }}>
+            <Select value={type} onChange={handleTypeChange} autoWidth>
+              <MenuItem value="alert">Alert</MenuItem>
+              <MenuItem value="song">Song</MenuItem>
+              <MenuItem value="review">Review</MenuItem>
+              <MenuItem value="clips">Clips</MenuItem>
+            </Select>
+          </FormControl>
+          <Box sx={{ mt: 1, display: "flex", alignItems: "center" }}>
+            <Switch checked={active} onChange={handleActiveChange} />
+            <Typography variant="body1">Active Contest</Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Switch checked={submission} onChange={handleSubmissionChange} />
+            <Typography variant="body1">Allow Submissions</Typography>
+          </Box>
+          <Button type="submit" fullWidth variant="contained" color="primary" onClick={handleCreate} disabled={title.length === 0} sx={{ mt: 1 }}>
+            Create
+          </Button>
+        </form>
       </Box>
     </SimpleBar>
   );
