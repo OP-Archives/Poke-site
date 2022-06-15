@@ -39,7 +39,6 @@ a:active {
   outline: none;
 }
 
-.tiktok-iframe {
-  border: 0;
-  display: block;
+.hidden {
+  visibility: hidden;
 }

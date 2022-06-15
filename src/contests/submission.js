@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Box, TextField, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import SimpleBar from "simplebar-react";
 import logo from "../assets/contestlogo.png";
 import { Alert } from "@mui/material";
 import client from "../client";
@@ -225,126 +224,125 @@ export default function Creation(props) {
   if (user === undefined) return <Loading />;
 
   return (
-    <SimpleBar style={{ minHeight: 0 }}>
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-        <img alt="" src={logo} sx={{ height: "auto", width: "100%" }} />
-        <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 1 }}>{`Contest ID: ${contest.id}`}</Typography>
-        <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>{`${contest.title}`}</Typography>
-        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 1 }} color="primary">
-          {type === "Modify" ? "Modify Submission" : "Submission"}
-        </Typography>
-        {error && (
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+      <img alt="" src={logo} sx={{ height: "auto", width: "100%" }} />
+      {submission && <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 1 }}>{`Submission ID: ${submission.id}`}</Typography>}
+      <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>{`Contest ID: ${contest.id}`}</Typography>
+      <Typography variant="h7" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>{`${contest.title}`}</Typography>
+      <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 1 }} color="primary">
+        {type === "Modify" ? "Modify Submission" : "Submission"}
+      </Typography>
+      {error && (
+        <Alert sx={{ mt: 1 }} severity="error">
+          {errorMsg}
+        </Alert>
+      )}
+      <form noValidate>
+        {(contest.type === "song" || contest.type === "alert" || contest.type === "clips") && (
+          <TextField
+            sx={{ mt: 1 }}
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            label="Title"
+            name="title"
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            autoFocus
+            onChange={handleTitleChange}
+          />
+        )}
+        {linkError && (
           <Alert sx={{ mt: 1 }} severity="error">
-            {errorMsg}
+            {linkErrorMsg}
           </Alert>
         )}
-        <form noValidate>
-          {(contest.type === "song" || contest.type === "alert" || contest.type === "clips") && (
-            <TextField
-              sx={{ mt: 1 }}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              label="Title"
-              name="title"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              autoFocus
-              onChange={handleTitleChange}
-            />
-          )}
-          {linkError && (
-            <Alert sx={{ mt: 1 }} severity="error">
-              {linkErrorMsg}
-            </Alert>
-          )}
-          {contest.type === "alert" && (
-            <FormControl fullWidth required sx={{ mt: 1 }}>
-              <InputLabel id="source-label">Source</InputLabel>
-              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                <MenuItem value={1}>Youtube</MenuItem>
-                <MenuItem value={2}>Tiktok</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-          {contest.type === "song" && (
-            <FormControl fullWidth required sx={{ mt: 1 }}>
-              <InputLabel id="source-label">Source</InputLabel>
-              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                <MenuItem value={1}>Soundcloud</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-          {contest.type === "review" && (
-            <FormControl fullWidth required sx={{ mt: 1 }}>
-              <InputLabel id="source-label">Source</InputLabel>
-              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                <MenuItem value={1}>Twitter</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-          {contest.type === "clips" && (
-            <FormControl fullWidth required sx={{ mt: 1 }}>
-              <InputLabel id="source-label">Source</InputLabel>
-              <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
-                <MenuItem value={1}>Twitch</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-          <TextField variant="outlined" margin="normal" required fullWidth label={"Link"} name={"Link"} autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={handleLinkChange} />
-          {contest.type === "alert" && source === 1 && (
-            <>
-              {startError && (
-                <Alert sx={{ mt: 1 }} severity="error">
-                  {startErrorMsg}
-                </Alert>
-              )}
-              <TextField variant="filled" margin="normal" fullWidth label="Start Timestamp (optional)" name="Start" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={startChange} />
-            </>
-          )}
-          {contest.type === "alert" && source === 1 && (
-            <>
-              {endError && (
-                <Alert sx={{ mt: 1 }} severity="error">
-                  {endErrorMsg}
-                </Alert>
-              )}
-              <TextField variant="filled" margin="normal" fullWidth label="End Timestamp (optional)" name="End" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={endChange} />
-            </>
-          )}
-          {commentError && (
-            <Alert sx={{ mt: 1 }} severity="error">
-              {commentErrorMsg}
-            </Alert>
-          )}
-          {(contest.type === "song" || contest.type === "alert") && (
-            <TextField
-              multiline
-              rows={4}
-              variant="filled"
-              margin="normal"
-              fullWidth
-              label="Comment"
-              name="Comment"
-              autoComplete="off"
-              autoCapitalize="off"
-              autoCorrect="off"
-              onChange={handleCommentChange}
-            />
-          )}
-          {type === "Modify" ? (
-            <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleModify} disabled={contest.type !== "review" ? title.length === 0 || !video : !video}>
-              Modify
-            </Button>
-          ) : (
-            <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleSubmit} disabled={contest.type !== "review" ? title.length === 0 || !video : !video}>
-              Submit
-            </Button>
-          )}
-        </form>
-      </Box>
-    </SimpleBar>
+        {contest.type === "alert" && (
+          <FormControl fullWidth required sx={{ mt: 1 }}>
+            <InputLabel id="source-label">Source</InputLabel>
+            <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+              <MenuItem value={1}>Youtube</MenuItem>
+              <MenuItem value={2}>Tiktok</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+        {contest.type === "song" && (
+          <FormControl fullWidth required sx={{ mt: 1 }}>
+            <InputLabel id="source-label">Source</InputLabel>
+            <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+              <MenuItem value={1}>Soundcloud</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+        {contest.type === "review" && (
+          <FormControl fullWidth required sx={{ mt: 1 }}>
+            <InputLabel id="source-label">Source</InputLabel>
+            <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+              <MenuItem value={1}>Twitter</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+        {contest.type === "clips" && (
+          <FormControl fullWidth required sx={{ mt: 1 }}>
+            <InputLabel id="source-label">Source</InputLabel>
+            <Select labelId="source-label" value={source} label="Source" onChange={handleSource}>
+              <MenuItem value={1}>Twitch</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+        <TextField variant="outlined" margin="normal" required fullWidth label={"Link"} name={"Link"} autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={handleLinkChange} />
+        {contest.type === "alert" && source === 1 && (
+          <>
+            {startError && (
+              <Alert sx={{ mt: 1 }} severity="error">
+                {startErrorMsg}
+              </Alert>
+            )}
+            <TextField variant="filled" margin="normal" required fullWidth label="Start Timestamp" name="Start" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={startChange} />
+          </>
+        )}
+        {contest.type === "alert" && source === 1 && (
+          <>
+            {endError && (
+              <Alert sx={{ mt: 1 }} severity="error">
+                {endErrorMsg}
+              </Alert>
+            )}
+            <TextField variant="filled" margin="normal" required fullWidth label="End Timestamp" name="End" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={endChange} />
+          </>
+        )}
+        {commentError && (
+          <Alert sx={{ mt: 1 }} severity="error">
+            {commentErrorMsg}
+          </Alert>
+        )}
+        {(contest.type === "song" || contest.type === "alert") && (
+          <TextField
+            multiline
+            rows={4}
+            variant="filled"
+            margin="normal"
+            fullWidth
+            label="Comment"
+            name="Comment"
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            onChange={handleCommentChange}
+          />
+        )}
+        {type === "Modify" ? (
+          <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleModify} disabled={contest.type !== "review" ? title.length === 0 || !video : !video}>
+            Modify
+          </Button>
+        ) : (
+          <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleSubmit} disabled={contest.type !== "review" ? title.length === 0 || !video : !video}>
+            Submit
+          </Button>
+        )}
+      </form>
+    </Box>
   );
 }

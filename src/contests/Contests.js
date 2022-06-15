@@ -121,7 +121,9 @@ export default function Contests(props) {
                   return (
                     <Paper key={data.id} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 4, mt: 2 }}>
                       <Box>
-                        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>{`${data.title}`}</Typography>
+                        <Typography variant="body2" sx={{ fontFamily: "Anton" }} color="textSecondary">{`${new Date(data.createdAt).toLocaleDateString()}`}</Typography>
+                        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase" }} color="primary">{`${data.type} Contest`}</Typography>
+                        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 2 }}>{`${data.title}`}</Typography>
                         <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 2 }} color="primary">{`${data.submissions.length} Submissions`}</Typography>
                       </Box>
                       <Box sx={{ display: "flex", flexDirection: isMobile ? "column" : "row" }}>
@@ -138,7 +140,7 @@ export default function Contests(props) {
                           </>
                         )}
                         <Box sx={{ p: 1 }}>
-                          {userSubmission ? <IsolatedModal type={"Modify"} user={user} contest={data} submission={userSubmission} /> : <IsolatedModal type={"Submit"} user={user} contest={data} />}
+                          <IsolatedModal type={userSubmission ? "Modify" : "Submit"} user={user} contest={data} submission={userSubmission} />
                         </Box>
                       </Box>
                     </Paper>
@@ -163,7 +165,9 @@ export default function Contests(props) {
                   return (
                     <Paper key={data.id} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 4, mt: 2 }}>
                       <Box>
-                        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase" }}>{`${data.title}`}</Typography>
+                        <Typography variant="body2" sx={{ fontFamily: "Anton" }} color="textSecondary">{`${new Date(data.createdAt).toLocaleDateString()}`}</Typography>
+                        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase" }} color="primary">{`${data.type} Contest`}</Typography>
+                        <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 2 }}>{`${data.title}`}</Typography>
                         <Typography variant="h5" sx={{ fontFamily: "Anton", textTransform: "uppercase", mt: 2 }} color="primary">{`${data.submissions.length} Submissions`}</Typography>
                       </Box>
                       <Box sx={{ display: "flex", flexDirection: isMobile ? "column" : "row" }}>
@@ -180,7 +184,7 @@ export default function Contests(props) {
                           </>
                         )}
                         <Box sx={{ p: 1 }}>
-                          <Button href={`/contest/${data.id}/winners`} variant="contained">
+                          <Button href={`/contests/${data.id}/winners`} variant="contained">
                             Winners
                           </Button>
                         </Box>

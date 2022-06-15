@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Button, Box, CircularProgress } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Button, Box, Typography } from "@mui/material";
 import client from "../client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
+import Loading from "../utils/Loading";
 
 export default function Winners(props) {
-  const classes = useStyles();
   const [matches, setMatches] = useState(undefined);
   const [rounds, setRounds] = useState(null);
   const [bracketLoading, setBracketLoading] = useState(true);
-  const submissions = props.submissions;
-  const contest = props.contest;
+  const { submissions, contest } = props;
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -19,7 +17,7 @@ export default function Winners(props) {
         .service("matches")
         .find({
           query: {
-            contest_id: contest.id,
+            contestId: contest.id,
             $sort: {
               id: 1,
             },
@@ -27,16 +25,13 @@ export default function Winners(props) {
         })
         .then((data) => {
           setMatches(data);
-        })
-        .catch(() => {
-          setMatches(undefined);
         });
     };
     fetchMatches();
     return;
-  }, [contest.id]);
+  }, [contest]);
 
-  const createMatches = async (evt) => {
+  const createMatches = async (_) => {
     if (!matches) return;
     setBracketLoading(true);
     const { accessToken } = await client.get("authentication");
@@ -44,14 +39,14 @@ export default function Winners(props) {
     if (matches.length !== 0) {
       const confirmDialog = window.confirm("This will recreate the bracket. Are you sure?");
       if (!confirmDialog) return setBracketLoading(false);
-      for (let match of matches) {
-        await client
-          .service("matches")
-          .remove(match.id)
-          .catch((e) => {
-            console.error(e);
-          });
-      }
+      await client
+        .service("matches")
+        .remove(null, {
+          query: { contestId: contest.id },
+        })
+        .catch((e) => {
+          console.error(e);
+        });
     }
 
     const sendSubmissions = [];
@@ -151,77 +146,24 @@ export default function Winners(props) {
   if (!matches || !rounds) return null;
 
   return (
-    <Box marginTop="3rem">
-      <Button variant="outlined" onClick={createMatches} className={classes.button}>
-        Create Bracket
-      </Button>
-      <Box marginTop="3rem">
-        {bracketLoading ? (
-          <CircularProgress style={{ marginTop: "2rem" }} size="2rem" />
-        ) : (
+    <>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2, flexDirection: "column", alignItems: "center" }}>
+        <Typography variant="h4" sx={{ textTransform: "uppercase" }} color="primary">{`${submissions.length} Winners`}</Typography>
+        <Button sx={{ mt: 1 }} variant="contained" onClick={createMatches}>
+          {matches.length === 0 ? "Generate Bracket" : "Regenerate Bracket"}
+        </Button>
+      </Box>
+      <Box sx={{ mt: 3 }}>
+        {bracketLoading && <Loading />}
+        {!bracketLoading && (
           <Bracket
             rounds={rounds}
             renderSeedComponent={(props) => {
-              return <CustomSeed {...props} classes={classes} contest={contest} matches={matches} setMatches={setMatches} />;
+              return <CustomSeed {...props} contest={contest} matches={matches} setMatches={setMatches} />;
             }}
           />
         )}
       </Box>
-    </Box>
+    </>
   );
 }
-
-const useStyles = makeStyles(() => ({
-  button: {
-    color: "#fff",
-    backgroundColor: "#008230",
-    "&:hover": {
-      backgroundColor: "#008230",
-      opacity: "0.7",
-      textDecoration: "none",
-      color: `#fff`,
-    },
-  },
-  modalContent: {
-    position: "absolute",
-    width: "400px",
-    backgroundColor: "#1d1d1d",
-    outline: "none",
-  },
-  modal: {
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "60%",
-  },
-  modalParent: {
-    height: "100%",
-    padding: "5rem",
-  },
-  text: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-  winner: {
-    color: "#008230",
-    fontWeight: "700",
-  },
-  textLink: {
-    color: "#fff",
-    fontWeight: "700",
-    "&:hover": {
-      color: "#fff",
-      opacity: "0.7",
-      textDecoration: "none",
-    },
-  },
-  winnerLink: {
-    color: "#008230",
-    fontWeight: "700",
-    "&:hover": {
-      color: "#008230",
-      opacity: "0.7",
-      textDecoration: "none",
-    },
-  },
-}));

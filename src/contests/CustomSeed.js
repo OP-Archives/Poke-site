@@ -1,15 +1,17 @@
-import Youtube from "react-youtube";
-import SimpleBar from "simplebar-react";
 import React, { useState } from "react";
 import client from "../client";
-import { Typography, Button, Box, Modal, Link } from "@mui/material";
+import { Typography, Button, Box, Modal, useMediaQuery } from "@mui/material";
 import { Seed, SeedItem, SeedTeam } from "react-brackets";
 import { styled } from "@mui/system";
 import { Tweet } from "react-twitter-widgets";
+import YoutubePlayer from "./YoutubePlayer";
+import TikTokPlayer from "./TikTokPlayer";
+import CustomLink from "../utils/CustomLink";
 
 export default function CustomSeed(props) {
+  const isMobile = useMediaQuery("(max-width: 800px)");
   const [modal, setModal] = useState(false);
-  const { seed, contest, classes, matches } = props;
+  const { seed, contest, matches, setMatches } = props;
 
   const isLastRound = matches[matches.length - 1].id === seed.match.id;
 
@@ -48,7 +50,7 @@ export default function CustomSeed(props) {
       newMatches[newMatches.findIndex((match) => parseInt(match.previous_a_match) === matchData.challonge_match_id || parseInt(match.previous_b_match) === matchData.challonge_match_id)];
 
     if (!nextMatch) {
-      props.setMatches(newMatches);
+      setMatches(newMatches);
       return handleClose();
     }
 
@@ -77,323 +79,223 @@ export default function CustomSeed(props) {
         console.error(e);
       });
 
-    props.setMatches(newMatches);
+    setMatches(newMatches);
 
     handleClose();
   };
 
-  console.log(seed);
+  const TEAM_A = seed.teams[0];
+  const TEAM_B = seed.teams[1];
 
   return (
     <>
       {seed.useOldVersion ? (
-        <Seed mobileBreakpoint={0} onClick={handleOpen} style={{ fontSize: "10px", minWidth: "100px" }}>
+        <Seed mobileBreakpoint={0} style={{ fontSize: "10px", minWidth: "100px" }}>
           <SeedItem>
-            <div>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(seed.teams[0].id) ? { color: "red" } : {}) : {}}>{seed.teams[0]?.name || "---------- "}</SeedTeam>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(seed.teams[1].id) ? { color: "red" } : {}) : {}}>{seed.teams[1]?.name || "---------- "}</SeedTeam>
+            <div onClick={handleOpen}>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: "red" } : {}) : {}}>{TEAM_A?.name || "---------- "}</SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: "red" } : {}) : {}}>{TEAM_B?.name || "---------- "}</SeedTeam>
             </div>
           </SeedItem>
         </Seed>
       ) : seed.pairedMatch ? (
-        <StyledSeed isTeamA={seed.isTeamA} onClick={handleOpen}>
+        <StyledSeed isTeamA={seed.isTeamA}>
           <SeedItem>
-            <div>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(seed.teams[0].id) ? { color: "red" } : {}) : {}}>{seed.teams[0]?.name || "---------- "}</SeedTeam>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(seed.teams[1].id) ? { color: "red" } : {}) : {}}>{seed.teams[1]?.name || "---------- "}</SeedTeam>
+            <div onClick={handleOpen}>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: "red" } : {}) : {}}>{TEAM_A?.name || "---------- "}</SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: "red" } : {}) : {}}>{TEAM_B?.name || "---------- "}</SeedTeam>
             </div>
           </SeedItem>
         </StyledSeed>
       ) : (
-        <SingleSeed isLastRound={isLastRound} onClick={handleOpen}>
+        <SingleSeed isLastRound={isLastRound}>
           <SeedItem>
-            <div>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(seed.teams[0].id) ? { color: "red" } : {}) : {}}>{seed.teams[0]?.name || "---------- "}</SeedTeam>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(seed.teams[1].id) ? { color: "red" } : {}) : {}}>{seed.teams[1]?.name || "---------- "}</SeedTeam>
+            <div onClick={handleOpen}>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: "red" } : {}) : {}}>{TEAM_A?.name || "---------- "}</SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: "red" } : {}) : {}}>{TEAM_B?.name || "---------- "}</SeedTeam>
             </div>
           </SeedItem>
         </SingleSeed>
       )}
-      {(seed.teams[0].submission || seed.teams[1].submission) && (
+      {(TEAM_A.submission || TEAM_B.submission) && contest && (
         <Modal open={modal} onClose={handleClose}>
-          <div className={`${classes.modalContent} ${classes.modal}`}>
-            <SimpleBar className={classes.modalParent}>
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <Box display="flex" justifyContent="center" alignItems="center" height="100%" flexDirection="column">
-                  <div>
-                    <Typography
-                      variant="body2"
-                      className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
-                    >{`Submission ID: ${seed.teams[0].submission ? seed.teams[0].submission.id : null}`}</Typography>
-                  </div>
-                  <Box marginTop="1rem">
-                    {contest && contest.type === "song" && (
-                      <Box display="flex" flexDirection="column" width="100%">
-                        <iframe
-                          title="Player"
-                          width="426"
-                          height="160"
-                          scrolling="no"
-                          frameBorder="no"
-                          allow="autoplay"
-                          src={`https://w.soundcloud.com/player/?url=${
-                            seed.teams[0].submission ? seed.teams[0].submission.video.link : "".replace(/(www\.|m\.)/, "")
-                          }&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
-                        />
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "90%",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 2,
+            }}
+          >
+            <Box sx={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", height: "100%", width: "100%", flexDirection: isMobile ? "column" : "row" }}>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: "100%", height: "100%" }}>
+                <Typography variant="body2" color="textSecondary">{`Submission ID: ${TEAM_A.submission ? TEAM_A.submission.id : "TBD"}`}</Typography>
+                {TEAM_A.submission && (
+                  <>
+                    {contest.type === "alert" && (TEAM_A.submission.video?.source === "youtube" || !TEAM_A.submission.video.source) && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <YoutubePlayer show={true} submission={TEAM_A.submission} />
                       </Box>
                     )}
 
-                    {contest && contest.type === "alert" && seed.teams[0].submission && (seed.teams[0].submission.video.source === "youtube" || !seed.teams[0].submission.video.source) && (
-                      <Youtube
-                        videoId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
-                        id="player"
-                        opts={{
-                          height: "240px",
-                          width: "426px",
-                          playerVars: {
-                            autoplay: 0,
-                            playsinline: 1,
-                            rel: 0,
-                            modestbranding: 1,
-                          },
-                        }}
-                      />
+                    {contest.type === "alert" && TEAM_A.submission.video?.source === "tiktok" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "22%" }}>
+                        <TikTokPlayer submission={TEAM_A.submission} show={true} />
+                      </Box>
                     )}
 
-                    {contest && contest.type === "alert" && seed.teams[0].submission && seed.teams[0].submission.video.source === "tiktok" && (
-                      <div
-                        className="tiktok-container"
-                        style={{
-                          height: "500px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: "100%",
-                        }}
-                      >
+                    {contest.type === "clips" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
                         <iframe
-                          className="tiktok-iframe"
-                          title="Player"
-                          width="300px"
+                          title={TEAM_A.submission.video.id}
+                          src={`https://clips.twitch.tv/embed?clip=${TEAM_A.submission.video.id}&parent=${window.location.hostname}`}
                           height="500px"
-                          scrolling="no"
-                          frameBorder="no"
-                          allowFullScreen
-                          src={`https://tiktok.com/embed/${seed.teams[0].submission.video.id}`}
-                        />
-                      </div>
-                    )}
-
-                    {contest && contest.type === "review" && (
-                      <Box display="flex" flexDirection="column" width="100%">
-                        <Tweet tweetId={seed.teams[0].submission ? seed.teams[0].submission.video.id : null} options={{ align: "center" }} />
-                      </Box>
-                    )}
-
-                    {contest && contest.type === "clips" && (
-                      <iframe
-                        title={seed.teams[0].submission ? seed.teams[0].submission.video.id : null}
-                        src={`https://clips.twitch.tv/embed?clip=${seed.teams[0].submission ? seed.teams[0].submission.video.id : null}&parent=${window.location.hostname}`}
-                        height="240px"
-                        width="426px"
-                        allowFullScreen={true}
-                        preload="auto"
-                        frameBorder="0"
-                      />
-                    )}
-                  </Box>
-                  <Box marginTop="1rem" display="flex" justifyContent="center" alignItems="center" flexDirection="column">
-                    <Typography
-                      variant="body2"
-                      className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
-                    >{`${seed.teams[0].submission ? seed.teams[0].submission.title : null}`}</Typography>
-                    <Typography
-                      variant="body2"
-                      className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
-                    >{`${seed.teams[0].submission ? seed.teams[0].submission.display_name : null}`}</Typography>
-                    <Link
-                      underline="hover"
-                      href={seed.teams[0].submission ? seed.teams[0].submission.video.link : null}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      variant="caption"
-                      color="textSecondary"
-                    >
-                      <Typography
-                        variant="caption"
-                        className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
-                      >
-                        {`${seed.teams[0].submission ? seed.teams[0].submission.video.link : null}`}
-                      </Typography>
-                    </Link>
-                    <div style={{ marginTop: "0.5rem" }}>
-                      <Typography
-                        variant="caption"
-                        style={{ wordBreak: "break-word" }}
-                        className={parseInt(seed.match.winner_id) === seed.teams[0].submission ? (parseInt(seed.teams[0].submission.id) ? classes.winner : classes.text) : classes.text}
-                      >
-                        {`${seed.teams[0].submission ? (seed.teams[0].submission.comment.length === 0 ? "..." : seed.teams[0].submission.comment) : null}`}
-                      </Typography>
-                    </div>
-                    {!props.public && seed.teams[0].submission && (
-                      <div style={{ marginTop: "1rem" }}>
-                        <Button
-                          variant="outlined"
-                          disabled={!seed.teams[0].submission}
-                          onClick={() => {
-                            chooseWinnerClick(seed.match, seed.teams[0].submission);
-                          }}
-                          className={classes.button}
-                        >
-                          Winner
-                        </Button>
-                      </div>
-                    )}
-                  </Box>
-                </Box>
-                <Box padding="5rem" display="flex" alignItems="center" justifyContent="center">
-                  <Typography variant="h4" className={classes.text}>
-                    {`Vs`}
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="center" alignItems="center">
-                  <Box display="flex" justifyContent="center" alignItems="center" height="100%" flexDirection="column">
-                    <div>
-                      <Typography
-                        variant="body2"
-                        className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
-                      >{`Submission ID: ${seed.teams[1].submission ? seed.teams[1].submission.id : null}`}</Typography>
-                    </div>
-                    <Box marginTop="1rem">
-                      {contest && contest.type === "song" && (
-                        <Box display="flex" flexDirection="column" width="100%">
-                          <iframe
-                            title="Player"
-                            width="426"
-                            height="160"
-                            scrolling="no"
-                            frameBorder="no"
-                            allow="autoplay"
-                            src={`https://w.soundcloud.com/player/?url=${
-                              seed.teams[1].submission ? seed.teams[1].submission.video.link : "".replace(/(www\.|m\.)/, "")
-                            }&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
-                          />
-                        </Box>
-                      )}
-
-                      {contest && contest.type === "alert" && seed.teams[1].submission && (seed.teams[1].submission.video.source === "youtube" || !seed.teams[1].submission.video.source) && (
-                        <Youtube
-                          videoId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
-                          id="player"
-                          opts={{
-                            height: "240px",
-                            width: "426px",
-                            playerVars: {
-                              autoplay: 0,
-                              playsinline: 1,
-                              rel: 0,
-                              modestbranding: 1,
-                            },
-                          }}
-                        />
-                      )}
-
-                      {contest && contest.type === "alert" && seed.teams[1].submission && seed.teams[1].submission.video.source === "tiktok" && (
-                        <div
-                          className="tiktok-container"
-                          style={{
-                            height: "500px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                          }}
-                        >
-                          <iframe
-                            className="tiktok-iframe"
-                            title="Player"
-                            width="300px"
-                            height="500px"
-                            scrolling="no"
-                            frameBorder="no"
-                            allowFullScreen
-                            src={`https://tiktok.com/embed/${seed.teams[1].submission.video.id}`}
-                          />
-                        </div>
-                      )}
-
-                      {contest && contest.type === "review" && (
-                        <Box display="flex" flexDirection="column" width="100%">
-                          <Tweet tweetId={seed.teams[1].submission ? seed.teams[1].submission.video.id : null} options={{ align: "center" }} />
-                        </Box>
-                      )}
-
-                      {contest && contest.type === "clips" && (
-                        <iframe
-                          title={seed.teams[1].submission ? seed.teams[1].submission.video.id : null}
-                          src={`https://clips.twitch.tv/embed?clip=${seed.teams[1].submission ? seed.teams[1].submission.video.id : null}&parent=${window.location.hostname}`}
-                          height="240px"
-                          width="426px"
+                          width="100%"
                           allowFullScreen={true}
                           preload="auto"
                           frameBorder="0"
                         />
-                      )}
-                    </Box>
-                    <Box marginTop="1rem" display="flex" justifyContent="center" alignItems="center" flexDirection="column">
-                      <Typography
-                        variant="body2"
-                        className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
-                      >{`${seed.teams[1].submission ? seed.teams[1].submission.title : null}`}</Typography>
-                      <Typography
-                        variant="body2"
-                        className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
-                      >{`${seed.teams[1].submission ? seed.teams[1].submission.display_name : null}`}</Typography>
-                      <Link
-                        underline="hover"
-                        href={seed.teams[1].submission ? seed.teams[1].submission.video.link : null}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        variant="caption"
-                        color="textSecondary"
-                      >
-                        <Typography
-                          variant="caption"
-                          className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
-                        >
-                          {`${seed.teams[1].submission ? seed.teams[1].submission.video.link : null}`}
-                        </Typography>
-                      </Link>
+                      </Box>
+                    )}
 
-                      <div style={{ marginTop: "0.5rem" }}>
-                        <Typography
-                          variant="caption"
-                          style={{ wordBreak: "break-word" }}
-                          className={parseInt(seed.match.winner_id) === seed.teams[1].submission ? (parseInt(seed.teams[1].submission.id) ? classes.winner : classes.text) : classes.text}
+                    {contest.type === "review" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                          <Tweet tweetId={TEAM_A.submission.video.id} options={{ align: "center" }} />
+                        </Box>
+                      </Box>
+                    )}
+
+                    {contest.type === "song" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", width: "100%", height: "100%" }}>
+                          <iframe
+                            title="SoundCloud Player"
+                            width="100%"
+                            height="160"
+                            scrolling="no"
+                            frameBorder="no"
+                            allow="autoplay"
+                            src={`https://w.soundcloud.com/player/?url=${TEAM_A.submission.video.link.replace(
+                              /(www\.|m\.)/,
+                              ""
+                            )}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+                          />
+                        </Box>
+                      </Box>
+                    )}
+
+                    <Box sx={{ m: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                      <Typography variant="h6">{`${TEAM_A.submission ? TEAM_A.submission.title : ""}`}</Typography>
+                      <Typography variant="h6" color="primary">{`${TEAM_A.submission ? TEAM_A.submission.display_name : ""}`}</Typography>
+                      <CustomLink href={TEAM_A.submission ? TEAM_A.submission.video.link : ""} target="_blank" rel="noreferrer noopener" color="textSecondary">
+                        <Typography variant="caption" noWrap>{`${TEAM_A.submission ? TEAM_A.submission.video.link : ""}`}</Typography>
+                      </CustomLink>
+                      {!props.public && TEAM_A.submission && (
+                        <Button
+                          sx={{ m: 1 }}
+                          variant="outlined"
+                          disabled={!TEAM_A.submission}
+                          onClick={() => {
+                            chooseWinnerClick(seed.match, TEAM_A.submission);
+                          }}
                         >
-                          {`${seed.teams[1].submission ? (seed.teams[1].submission.comment.length === 0 ? "..." : seed.teams[1].submission.comment) : null}`}
-                        </Typography>
-                      </div>
-                      {!props.public && (
-                        <div style={{ marginTop: "1rem" }}>
-                          <Button
-                            variant="outlined"
-                            disabled={!seed.teams[1].submission}
-                            onClick={() => {
-                              chooseWinnerClick(seed.match, seed.teams[1].submission);
-                            }}
-                            className={classes.button}
-                          >
-                            Winner
-                          </Button>
-                        </div>
+                          Winner
+                        </Button>
                       )}
                     </Box>
-                  </Box>
-                </Box>
+                  </>
+                )}
               </Box>
-            </SimpleBar>
-          </div>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", m: 1 }}>
+                <Typography variant="h4" color="error" sx={{ textTransform: "uppercase" }}>{`Vs`}</Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: "100%" }}>
+                <Typography variant="body2" color="textSecondary">{`Submission ID: ${TEAM_B.submission ? TEAM_B.submission.id : "TBD"}`}</Typography>
+                {TEAM_B.submission && (
+                  <>
+                    {contest.type === "alert" && (TEAM_B.submission.video?.source === "youtube" || !TEAM_B.submission.video.source) && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <YoutubePlayer show={true} submission={TEAM_B.submission} />
+                      </Box>
+                    )}
+
+                    {contest.type === "alert" && TEAM_B.submission.video?.source === "tiktok" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "22%" }}>
+                        <TikTokPlayer submission={TEAM_B.submission} show={true} />
+                      </Box>
+                    )}
+
+                    {contest.type === "clips" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <iframe
+                          title={TEAM_B.submission.video.id}
+                          src={`https://clips.twitch.tv/embed?clip=${TEAM_B.submission.video.id}&parent=${window.location.hostname}`}
+                          height="500px"
+                          width="100%"
+                          allowFullScreen={true}
+                          preload="auto"
+                          frameBorder="0"
+                        />
+                      </Box>
+                    )}
+
+                    {contest.type === "review" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                          <Tweet tweetId={TEAM_B.submission.video.id} options={{ align: "center" }} />
+                        </Box>
+                      </Box>
+                    )}
+
+                    {contest.type === "song" && (
+                      <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                          <iframe
+                            title="SoundCloud Player"
+                            width="100%"
+                            height="160"
+                            scrolling="no"
+                            frameBorder="no"
+                            allow="autoplay"
+                            src={`https://w.soundcloud.com/player/?url=${TEAM_B.submission.video.link.replace(
+                              /(www\.|m\.)/,
+                              ""
+                            )}&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true`}
+                          />
+                        </Box>
+                      </Box>
+                    )}
+
+                    <Box sx={{ m: 1, display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                      <Typography variant="h6">{`${TEAM_B.submission ? TEAM_B.submission.title : ""}`}</Typography>
+                      <Typography variant="h6" color="primary">{`${TEAM_B.submission ? TEAM_B.submission.display_name : ""}`}</Typography>
+                      <CustomLink href={TEAM_B.submission ? TEAM_B.submission.video.link : ""} target="_blank" rel="noreferrer noopener" color="textSecondary">
+                        <Typography variant="caption" noWrap>{`${TEAM_B.submission ? TEAM_B.submission.video.link : ""}`}</Typography>
+                      </CustomLink>
+                      {!props.public && TEAM_B.submission && (
+                        <Button
+                          sx={{ m: 1 }}
+                          variant="outlined"
+                          disabled={!TEAM_B.submission}
+                          onClick={() => {
+                            chooseWinnerClick(seed.match, TEAM_B.submission);
+                          }}
+                        >
+                          Winner
+                        </Button>
+                      )}
+                    </Box>
+                  </>
+                )}
+              </Box>
+            </Box>
+          </Box>
         </Modal>
       )}
     </>

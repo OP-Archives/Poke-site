@@ -6,7 +6,7 @@ import Creation from "./creation";
 
 export default function IsolatedModal(props) {
   const [modal, setModal] = useState(false);
-  const { user, type, contest } = props;
+  const { user, type, contest, submission } = props;
 
   const handleOpen = () => {
     setModal(true);
@@ -47,7 +47,7 @@ export default function IsolatedModal(props) {
           {type === "Creation" && <Creation user={user} />}
           {type === "Submit" && <Submission user={user} contest={contest} type={"Submission"} />}
           {type === "Edit" && <Edit user={user} contest={contest} />}
-          {type === "Modify" && <Submission user={user} contest={contest} submission={contest.submission} type={"Modify"} />}
+          {type === "Modify" && <Submission user={user} contest={contest} submission={submission} type={"Modify"} />}
         </Box>
       </Modal>
     </>
