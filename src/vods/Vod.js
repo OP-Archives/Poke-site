@@ -1,10 +1,10 @@
 import React from "react";
-import { Box, Typography, Link, Grid, Tooltip, styled } from "@mui/material";
+import { Box, Typography, Link, Grid } from "@mui/material";
 import CustomLink from "../utils/CustomLink";
 import default_thumbnail from "../assets/sadge.jpg";
-import { tooltipClasses } from "@mui/material/Tooltip";
 import Chapters from "./ChaptersMenu";
 import WatchMenu from "./WatchMenu";
+import CustomWidthTooltip from "../utils/CustomToolTip";
 
 export default function Vod(props) {
   const { vod, gridSize } = props;
@@ -65,9 +65,3 @@ export default function Vod(props) {
     </>
   );
 }
-
-const CustomWidthTooltip = styled(({ className, ...props }) => <Tooltip {...props} classes={{ popper: className }} />)({
-  [`& .${tooltipClasses.tooltip}`]: {
-    maxWidth: "none",
-  },
-});
