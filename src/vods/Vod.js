@@ -1,16 +1,14 @@
 import React from "react";
-import YouTubeIcon from "@mui/icons-material/YouTube";
-import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
-import { Box, Typography, Button, MenuItem, Grid, Tooltip, Paper, styled, Modal } from "@mui/material";
+import { Box, Typography, Link, Grid, Tooltip, styled } from "@mui/material";
 import CustomLink from "../utils/CustomLink";
 import default_thumbnail from "../assets/sadge.jpg";
 import { tooltipClasses } from "@mui/material/Tooltip";
+import Chapters from "./ChaptersMenu";
+import WatchMenu from "./WatchMenu";
 
 export default function Vod(props) {
-  const { vod, isMobile, gridSize } = props;
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const { vod, gridSize } = props;
+  const DEFAULT_VOD = vod.youtube.length > 0 ? `/youtube/${vod.id}` : `/manual/${vod.id}`;
 
   return (
     <>
@@ -26,67 +24,44 @@ export default function Vod(props) {
             },
           }}
         >
-          <Box sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
-            <Button onClick={handleOpen} sx={{ height: "100%", width: "100%" }}>
-              <img className="thumbnail" alt="" src={vod.thumbnail_url ? vod.thumbnail_url : default_thumbnail} />
-            </Button>
-          </Box>
+          <Link href={DEFAULT_VOD}>
+            <img className="thumbnail" alt="" src={vod.thumbnail_url ? vod.thumbnail_url : default_thumbnail} />
+          </Link>
           <Box sx={{ pointerEvents: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
             <Box sx={{ position: "absolute", bottom: 0, left: 0 }}>
-              <Typography variant="caption" sx={{ padding: "0 .2rem", backgroundColor: "rgba(0,0,0,.6)" }}>
+              <Typography variant="caption" sx={{ p: 0.3, backgroundColor: "rgba(0,0,0,.6)" }}>
                 {`${vod.date}`}
               </Typography>
             </Box>
           </Box>
           <Box sx={{ pointerEvents: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
             <Box sx={{ position: "absolute", bottom: 0, right: 0 }}>
-              <Typography variant="caption" sx={{ padding: "0 .2rem", backgroundColor: "rgba(0,0,0,.6)" }}>
+              <Typography variant="caption" sx={{ p: 0.3, backgroundColor: "rgba(0,0,0,.6)" }}>
                 {`${vod.duration}`}
               </Typography>
             </Box>
           </Box>
         </Box>
-        <Box sx={{ mt: 1, mb: 1 }}>
-          <Box sx={{ display: "flex", flexWrap: "nowrap", flexDirection: "column" }}>
-            <Box sx={{ flexGrow: 1, flexShrink: 1, width: "100%", minWidth: 0 }}>
-              <Box>
-                <CustomWidthTooltip title={vod.title} placement="bottom">
-                  <span>
-                    <Button onClick={handleOpen} sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", width: "100%" }}>
-                      <Typography variant="caption" color="primary">
-                        {vod.title}
-                      </Typography>
-                    </Button>
-                  </span>
-                </CustomWidthTooltip>
-              </Box>
+        <Box sx={{ mt: 1, mb: 1, display: "flex" }}>
+          {vod.chapters && vod.chapters.length > 0 && <Chapters vod={vod} />}
+          <Box sx={{ minWidth: 0, width: "100%" }}>
+            <Box sx={{ p: 0.5 }}>
+              <CustomWidthTooltip title={vod.title} placement="top">
+                <span>
+                  <CustomLink href={DEFAULT_VOD} sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>
+                    <Typography variant="caption" color="primary" sx={{ fontWeight: "550" }}>
+                      {vod.title}
+                    </Typography>
+                  </CustomLink>
+                </span>
+              </CustomWidthTooltip>
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <WatchMenu vod={vod} />
             </Box>
           </Box>
         </Box>
       </Grid>
-      <Modal keepMounted open={open} onClose={handleClose} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-          <Box sx={{ m: 1, display: "flex", justifyContent: "center", textTransform: "uppercase" }}>
-            <Typography variant="h5">Watch on</Typography>
-          </Box>
-          <Box sx={{ display: "flex", m: 1, flexDirection: isMobile ? "column" : "row" }}>
-            {vod.youtube.length > 0 && (
-              <CustomLink href={`/youtube/${props.vod.id}`}>
-                <MenuItem>
-                  <YouTubeIcon sx={{ mr: 1 }} />
-                  Youtube
-                </MenuItem>
-              </CustomLink>
-            )}
-            <CustomLink href={`/manual/${props.vod.id}`}>
-              <MenuItem>
-                <OpenInBrowserIcon sx={{ mr: 1 }} />
-                Manual
-              </MenuItem>
-            </CustomLink>
-          </Box>
-        </Paper>
-      </Modal>
     </>
   );
 }

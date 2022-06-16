@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/s
 import { CssBaseline, styled } from "@mui/material";
 import { green } from "@mui/material/colors";
 import Frontpage from "./frontpage";
-import Vods from "./vods/vods";
+import Vods from "./vods/Vods";
 import Navbar from "./navbar/navbar";
 import Contests from "./contests/Contests";
 import Manage from "./contests/manage";

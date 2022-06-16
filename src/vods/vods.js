@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, Pagination, Grid, useMediaQuery } from "@mui/material";
+import { Box, Pagination, Grid, useMediaQuery, Typography } from "@mui/material";
 import SimpleBar from "simplebar-react";
 import ErrorBoundary from "../utils/ErrorBoundary";
 import AdSense from "react-adsense";
@@ -15,7 +15,7 @@ export default function Vods(props) {
   const [vods, setVods] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [page, setPage] = React.useState(null);
-  const [totalPages, setTotalPages] = React.useState(null);
+  const [totalVods, setTotalVods] = React.useState(null);
 
   useEffect(() => {
     document.title = `VODS - ${channel}`;
@@ -30,7 +30,7 @@ export default function Vods(props) {
         .then((response) => {
           setPage(1);
           setVods(response.data);
-          setTotalPages(Math.ceil(response.total / limit));
+          setTotalVods(response.total);
           setLoading(false);
         })
         .catch((e) => {
@@ -65,16 +65,23 @@ export default function Vods(props) {
 
   if (loading) return <Loading />;
 
+  const totalPages = Math.ceil(totalVods / limit);
+
   return (
     <SimpleBar style={{ minHeight: 0 }}>
       <Box sx={{ padding: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Typography variant="h4" color="primary" sx={{ textTransform: "uppercase", fontWeight: "550" }}>
+            {`${totalVods} Vods Archived`}
+          </Typography>
+        </Box>
         <Box sx={{ display: "flex", mt: 1, justifyContent: "center" }}>
           <ErrorBoundary>
             <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
           </ErrorBoundary>
         </Box>
         <Grid container spacing={2} sx={{ mt: 1, justifyContent: "center" }}>
-          {vods.map((vod, i) => (
+          {vods.map((vod, _) => (
             <Vod gridSize={2.1} key={vod.id} vod={vod} isMobile={isMobile} />
           ))}
         </Grid>
