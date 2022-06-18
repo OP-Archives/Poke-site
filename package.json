@@ -16,6 +16,7 @@
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "react-twemoji": "^0.5.0",
     "react-twitter-widgets": "^1.10.0",
     "react-youtube": "^9.0.2",
     "simplebar-react": "^2.4.1",

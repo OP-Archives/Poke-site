@@ -4,6 +4,7 @@ import SimpleBar from "simplebar-react";
 import Loading from "../utils/Loading";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { collapseClasses } from "@mui/material/Collapse";
+import Twemoji from "react-twemoji";
 
 const GLOBAL_TWITCH_BADGES_API = "https://badges.twitch.tv/v1/badges/global/display?language=en";
 const BASE_TWITCH_CDN = "https://static-cdn.jtvnw.net";
@@ -309,7 +310,11 @@ export default function Chat(props) {
               }
             }
 
-            textFragments.push(<Typography variant="body1" display="inline" key={messageCount++}>{`${text} `}</Typography>);
+            textFragments.push(
+              <Twemoji key={messageCount++} noWrapper options={{ className: "twemoji" }}>
+                <Typography variant="body1" display="inline">{`${text} `}</Typography>
+              </Twemoji>
+            );
           }
           continue;
         }

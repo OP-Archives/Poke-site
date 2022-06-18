@@ -42,3 +42,10 @@ a:active {
 .hidden {
   visibility: hidden;
 }
+
+.twemoji {
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+  border: none;
+}
