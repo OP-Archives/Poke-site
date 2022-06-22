@@ -6,6 +6,7 @@ import AdSense from "react-adsense";
 import Footer from "../utils/Footer";
 import Loading from "../utils/Loading";
 import Vod from "./Vod";
+import Search from "./Search";
 
 const limit = 50;
 
@@ -79,6 +80,11 @@ export default function Vods(props) {
           <ErrorBoundary>
             <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
           </ErrorBoundary>
+        </Box>
+        <Box sx={{ display: "flex", mt: 1, justifyContent: "center", alignItems: "center" }}>
+          <Box sx={{ width: isMobile ? "100%" : "50%" }}>
+            <Search VODS_API_BASE={VODS_API_BASE} />
+          </Box>
         </Box>
         <Grid container spacing={2} sx={{ mt: 1, justifyContent: "center" }}>
           {vods.map((vod, _) => (
