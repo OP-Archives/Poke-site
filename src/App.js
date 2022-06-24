@@ -1,18 +1,20 @@
+import { lazy, Suspense, useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 import { CssBaseline, styled } from "@mui/material";
 import { green } from "@mui/material/colors";
-import Frontpage from "./frontpage";
-import Vods from "./vods/Vods";
-import Navbar from "./navbar/navbar";
-import Contests from "./contests/Contests";
-import Manage from "./contests/manage";
-import Winners from "./contests/winners";
+import Loading from "./utils/Loading";
 import client from "./client";
-import { useState, useEffect } from "react";
-import YoutubeVod from "./vods/YoutubeVod";
-import CustomVod from "./vods/CustomVod";
-import NotFound from "./utils/NotFound";
+
+const Frontpage = lazy(() => import("./frontpage"));
+const Vods = lazy(() => import("./vods/Vods"));
+const Navbar = lazy(() => import("./navbar/navbar"));
+const Contests = lazy(() => import("./contests/Contests"));
+const Manage = lazy(() => import("./contests/manage"));
+const Winners = lazy(() => import("./contests/winners"));
+const YoutubeVod = lazy(() => import("./vods/YoutubeVod"));
+const CustomVod = lazy(() => import("./vods/CustomVod"));
+const NotFound = lazy(() => import("./utils/NotFound"));
 
 const channel = "Pokelawls",
   twitchId = "12943173",
@@ -67,102 +69,106 @@ export default function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="*"
-            element={
-              <Parent>
-                <NotFound channel={channel} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/"
-            element={
-              <Parent>
-                <Navbar />
-                <Frontpage channel={channel} VODS_API_BASE={VODS_API_BASE} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/vods"
-            element={
-              <Parent>
-                <Navbar />
-                <Vods channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/vods/:vodId"
-            element={
-              <Parent>
-                <YoutubeVod channel={channel} twitchId={twitchId} type="vod" VODS_API_BASE={VODS_API_BASE} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/live/:vodId"
-            element={
-              <Parent>
-                <YoutubeVod channel={channel} twitchId={twitchId} type="live" VODS_API_BASE={VODS_API_BASE} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/youtube/:vodId"
-            element={
-              <Parent>
-                <YoutubeVod channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/manual/:vodId"
-            element={
-              <Parent>
-                <CustomVod channel={channel} twitchId={twitchId} type="manual" VODS_API_BASE={VODS_API_BASE} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/contests"
-            element={
-              <Parent>
-                <Navbar />
-                <Contests user={user} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/contests/:contestId/manage"
-            element={
-              <Parent>
-                <Navbar />
-                <Manage user={user} />
-              </Parent>
-            }
-          />
-          <Route
-            exact
-            path="/contests/:contestId/winners"
-            element={
-              <Parent>
-                <Navbar />
-                <Winners user={user} />
-              </Parent>
-            }
-          />
-        </Routes>
+        <Parent>
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route
+                path="*"
+                element={
+                  <Parent>
+                    <NotFound channel={channel} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/"
+                element={
+                  <Parent>
+                    <Navbar />
+                    <Frontpage channel={channel} VODS_API_BASE={VODS_API_BASE} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/vods"
+                element={
+                  <Parent>
+                    <Navbar />
+                    <Vods channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/vods/:vodId"
+                element={
+                  <Parent>
+                    <YoutubeVod channel={channel} twitchId={twitchId} type="vod" VODS_API_BASE={VODS_API_BASE} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/live/:vodId"
+                element={
+                  <Parent>
+                    <YoutubeVod channel={channel} twitchId={twitchId} type="live" VODS_API_BASE={VODS_API_BASE} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/youtube/:vodId"
+                element={
+                  <Parent>
+                    <YoutubeVod channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/manual/:vodId"
+                element={
+                  <Parent>
+                    <CustomVod channel={channel} twitchId={twitchId} type="manual" VODS_API_BASE={VODS_API_BASE} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/contests"
+                element={
+                  <Parent>
+                    <Navbar />
+                    <Contests user={user} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/contests/:contestId/manage"
+                element={
+                  <Parent>
+                    <Navbar />
+                    <Manage user={user} />
+                  </Parent>
+                }
+              />
+              <Route
+                exact
+                path="/contests/:contestId/winners"
+                element={
+                  <Parent>
+                    <Navbar />
+                    <Winners user={user} />
+                  </Parent>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </Parent>
       </BrowserRouter>
     </ThemeProvider>
   );
