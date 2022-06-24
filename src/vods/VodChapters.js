@@ -17,11 +17,11 @@ export default function Chapters(props) {
   const handleChapterClick = (data) => {
     if (youtube) {
       let part = 1,
-        duration = data.start;
+        duration = data?.start || toSeconds(data.duration);
       if (duration > 0) {
         for (let data of youtube) {
           if (data.duration > duration) {
-            part = data.part;
+            part = data?.part || 1;
             break;
           }
           duration -= data.duration;
@@ -30,7 +30,7 @@ export default function Chapters(props) {
       setPart({ part: part, duration: duration });
       setChapter(data);
     } else {
-      setInitalDuration(data.start);
+      setInitalDuration(data?.start || toSeconds(data.duration));
       setChapter(data);
       setAnchorEl(null);
     }
@@ -46,14 +46,14 @@ export default function Chapters(props) {
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose} sx={{ maxWidth: "280px", maxHeight: "400px" }}>
         {chapters.map((data, _) => {
           return (
-            <MenuItem onClick={() => handleChapterClick(data)} key={data.gameId + data.start} selected={data.start === chapter.start}>
+            <MenuItem onClick={() => handleChapterClick(data)} key={(data?.gameId || data.name) + (data?.start || data.duration)} selected={data.start === chapter.start}>
               <Box sx={{ display: "flex" }}>
                 <Box sx={{ mr: 1 }}>
                   <img alt="" src={getImage(data.image)} style={{ width: "40px", height: "53px" }} />
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography color="inherit" variant="body2" noWrap>{`${data.name}`}</Typography>
-                  <Typography variant="caption" color="textSecondary" noWrap>{`${humanize(data.end * 1000, { largest: 2 })}`}</Typography>
+                  <Typography color="primary" variant="body2" noWrap>{`${data.name}`}</Typography>
+                  {data.end !== undefined && <Typography variant="caption" color="textSecondary" noWrap>{`${humanize(data.end * 1000, { largest: 2 })}`}</Typography>}
                 </Box>
               </Box>
             </MenuItem>
@@ -68,4 +68,12 @@ export default function Chapters(props) {
 const getImage = (link) => {
   if (!link) return "https://static-cdn.jtvnw.net/ttv-static/404_boxart.jpg";
   return link.replace("{width}x{height}", "40x53");
+};
+
+//Convert older chapter timestamps to seconds.
+const toSeconds = (hms) => {
+  if (!hms) return;
+  const time = hms.split(":");
+
+  return +time[0] * 60 * 60 + +time[1] * 60 + +time[2];
 };

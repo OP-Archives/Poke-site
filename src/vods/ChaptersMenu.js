@@ -26,15 +26,15 @@ export default function Chapters(props) {
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
         {vod.chapters.map((data, _) => {
           return (
-            <CustomLink key={data.gameId + data.start} href={`${DEFAULT_VOD}?duration=${data?.start || 0}`}>
+            <CustomLink key={vod.id + (data?.gameId || data.name) + (data?.start || data.duration)} href={`${DEFAULT_VOD}?duration=${data?.start || toSeconds(data.duration) || 0}`}>
               <MenuItem>
                 <Box sx={{ display: "flex" }}>
                   <Box sx={{ mr: 1 }}>
                     <img alt="" src={getImage(data.image)} style={{ width: "40px", height: "53px" }} />
                   </Box>
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography color="inherit" variant="body2">{`${data.name}`}</Typography>
-                    <Typography variant="caption">{`${humanize(data.end * 1000, { largest: 2 })}`}</Typography>
+                    <Typography color="primary" variant="body2">{`${data.name}`}</Typography>
+                    {data.end !== undefined && <Typography variant="caption" color="textSecondary">{`${humanize(data.end * 1000, { largest: 2 })}`}</Typography>}
                   </Box>
                 </Box>
               </MenuItem>
@@ -50,4 +50,12 @@ export default function Chapters(props) {
 const getImage = (link) => {
   if (!link) return "https://static-cdn.jtvnw.net/ttv-static/404_boxart.jpg";
   return link.replace("{width}x{height}", "40x53");
+};
+
+//Convert older chapter timestamps to seconds.
+const toSeconds = (hms) => {
+  if (!hms) return;
+  const time = hms.split(":");
+
+  return +time[0] * 60 * 60 + +time[1] * 60 + +time[2];
 };
