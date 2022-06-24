@@ -3,7 +3,7 @@ import { Box, Tooltip, IconButton, Menu, MenuItem, Typography } from "@mui/mater
 import humanize from "humanize-duration";
 
 export default function Chapters(props) {
-  const { chapters, chapter, setPart, youtube, setChapter, setInitalDuration } = props;
+  const { chapters, chapter, setPart, youtube, setChapter, setTimestamp } = props;
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClose = () => {
@@ -17,23 +17,22 @@ export default function Chapters(props) {
   const handleChapterClick = (data) => {
     if (youtube) {
       let part = 1,
-        duration = data?.start || toSeconds(data.duration);
-      if (duration > 0) {
+        timestamp = data?.start || toSeconds(data.duration);
+      if (timestamp > 1) {
         for (let data of youtube) {
-          if (data.duration > duration) {
+          if (data.duration > timestamp) {
             part = data?.part || 1;
             break;
           }
-          duration -= data.duration;
+          timestamp -= data.duration;
         }
       }
-      setPart({ part: part, duration: duration });
-      setChapter(data);
+      setPart({ part: part, timestamp: timestamp });
     } else {
-      setInitalDuration(data?.start || toSeconds(data.duration));
-      setChapter(data);
-      setAnchorEl(null);
+      setTimestamp(data?.start || toSeconds(data.duration));
     }
+    setChapter(data);
+    setAnchorEl(null);
   };
 
   return (

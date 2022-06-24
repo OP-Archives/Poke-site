@@ -10,7 +10,7 @@ export default function YoutubePlayer(props) {
     if (!playerRef.current) return;
 
     const index = youtube.findIndex((data) => data.part === part.part);
-    playerRef.current.loadVideoById(youtube[index !== -1 ? index : 0].id, part.duration);
+    playerRef.current.loadVideoById(youtube[index !== -1 ? index : 0].id, part.timestamp);
   }, [part, playerRef, youtube]);
 
   const timeUpdate = () => {
@@ -42,7 +42,7 @@ export default function YoutubePlayer(props) {
     });
 
     const index = youtube.findIndex((data) => data.part === part.part);
-    playerRef.current.loadVideoById(youtube[index !== -1 ? index : 0].id, part.duration);
+    playerRef.current.loadVideoById(youtube[index !== -1 ? index : 0].id, part.timestamp);
   };
 
   const onPlay = () => {

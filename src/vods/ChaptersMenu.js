@@ -26,7 +26,7 @@ export default function Chapters(props) {
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
         {vod.chapters.map((data, _) => {
           return (
-            <CustomLink key={vod.id + (data?.gameId || data.name) + (data?.start || data.duration)} href={`${DEFAULT_VOD}?duration=${data?.start || toSeconds(data.duration) || 0}`}>
+            <CustomLink key={vod.id + (data?.gameId || data.name) + (data?.start || data.duration)} href={`${DEFAULT_VOD}?t=${toHMS(data?.start || toSeconds(data.duration) || 1)}`}>
               <MenuItem>
                 <Box sx={{ display: "flex" }}>
                   <Box sx={{ mr: 1 }}>
@@ -58,4 +58,14 @@ const toSeconds = (hms) => {
   const time = hms.split(":");
 
   return +time[0] * 60 * 60 + +time[1] * 60 + +time[2];
+};
+
+//Parse seconds to 1h2m3s format
+const toHMS = (secs) => {
+  let sec_num = parseInt(secs, 10);
+  let hours = Math.floor(sec_num / 3600);
+  let minutes = Math.floor(sec_num / 60) % 60;
+  let seconds = sec_num % 60;
+
+  return `${hours}h${minutes}m${seconds}s`;
 };
