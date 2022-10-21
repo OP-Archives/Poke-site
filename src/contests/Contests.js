@@ -66,12 +66,13 @@ export default function Contests(props) {
   const ongoingContests = contests.filter((contest) => contest.active);
 
   return (
-    <SimpleBar style={{ minHeight: 0 }}>
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 4, flexDirection: "column", width: "100%" }}>
+    <SimpleBar style={{ minHeight: 0, height: "100%" }}>
+      <Box sx={{ mt: 2, textAlign: "center" }}>
         <ErrorBoundary>
           <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
         </ErrorBoundary>
-
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 1, flexDirection: "column", width: "100%" }}>
         <Box sx={{ p: 2, width: "100%" }}>
           <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
             <Box sx={{ mt: 2, minWidth: `${isMobile ? "100%" : "50%"}` }}>

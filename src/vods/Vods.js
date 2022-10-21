@@ -71,15 +71,15 @@ export default function Vods(props) {
   return (
     <SimpleBar style={{ minHeight: 0, height: "100%" }}>
       <Box sx={{ padding: 2 }}>
+        <Box sx={{ mt: 1, textAlign: "center" }}>
+          <ErrorBoundary>
+            <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
+          </ErrorBoundary>
+        </Box>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Typography variant="h4" color="primary" sx={{ textTransform: "uppercase", fontWeight: "550" }}>
             {`${totalVods} Vods Archived`}
           </Typography>
-        </Box>
-        <Box sx={{ display: "flex", mt: 1, justifyContent: "center" }}>
-          <ErrorBoundary>
-            <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-          </ErrorBoundary>
         </Box>
         <Box sx={{ display: "flex", mt: 1, justifyContent: "center", alignItems: "center" }}>
           <Box sx={{ width: isMobile ? "100%" : "50%" }}>
@@ -91,14 +91,14 @@ export default function Vods(props) {
             <Vod gridSize={2.1} key={vod.id} vod={vod} isMobile={isMobile} />
           ))}
         </Grid>
-        <Box sx={{ display: "flex", mt: 1, justifyContent: "center" }}>
-          <ErrorBoundary>
-            <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-          </ErrorBoundary>
-        </Box>
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
         {totalPages !== null && <Pagination count={totalPages} disabled={totalPages <= 1} color="primary" page={page} onChange={handlePageChange} />}
+      </Box>
+      <Box sx={{ mt: 1, textAlign: "center" }}>
+        <ErrorBoundary>
+          <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
+        </ErrorBoundary>
       </Box>
       <Footer />
     </SimpleBar>
