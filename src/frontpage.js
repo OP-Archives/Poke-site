@@ -66,16 +66,14 @@ export default function Frontpage(props) {
   const vodsToUse = isMobile ? vods.slice(0, 2) : vods.slice(0, 3);
 
   return (
-    <SimpleBar style={{ minHeight: 0, height: "100%"}}>
-      <Box sx={{ mt: 1, textAlign: "center" }}>
-        <ErrorBoundary>
-          <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-        </ErrorBoundary>
-      </Box>
+    <SimpleBar style={{ minHeight: 0, height: "100%" }}>
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
-            <Paper sx={{ p: 1, width: "100%" }}>
+            <ErrorBoundary>
+              <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
+            </ErrorBoundary>
+            <Paper sx={{ p: 1, width: "100%", mt: 1 }}>
               <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 2 }}>
                 <CustomLink href="/vods">
                   <Typography variant="h6" color="primary">

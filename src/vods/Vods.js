@@ -76,7 +76,7 @@ export default function Vods(props) {
             <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
           </ErrorBoundary>
         </Box>
-        <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <Typography variant="h4" color="primary" sx={{ textTransform: "uppercase", fontWeight: "550" }}>
             {`${totalVods} Vods Archived`}
           </Typography>
@@ -94,11 +94,6 @@ export default function Vods(props) {
       </Box>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
         {totalPages !== null && <Pagination count={totalPages} disabled={totalPages <= 1} color="primary" page={page} onChange={handlePageChange} />}
-      </Box>
-      <Box sx={{ mt: 1, textAlign: "center" }}>
-        <ErrorBoundary>
-          <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-        </ErrorBoundary>
       </Box>
       <Footer />
     </SimpleBar>

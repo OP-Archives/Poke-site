@@ -3,8 +3,6 @@ import { useMediaQuery, Box, Typography, Button, SvgIcon, Paper } from "@mui/mat
 import logo from "../assets/contestlogo.png";
 import SimpleBar from "simplebar-react";
 import client from "../client";
-import ErrorBoundary from "../utils/ErrorBoundary";
-import AdSense from "react-adsense";
 import Footer from "../utils/Footer";
 import Loading from "../utils/Loading";
 import IsolatedModal from "./IsolatedModal";
@@ -67,11 +65,6 @@ export default function Contests(props) {
 
   return (
     <SimpleBar style={{ minHeight: 0, height: "100%" }}>
-      <Box sx={{ mt: 2, textAlign: "center" }}>
-        <ErrorBoundary>
-          <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-        </ErrorBoundary>
-      </Box>
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mt: 1, flexDirection: "column", width: "100%" }}>
         <Box sx={{ p: 2, width: "100%" }}>
           <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
