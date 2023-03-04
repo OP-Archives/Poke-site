@@ -18,9 +18,9 @@ export default function TikTokPlayer(props) {
     <Box
       sx={{
         backgroundColor: "black",
-        pl: 2.2,
-        pt: 1,
         aspectRatio: "9/16",
+        maxWidth: "325px",
+        height: "575px",
       }}
       onClick={handlePlayerClick}
     >
