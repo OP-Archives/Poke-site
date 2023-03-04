@@ -21,6 +21,7 @@ export default function TikTokPlayer(props) {
         aspectRatio: "9/16",
         maxWidth: "325px",
         height: "575px",
+        minHeight: 0,
       }}
       onClick={handlePlayerClick}
     >
