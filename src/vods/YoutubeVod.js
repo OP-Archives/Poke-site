@@ -12,7 +12,7 @@ import ExpandMore from "../utils/CustomExpandMore";
 import CustomToolTip from "../utils/CustomToolTip";
 import { parse } from "tinyduration";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { toHMS } from "../utils/helpers";
+import { toHMS, toSeconds } from "../utils/helpers";
 
 export default function Vod(props) {
   const location = useLocation();
@@ -143,9 +143,7 @@ export default function Vod(props) {
             <Box sx={{ display: "flex", p: 1, alignItems: "center" }}>
               {chapter && <Chapters chapters={vod.chapters} chapter={chapter} setPart={setPart} youtube={youtube} setChapter={setChapter} />}
               <CustomToolTip title={vod.title}>
-                <Box sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", ml: 1 }}>
-                  <Typography fontWeight={550} variant="body1">{`${vod.title}`}</Typography>
-                </Box>
+                <Typography fontWeight={550} variant="body1" noWrap={true}>{`${vod.title}`}</Typography>
               </CustomToolTip>
               <Box sx={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
                 <Box sx={{ ml: 0.5 }}>
@@ -202,12 +200,6 @@ export default function Vod(props) {
     </Box>
   );
 }
-
-const toSeconds = (hms) => {
-  const time = hms.split(":");
-
-  return +time[0] * 60 * 60 + +time[1] * 60 + +time[2];
-};
 
 /**
  * Parse Timestamp (1h2m3s) to seconds.

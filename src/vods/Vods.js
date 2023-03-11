@@ -1,14 +1,10 @@
 import React, { useEffect } from "react";
 import { Box, Pagination, Grid, useMediaQuery, Typography } from "@mui/material";
 import SimpleBar from "simplebar-react";
-import ErrorBoundary from "../utils/ErrorBoundary";
-import AdSense from "react-adsense";
 import Footer from "../utils/Footer";
 import Loading from "../utils/Loading";
 import Vod from "./Vod";
 import Search from "./Search";
-
-const limit = 20;
 
 export default function Vods(props) {
   const { VODS_API_BASE, channel } = props;
@@ -17,6 +13,7 @@ export default function Vods(props) {
   const [loading, setLoading] = React.useState(true);
   const [page, setPage] = React.useState(null);
   const [totalVods, setTotalVods] = React.useState(null);
+  const limit = isMobile ? 10 : 20;
 
   useEffect(() => {
     document.title = `VODS - ${channel}`;
@@ -40,7 +37,7 @@ export default function Vods(props) {
     };
     fetchVods();
     return;
-  }, [VODS_API_BASE, channel]);
+  }, [VODS_API_BASE, channel, limit]);
 
   const handlePageChange = (_, value) => {
     if (page === value) return;
@@ -71,12 +68,7 @@ export default function Vods(props) {
   return (
     <SimpleBar style={{ minHeight: 0, height: "100%" }}>
       <Box sx={{ padding: 2 }}>
-        <Box sx={{ mt: 1, textAlign: "center" }}>
-          <ErrorBoundary>
-            <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-          </ErrorBoundary>
-        </Box>
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Typography variant="h4" color="primary" sx={{ textTransform: "uppercase", fontWeight: "550" }}>
             {`${totalVods} Vods Archived`}
           </Typography>
