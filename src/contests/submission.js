@@ -203,6 +203,7 @@ export default function Creation(props) {
     return client
       .service("submissions")
       .patch(submission.id, {
+        contestId: contest.id,
         video: tmpVideo,
         comment: comment,
         title: title,
