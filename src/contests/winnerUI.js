@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Typography } from "@mui/material";
-import client from "../client";
+import client from "./client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
 import Loading from "../utils/Loading";

@@ -115,7 +115,7 @@ export default function Frontpage(props) {
                       }}
                     >
                       <a href={item.link} target="_blank" rel="noreferrer noopener">
-                        <img alt="" key={index} src={item.image} height="100%" width="100%" />
+                        <img alt="" src={item.image} height="100%" width="100%" />
                       </a>
                     </Box>
                   );

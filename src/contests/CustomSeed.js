@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import client from "../client";
+import client from "./client";
 import { Typography, Button, Box, Modal, useMediaQuery } from "@mui/material";
 import { Seed, SeedItem, SeedTeam } from "react-brackets";
 import { styled } from "@mui/system";

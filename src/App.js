@@ -4,7 +4,7 @@ import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/s
 import { CssBaseline, styled } from "@mui/material";
 import { green } from "@mui/material/colors";
 import Loading from "./utils/Loading";
-import client from "./client";
+import client from "./contests/client";
 
 const Frontpage = lazy(() => import("./frontpage"));
 const Vods = lazy(() => import("./vods/Vods"));

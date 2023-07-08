@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import SimpleBar from "simplebar-react";
 import logo from "../assets/contestlogo.png";
-import client from "../client";
+import client from "./client";
 import { Bracket } from "react-brackets";
 import CustomSeed from "./CustomSeed";
 import Footer from "../utils/Footer";

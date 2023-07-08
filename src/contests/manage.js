@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Typography, Button, Box, useMediaQuery, Paper, Switch, Input } from "@mui/material";
-import client from "../client";
+import client from "./client";
 import Redirect from "../utils/Redirect";
 import { useParams } from "react-router-dom";
 import Loading from "../utils/Loading";

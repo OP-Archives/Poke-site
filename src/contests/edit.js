@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Typography, Button, Box, TextField, Switch, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import logo from "../assets/contestlogo.png";
 import { Alert } from "@mui/material";
-import client from "../client";
+import client from "./client";
 import Loading from "../utils/Loading";
 
 export default function Edit(props) {
