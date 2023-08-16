@@ -14,19 +14,15 @@ import Vod from "./vods/Vod";
 const merchImages = [
   {
     image: merch1,
-    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-smoke-black-tee",
   },
   {
     image: merch2,
-    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-kisses-black-tee",
   },
   {
     image: merch3,
-    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-kisses-white-tee",
   },
   {
     image: merch4,
-    link: "https://dotexe.com/collections/pokelawls/products/pokelawls-kisses-black-hoodie",
   },
 ];
 
@@ -95,11 +91,9 @@ export default function Frontpage(props) {
           <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
             <Paper sx={{ p: 1 }}>
               <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 1 }}>
-                <CustomLink href="https://dotexe.com/collections/pokelawls" target="_blank" rel="noopener noreferrer">
-                  <Typography variant="h6" color="primary">
-                    Merch
-                  </Typography>
-                </CustomLink>
+                <Typography variant="h6" color="primary">
+                  Merch
+                </Typography>
               </Box>
               <Box display="flex" flexWrap="nowrap">
                 {merchImages.map((item, index) => {
@@ -114,9 +108,7 @@ export default function Frontpage(props) {
                         },
                       }}
                     >
-                      <a href={item.link} target="_blank" rel="noreferrer noopener">
-                        <img alt="" src={item.image} height="100%" width="100%" />
-                      </a>
+                      <img alt="" src={item.image} height="100%" width="100%" />
                     </Box>
                   );
                 })}
