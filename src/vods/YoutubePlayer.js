@@ -81,7 +81,7 @@ export default function YoutubePlayer(props) {
           autoplay: 1,
           playsinline: 1,
           rel: 0,
-          modestbranding: 1,
+          enablejsapi: 1,
         },
       }}
       onReady={onReady}
