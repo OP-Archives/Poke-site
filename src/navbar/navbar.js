@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, useMediaQuery, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, useMediaQuery, Box, Divider } from "@mui/material";
 import Logo from "../assets/jammin.gif";
 import CustomLink from "../utils/CustomLink";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -44,7 +44,7 @@ export default function Navbar() {
       <AppBar position="static">
         <Toolbar>
           <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-            {isMobile && <Drawer />}
+            {isMobile && <Drawer socials={socials} />}
 
             <Box sx={{ mr: 2 }}>
               <a href="/">
@@ -59,32 +59,24 @@ export default function Navbar() {
                 </Typography>
               </CustomLink>
             </Typography>
+
+            {!isMobile && (
+              <>
+                <Divider orientation="vertical" flexItem variant="middle" sx={{ ml: 1, mr: 1 }} />
+
+                {socials.map(({ path, icon }) => (
+                  <Box key={path} sx={{ mr: 2 }}>
+                    <CustomLink href={path} rel="noopener noreferrer" target="_blank">
+                      {icon}
+                    </CustomLink>
+                  </Box>
+                ))}
+              </>
+            )}
           </Box>
 
           {!isMobile && (
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flex: 1 }}>
-              {socials.map(({ path, icon }) => (
-                <Box key={path} sx={{ mr: 2 }}>
-                  <CustomLink href={path} rel="noopener noreferrer" target="_blank">
-                    {icon}
-                  </CustomLink>
-                </Box>
-              ))}
-            </Box>
-          )}
-
-          {!isMobile && (
-            <Box sx={{ display: "flex", justifyContent: "end", flex: 1 }}>
-              <Box sx={{ mr: 2 }}>
-                <CustomLink href={`${process.env.REACT_APP_GITHUB}/issues`} rel="noopener noreferrer" target="_blank">
-                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <ReportIcon color="primary" sx={{ mr: 0.5 }} />
-                    <Typography color="primary" variant="h6">
-                      Report an Issue
-                    </Typography>
-                  </Box>
-                </CustomLink>
-              </Box>
               <Box sx={{ mr: 2 }}>
                 <CustomLink href="/contests">
                   <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -101,6 +93,21 @@ export default function Navbar() {
                     <OndemandVideoIcon color="primary" sx={{ mr: 0.5 }} />
                     <Typography color="primary" variant="h6">
                       Vods
+                    </Typography>
+                  </Box>
+                </CustomLink>
+              </Box>
+            </Box>
+          )}
+
+          {!isMobile && (
+            <Box sx={{ display: "flex", justifyContent: "end", flex: 1 }}>
+              <Box sx={{ mr: 2 }}>
+                <CustomLink href={`${process.env.REACT_APP_GITHUB}/issues`} rel="noopener noreferrer" target="_blank">
+                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <ReportIcon color="primary" sx={{ mr: 0.5 }} />
+                    <Typography color="primary" variant="h6">
+                      Issues
                     </Typography>
                   </Box>
                 </CustomLink>
