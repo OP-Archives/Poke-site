@@ -105,7 +105,7 @@ export default function App() {
                 element={
                   <>
                     <Navbar />
-                    <Contests user={user} />
+                    <Contests user={user} channel={channel} />
                   </>
                 }
               />
@@ -115,7 +115,7 @@ export default function App() {
                 element={
                   <>
                     <Navbar />
-                    <Manage user={user} />
+                    <Manage user={user} channel={channel} />
                   </>
                 }
               />
@@ -125,7 +125,7 @@ export default function App() {
                 element={
                   <>
                     <Navbar />
-                    <Winners user={user} />
+                    <Winners user={user} channel={channel} />
                   </>
                 }
               />
