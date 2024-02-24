@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Typography, Button, Box, useMediaQuery, Paper, Switch, Input } from "@mui/material";
+import { Typography, Button, Box, useMediaQuery, Paper, Switch, TextField, IconButton } from "@mui/material";
 import client from "./client";
 import Redirect from "../utils/Redirect";
 import { useParams } from "react-router-dom";
@@ -13,6 +13,10 @@ import { Tweet } from "react-twitter-widgets";
 import CustomLink from "../utils/CustomLink";
 import debounce from "lodash.debounce";
 import Winners from "./winnerUI";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import FirstPageIcon from "@mui/icons-material/FirstPage";
+import LastPageIcon from "@mui/icons-material/LastPage";
 
 export default function Manage(props) {
   const { user } = props;
@@ -281,14 +285,15 @@ export default function Manage(props) {
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
                       <Box sx={{ display: "flex", alignItems: "center" }}>
                         <Typography variant="h6" sx={{ mr: 1 }}>{`Submission ID:`}</Typography>
-                        <Input
+                        <TextField
                           key={submission.id}
                           type="text"
-                          sx={{ width: `${submission.id.length * 12}px`, fontWeight: "550", fontSize: "1.25rem" }}
+                          sx={{ width: `${submission.id.length * 1.5}rem` }}
+                          inputProps={{ sx: { textAlign: "center" } }}
                           autoCapitalize="off"
                           autoCorrect="off"
                           autoComplete="off"
-                          disableUnderline
+                          size="small"
                           defaultValue={submission.id}
                           onFocus={(e) => e.target.select()}
                           onChange={submissionIdDebounce}
@@ -301,15 +306,15 @@ export default function Manage(props) {
                         }`}</Typography>
                       </Box>
                       <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <Input
+                        <TextField
                           key={currentIndex}
                           type="text"
-                          sx={{ width: `${submissions.length.toString().length * 12}px`, fontWeight: "550", fontSize: "1.25rem", mr: 1 }}
+                          sx={{ width: `${submissions.length.toString().length * 1.5}rem`, mr: 1 }}
                           inputProps={{ sx: { textAlign: "center" } }}
                           autoCapitalize="off"
                           autoCorrect="off"
                           autoComplete="off"
-                          disableUnderline
+                          size="small"
                           defaultValue={currentIndex}
                           onFocus={(e) => e.target.select()}
                           onChange={indexDebounce}
@@ -318,23 +323,36 @@ export default function Manage(props) {
                       </Box>
                     </Box>
 
-                    <Box sx={{ display: "flex", width: "100%", justifyContent: "space-evenly", alignItems: "center", flexDirection: isMobile ? "column" : "row" }}>
-                      <Button variant="contained" onClick={prevSubmission}>{`<`}</Button>
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <IconButton variant="outlined" onClick={() => setSubmission(submissions[0])}>
+                        <FirstPageIcon color="primary" fontSize="large" />
+                      </IconButton>
+                      <IconButton variant="outlined" onClick={prevSubmission}>
+                        <KeyboardArrowLeftIcon color="primary" fontSize="large" />
+                      </IconButton>
+                      <IconButton variant="outlined" onClick={nextSubmission}>
+                        <KeyboardArrowRightIcon color="primary" fontSize="large" />
+                      </IconButton>
+                      <IconButton variant="outlined" onClick={() => setSubmission(submissions[submissions.length - 1])}>
+                        <LastPageIcon color="primary" fontSize="large" />
+                      </IconButton>
+                    </Box>
 
+                    <Box sx={{ display: "flex", width: "100%", justifyContent: "space-evenly", alignItems: "center", flexDirection: isMobile ? "column" : "row" }}>
                       {contest.type === "alert" && (submission.video?.source === "youtube" || !submission.video.source) && (
-                        <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ height: "100%", width: isMobile ? "100%" : "60%" }}>
                           <YoutubePlayer submission={submission} />
                         </Box>
                       )}
 
                       {contest.type === "alert" && submission.video?.source === "tiktok" && (
-                        <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "22%" }}>
+                        <Box sx={{ height: "100%", width: isMobile ? "100%" : "22%" }}>
                           <TikTokPlayer submission={submission} />
                         </Box>
                       )}
 
                       {contest.type === "clips" && (
-                        <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ height: "100%", width: isMobile ? "100%" : "60%" }}>
                           <iframe
                             title={submission.video.id}
                             src={`https://clips.twitch.tv/embed?clip=${submission.video.id}&parent=${window.location.hostname}`}
@@ -348,7 +366,7 @@ export default function Manage(props) {
                       )}
 
                       {contest.type === "review" && (
-                        <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ height: "100%", width: isMobile ? "100%" : "60%" }}>
                           <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
                             <Tweet tweetId={submission.video.id} options={{ align: "center" }} />
                           </Box>
@@ -356,7 +374,7 @@ export default function Manage(props) {
                       )}
 
                       {contest.type === "song" && (
-                        <Box sx={{ m: 1, height: "100%", width: isMobile ? "100%" : "60%" }}>
+                        <Box sx={{ height: "100%", width: isMobile ? "100%" : "60%" }}>
                           <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
                             <iframe
                               title="SoundCloud Player"
@@ -373,8 +391,6 @@ export default function Manage(props) {
                           </Box>
                         </Box>
                       )}
-
-                      <Button variant="contained" onClick={nextSubmission}>{`>`}</Button>
                     </Box>
                   </>
                 )}
