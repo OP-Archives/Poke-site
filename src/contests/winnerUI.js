@@ -52,12 +52,12 @@ export default function Winners(props) {
     const sendSubmissions = [];
     for (let submission of submissions) {
       sendSubmissions.push({
-        misc: submission.userId,
+        misc: submission.id,
         name: submission.display_name,
       });
     }
 
-    await fetch(`https://api.poke.gg/v1/challonge`, {
+    await fetch(`${process.env.REACT_APP_CONTESTS_API}/v1/challonge`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -83,14 +83,7 @@ export default function Winners(props) {
     if (!matches) return;
 
     const getSubmission = (id) => {
-      let data;
-      for (let submission of submissions) {
-        if (parseInt(submission.id) === id || parseInt(submission.userId) === id) {
-          data = submission;
-          break;
-        }
-      }
-      return data;
+      return submissions.find((submission) => parseInt(submission.id) === id || parseInt(submission.userId) === id);
     };
 
     let maxRounds = 0,
