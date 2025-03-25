@@ -97,6 +97,7 @@ export default function App() {
               <Route exact path="/live/:vodId" element={<YoutubeVod channel={channel} twitchId={twitchId} type="live" VODS_API_BASE={VODS_API_BASE} />} />
               <Route exact path="/youtube/:vodId" element={<YoutubeVod channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />} />
               <Route exact path="/games/:vodId" element={<Games channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />} />
+              <Route exact path="/census" element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSckFtM7MvCVirZLRUejvbXQrdvmIdtr-XlKg-7BJXsX8xLxjg/viewform" />} />
               <Route
                 exact
                 path="/contests"
