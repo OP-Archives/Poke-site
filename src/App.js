@@ -15,6 +15,7 @@ const Winners = lazy(() => import("./contests/winners"));
 const YoutubeVod = lazy(() => import("./vods/YoutubeVod"));
 const Games = lazy(() => import("./games/Games"));
 const NotFound = lazy(() => import("./utils/NotFound"));
+const Redirect = lazy(() => import("./utils/Redirect"));
 
 const channel = process.env.REACT_APP_CHANNEL,
   twitchId = process.env.REACT_APP_TWITCH_ID,
