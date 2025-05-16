@@ -6,7 +6,6 @@ import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
 import merch4 from "./assets/merch/merch4.png";
 import ErrorBoundary from "./utils/ErrorBoundary";
-import AdSense from "react-adsense";
 import Footer from "./utils/Footer";
 import CustomLink from "./utils/CustomLink";
 import Vod from "./vods/Vod";
@@ -66,9 +65,6 @@ export default function Frontpage(props) {
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
           <Box sx={{ display: "flex", flexDirection: "column", width: `${isMobile ? "100%" : "50%"}` }}>
-            <ErrorBoundary>
-              <AdSense.Google client="ca-pub-8093490837210586" slot="3667265818" style={{ display: "block" }} format="auto" responsive="true" layoutKey="-gw-1+2a-9x+5c" />
-            </ErrorBoundary>
             <Paper sx={{ p: 1, width: "100%", mt: 1 }}>
               <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", mb: 2 }}>
                 <CustomLink href="/vods">
