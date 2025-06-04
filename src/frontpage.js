@@ -5,7 +5,6 @@ import merch1 from "./assets/merch/merch1.png";
 import merch2 from "./assets/merch/merch2.png";
 import merch3 from "./assets/merch/merch3.png";
 import merch4 from "./assets/merch/merch4.png";
-import ErrorBoundary from "./utils/ErrorBoundary";
 import Footer from "./utils/Footer";
 import CustomLink from "./utils/CustomLink";
 import Vod from "./vods/Vod";
