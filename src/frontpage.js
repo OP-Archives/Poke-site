@@ -44,7 +44,7 @@ export default function Frontpage(props) {
               .filter((vod) => {
                 return vod.youtube.length !== 0;
               })
-              .slice(0, 3)
+              .slice(0, 2)
           );
         })
         .catch((e) => {
@@ -72,9 +72,9 @@ export default function Frontpage(props) {
                   </Typography>
                 </CustomLink>
               </Box>
-              <Grid container spacing={2} sx={{ mt: 1, justifyContent: "center" }}>
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 2, justifyContent: "center" }}>
                 {vodsToUse.map((vod, i) => (
-                  <Vod key={vod.id} gridSize={4} vod={vod} isMobile={isMobile} />
+                  <Vod key={vod.id} vod={vod} isMobile={isMobile} />
                 ))}
               </Grid>
             </Paper>

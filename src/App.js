@@ -16,6 +16,7 @@ const YoutubeVod = lazy(() => import("./vods/YoutubeVod"));
 const Games = lazy(() => import("./games/Games"));
 const NotFound = lazy(() => import("./utils/NotFound"));
 const Redirect = lazy(() => import("./utils/Redirect"));
+const CustomVod = lazy(() => import("./vods/CustomVod"));
 
 const channel = process.env.REACT_APP_CHANNEL,
   twitchId = process.env.REACT_APP_TWITCH_ID,
@@ -98,6 +99,7 @@ export default function App() {
               <Route exact path="/live/:vodId" element={<YoutubeVod channel={channel} twitchId={twitchId} type="live" VODS_API_BASE={VODS_API_BASE} />} />
               <Route exact path="/youtube/:vodId" element={<YoutubeVod channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />} />
               <Route exact path="/games/:vodId" element={<Games channel={channel} twitchId={twitchId} VODS_API_BASE={VODS_API_BASE} />} />
+              <Route exact path="/manual/:vodId" element={<CustomVod channel={channel} twitchId={twitchId} type="manual" VODS_API_BASE={VODS_API_BASE} />} />
               <Route exact path="/census" element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSckFtM7MvCVirZLRUejvbXQrdvmIdtr-XlKg-7BJXsX8xLxjg/viewform" />} />
               <Route
                 exact
