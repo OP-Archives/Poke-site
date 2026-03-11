@@ -15,7 +15,7 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Paper from '@mui/material/Paper';
 dayjs.extend(localizedFormat);
 
-const OAUTH_LOGIN = `${import.meta.env.VITE_APP_CONTESTS_API}/oauth/twitch?redirect=contests`;
+const OAUTH_LOGIN = `${import.meta.env.VITE_CONTESTS_API}/oauth/twitch?redirect=contests`;
 
 export default function Contests(props) {
   const isMobile = useMediaQuery('(max-width: 800px)');
