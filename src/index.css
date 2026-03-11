@@ -1,0 +1,55 @@
+ul {
+  border: 0;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+.background {
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}
+
+a,
+a:visited,
+a:hover,
+a:active {
+  text-decoration: none !important;
+}
+
+.thumbnail {
+  vertical-align: top;
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.player {
+  height: 100%;
+  width: 100%;
+}
+
+*:focus {
+  outline: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.twemoji {
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+  border: none;
+}
+
+ins.adsbygoogle[data-ad-status='unfilled'] {
+  display: none !important;
+}
