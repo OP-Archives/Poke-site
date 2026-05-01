@@ -72,7 +72,12 @@ export default function Frontpage() {
                   </Typography>
                 </CustomLink>
               </Box>
-              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ mt: 2, justifyContent: 'center' }}>
+              <Grid
+                container
+                rowSpacing={1}
+                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+                sx={{ mt: 2, justifyContent: 'center' }}
+              >
                 {vodsToUse.map((vod) => (
                   <Vod key={vod.id} vod={vod} isMobile={isMobile} />
                 ))}
@@ -90,7 +95,7 @@ export default function Frontpage() {
                   Merch
                 </Typography>
               </Box>
-              <Box display="flex" flexWrap="nowrap">
+              <Box sx={{ display: 'flex', flexWrap: 'nowrap' }}>
                 {merchImages.map((item, index) => {
                   return (
                     <Box

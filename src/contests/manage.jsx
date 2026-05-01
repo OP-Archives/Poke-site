@@ -218,7 +218,15 @@ export default function Manage(props) {
         const index = submissions.findIndex((argSubmission) => argSubmission.id === submission.id);
         if (index === -1) return;
         submissions.splice(index, 1);
-        setSubmission(submissions[index] ? submissions[index] : submissions[index - 1] ? submissions[index - 1] : submissions[index + 1] ? submissions[index + 1] : undefined);
+        setSubmission(
+          submissions[index]
+            ? submissions[index]
+            : submissions[index - 1]
+              ? submissions[index - 1]
+              : submissions[index + 1]
+                ? submissions[index + 1]
+                : undefined
+        );
       })
       .catch((e) => {
         console.error(e);
@@ -258,7 +266,10 @@ export default function Manage(props) {
   if (!user) return <Redirect to="/contests" />;
   if (user.type !== 'mod' && user.type !== 'admin') return <Redirect to="/contests" />;
 
-  const currentIndex = submissions && submission ? submissions.findIndex((argSubmission) => argSubmission.id === submission.id) + 1 : undefined;
+  const currentIndex =
+    submissions && submission
+      ? submissions.findIndex((argSubmission) => argSubmission.id === submission.id) + 1
+      : undefined;
 
   return (
     <SimpleBar style={{ minHeight: 0, height: '100%' }}>
@@ -289,7 +300,9 @@ export default function Manage(props) {
                 {submissions === undefined && <Loading />}
                 {submissions && submission && ui !== 'winners' && (
                   <>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    <Box
+                      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}
+                    >
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Typography variant="h6" sx={{ mr: 1 }}>{`Submission ID:`}</Typography>
                         <TextField
@@ -310,9 +323,17 @@ export default function Manage(props) {
                       </Box>
                       <Box sx={{ display: 'flex' }}>
                         <Typography variant="h6" sx={{ mr: 0.5 }}>{`Status:`}</Typography>
-                        <Typography variant="h6" color={submission.status === 'approved' ? 'primary' : submission.status === '' ? 'textSecondary' : 'error'} sx={{ textTransform: 'uppercase' }}>{`${
-                          submission.status === '' ? 'Not Approved' : submission.status
-                        }`}</Typography>
+                        <Typography
+                          variant="h6"
+                          color={
+                            submission.status === 'approved'
+                              ? 'primary'
+                              : submission.status === ''
+                                ? 'textSecondary'
+                                : 'error'
+                          }
+                          sx={{ textTransform: 'uppercase' }}
+                        >{`${submission.status === '' ? 'Not Approved' : submission.status}`}</Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <TextField
@@ -349,12 +370,21 @@ export default function Manage(props) {
                       </IconButton>
                     </Box>
 
-                    <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', flexDirection: isMobile ? 'column' : 'row' }}>
-                      {contest.type === 'alert' && (submission.video?.source === 'youtube' || !submission.video.source) && (
-                        <Box sx={{ height: '100%', width: isMobile ? '100%' : '60%' }}>
-                          <YoutubePlayer submission={submission} />
-                        </Box>
-                      )}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        width: '100%',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'center',
+                        flexDirection: isMobile ? 'column' : 'row',
+                      }}
+                    >
+                      {contest.type === 'alert' &&
+                        (submission.video?.source === 'youtube' || !submission.video.source) && (
+                          <Box sx={{ height: '100%', width: isMobile ? '100%' : '60%' }}>
+                            <YoutubePlayer submission={submission} />
+                          </Box>
+                        )}
 
                       {contest.type === 'alert' && submission.video?.source === 'tiktok' && (
                         <Box sx={{ height: '100%', width: isMobile ? '100%' : '22%' }}>
@@ -408,13 +438,29 @@ export default function Manage(props) {
               </Box>
 
               {submissions && submission && ui !== 'winners' && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', mt: 1, width: isMobile ? '100%' : '60%' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    mt: 1,
+                    width: isMobile ? '100%' : '60%',
+                  }}
+                >
                   <Typography variant="h5">{`${submission.title}`}</Typography>
                   <Typography variant="h5" color="primary">{`${submission.display_name}`}</Typography>
-                  <CustomLink href={submission.video.link} target="_blank" rel="noreferrer noopener" color="textSecondary">
+                  <CustomLink
+                    href={submission.video.link}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    color="textSecondary"
+                  >
                     <Typography variant="caption" noWrap>{`${submission.video.link}`}</Typography>
                   </CustomLink>
-                  {submission.video.start != null && submission.video.end != null && <Typography variant="h5">{`${toHHMMSS(submission.video.start)} - ${toHHMMSS(submission.video.end)}`}</Typography>}
+                  {submission.video.start != null && submission.video.end != null && (
+                    <Typography variant="h5">{`${toHHMMSS(submission.video.start)} - ${toHHMMSS(submission.video.end)}`}</Typography>
+                  )}
                   <Typography variant="caption" sx={{ wordBreak: 'break-word' }}>
                     {`${submission.comment}`}
                   </Typography>

@@ -70,7 +70,19 @@ export default function Creation(props) {
         </Alert>
       )}
       <form noValidate>
-        <TextField variant="outlined" margin="normal" required fullWidth label="Title" name="title" autoComplete="off" autoCapitalize="off" autoCorrect="off" autoFocus onChange={handleTitleChange} />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          label="Title"
+          name="title"
+          autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          autoFocus
+          onChange={handleTitleChange}
+        />
         <FormControl fullWidth sx={{ mt: 1 }}>
           <Select value={type} onChange={handleTypeChange} autoWidth>
             <MenuItem value="alert">Alert</MenuItem>
@@ -87,7 +99,15 @@ export default function Creation(props) {
           <Switch checked={submission} onChange={handleSubmissionChange} />
           <Typography variant="body1">Allow Submissions</Typography>
         </Box>
-        <Button type="submit" fullWidth variant="contained" color="primary" onClick={handleCreate} disabled={title.length === 0} sx={{ mt: 1 }}>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          onClick={handleCreate}
+          disabled={title.length === 0}
+          sx={{ mt: 1 }}
+        >
           Create
         </Button>
       </form>

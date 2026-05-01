@@ -45,7 +45,19 @@ export default function IsolatedModal(props) {
       )}
 
       <Modal open={modal} onClose={handleClose}>
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
           {type === 'Creation' && <Creation user={user} />}
           {type === 'Submit' && <Submission user={user} contest={contest} type={'Submission'} />}
           {type === 'Edit' && <Edit user={user} contest={contest} />}

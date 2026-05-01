@@ -233,9 +233,20 @@ export default function Creation(props) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
       <img alt="" src={logo} sx={{ height: 'auto', width: '100%' }} />
-      {submission && <Typography variant="h7" sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }}>{`Submission ID: ${submission.id}`}</Typography>}
-      <Typography variant="h7" sx={{ fontFamily: 'Anton', textTransform: 'uppercase' }}>{`Contest ID: ${contest.id}`}</Typography>
-      <Typography variant="h7" sx={{ fontFamily: 'Anton', textTransform: 'uppercase' }}>{`${contest.title}`}</Typography>
+      {submission && (
+        <Typography
+          variant="h7"
+          sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }}
+        >{`Submission ID: ${submission.id}`}</Typography>
+      )}
+      <Typography
+        variant="h7"
+        sx={{ fontFamily: 'Anton', textTransform: 'uppercase' }}
+      >{`Contest ID: ${contest.id}`}</Typography>
+      <Typography
+        variant="h7"
+        sx={{ fontFamily: 'Anton', textTransform: 'uppercase' }}
+      >{`${contest.title}`}</Typography>
       <Typography variant="h5" sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }} color="primary">
         {type === 'Modify' ? 'Modify Submission' : 'Submission'}
       </Typography>
@@ -299,7 +310,18 @@ export default function Creation(props) {
             </Select>
           </FormControl>
         )}
-        <TextField variant="outlined" margin="normal" required fullWidth label={'Link'} name={'Link'} autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={handleLinkChange} />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          label={'Link'}
+          name={'Link'}
+          autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          onChange={handleLinkChange}
+        />
         {contest.type === 'alert' && source === 1 && (
           <>
             {startError && (
@@ -307,7 +329,18 @@ export default function Creation(props) {
                 {startErrorMsg}
               </Alert>
             )}
-            <TextField variant="filled" margin="normal" required fullWidth label="Start Timestamp" name="Start" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={startChange} />
+            <TextField
+              variant="filled"
+              margin="normal"
+              required
+              fullWidth
+              label="Start Timestamp"
+              name="Start"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              onChange={startChange}
+            />
           </>
         )}
         {contest.type === 'alert' && source === 1 && (
@@ -317,7 +350,18 @@ export default function Creation(props) {
                 {endErrorMsg}
               </Alert>
             )}
-            <TextField variant="filled" margin="normal" required fullWidth label="End Timestamp" name="End" autoComplete="off" autoCapitalize="off" autoCorrect="off" onChange={endChange} />
+            <TextField
+              variant="filled"
+              margin="normal"
+              required
+              fullWidth
+              label="End Timestamp"
+              name="End"
+              autoComplete="off"
+              autoCapitalize="off"
+              autoCorrect="off"
+              onChange={endChange}
+            />
           </>
         )}
         {commentError && (
@@ -341,11 +385,27 @@ export default function Creation(props) {
           />
         )}
         {type === 'Modify' ? (
-          <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleModify} disabled={contest.type !== 'review' ? title.length === 0 || !video : !video}>
+          <Button
+            sx={{ mt: 1 }}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleModify}
+            disabled={contest.type !== 'review' ? title.length === 0 || !video : !video}
+          >
             Modify
           </Button>
         ) : (
-          <Button sx={{ mt: 1 }} type="submit" fullWidth variant="contained" color="primary" onClick={handleSubmit} disabled={contest.type !== 'review' ? title.length === 0 || !video : !video}>
+          <Button
+            sx={{ mt: 1 }}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={contest.type !== 'review' ? title.length === 0 || !video : !video}
+          >
             Submit
           </Button>
         )}

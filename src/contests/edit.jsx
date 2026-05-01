@@ -90,9 +90,19 @@ export default function Edit(props) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
       <img alt="" src={logo} sx={{ height: 'auto', width: '100%' }} />
-      <Typography variant="h4" sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }} color="primary">{`Edit`}</Typography>
-      <Typography variant="h7" sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }}>{`Contest ID: ${contest.id}`}</Typography>
-      <Typography variant="h7" sx={{ fontFamily: 'Anton', textTransform: 'uppercase' }}>{`${contest.title}`}</Typography>
+      <Typography
+        variant="h4"
+        sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }}
+        color="primary"
+      >{`Edit`}</Typography>
+      <Typography
+        variant="h7"
+        sx={{ fontFamily: 'Anton', textTransform: 'uppercase', mt: 1 }}
+      >{`Contest ID: ${contest.id}`}</Typography>
+      <Typography
+        variant="h7"
+        sx={{ fontFamily: 'Anton', textTransform: 'uppercase' }}
+      >{`${contest.title}`}</Typography>
       {error && (
         <Alert sx={{ mt: 1 }} severity="error">
           {errorMsg}
@@ -136,7 +146,12 @@ export default function Edit(props) {
             variant="contained"
             fullWidth
             onClick={handleEdit}
-            disabled={title === contest.title && submission === contest.submission && active === contest.active && type === contest.type}
+            disabled={
+              title === contest.title &&
+              submission === contest.submission &&
+              active === contest.active &&
+              type === contest.type
+            }
           >
             Edit
           </Button>

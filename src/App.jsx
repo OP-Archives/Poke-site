@@ -104,21 +104,80 @@ export default function App() {
                 <Route
                   exact
                   path="/vods/:vodId"
-                  element={<YoutubeVod type="vod" logo={Logo} origin={origin} channel={channel} archiveApiBase={archiveApiBase} defaultDelay={defaultDelay} twitchId={twitchId} />}
+                  element={
+                    <YoutubeVod
+                      type="vod"
+                      logo={Logo}
+                      origin={origin}
+                      channel={channel}
+                      archiveApiBase={archiveApiBase}
+                      defaultDelay={defaultDelay}
+                      twitchId={twitchId}
+                    />
+                  }
                 />
                 <Route
                   exact
                   path="/live/:vodId"
-                  element={<YoutubeVod type="live" logo={Logo} origin={origin} channel={channel} archiveApiBase={archiveApiBase} defaultDelay={defaultDelay} twitchId={twitchId} />}
+                  element={
+                    <YoutubeVod
+                      type="live"
+                      logo={Logo}
+                      origin={origin}
+                      channel={channel}
+                      archiveApiBase={archiveApiBase}
+                      defaultDelay={defaultDelay}
+                      twitchId={twitchId}
+                    />
+                  }
                 />
                 <Route
                   exact
                   path="/youtube/:vodId"
-                  element={<YoutubeVod logo={Logo} origin={origin} channel={channel} archiveApiBase={archiveApiBase} defaultDelay={defaultDelay} twitchId={twitchId} />}
+                  element={
+                    <YoutubeVod
+                      logo={Logo}
+                      origin={origin}
+                      channel={channel}
+                      archiveApiBase={archiveApiBase}
+                      defaultDelay={defaultDelay}
+                      twitchId={twitchId}
+                    />
+                  }
                 />
-                <Route exact path="/games/:vodId" element={<Games channel={channel} logo={Logo} origin={origin} archiveApiBase={archiveApiBase} twitchId={twitchId} />} />
-                <Route exact path="/manual/:vodId" element={<CustomVod type="manual" logo={Logo} channel={channel} archiveApiBase={archiveApiBase} twitchId={twitchId} />} />
-                <Route exact path="/census" element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSckFtM7MvCVirZLRUejvbXQrdvmIdtr-XlKg-7BJXsX8xLxjg/viewform" />} />
+                <Route
+                  exact
+                  path="/games/:vodId"
+                  element={
+                    <Games
+                      channel={channel}
+                      logo={Logo}
+                      origin={origin}
+                      archiveApiBase={archiveApiBase}
+                      twitchId={twitchId}
+                    />
+                  }
+                />
+                <Route
+                  exact
+                  path="/manual/:vodId"
+                  element={
+                    <CustomVod
+                      type="manual"
+                      logo={Logo}
+                      channel={channel}
+                      archiveApiBase={archiveApiBase}
+                      twitchId={twitchId}
+                    />
+                  }
+                />
+                <Route
+                  exact
+                  path="/census"
+                  element={
+                    <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSckFtM7MvCVirZLRUejvbXQrdvmIdtr-XlKg-7BJXsX8xLxjg/viewform" />
+                  }
+                />
                 <Route
                   exact
                   path="/contests"

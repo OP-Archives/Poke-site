@@ -51,7 +51,13 @@ export default function CustomSeed(props) {
       });
 
     const nextMatch =
-      newMatches[newMatches.findIndex((match) => parseInt(match.previous_a_match) === matchData.challonge_match_id || parseInt(match.previous_b_match) === matchData.challonge_match_id)];
+      newMatches[
+        newMatches.findIndex(
+          (match) =>
+            parseInt(match.previous_a_match) === matchData.challonge_match_id ||
+            parseInt(match.previous_b_match) === matchData.challonge_match_id
+        )
+      ];
 
     if (!nextMatch) {
       setMatches(newMatches);
@@ -97,8 +103,12 @@ export default function CustomSeed(props) {
         <Seed mobileBreakpoint={0} style={{ fontSize: '10px', minWidth: '100px' }}>
           <SeedItem>
             <div onClick={handleOpen}>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: 'red' } : {}) : {}}>{TEAM_A?.name || '---------- '}</SeedTeam>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: 'red' } : {}) : {}}>{TEAM_B?.name || '---------- '}</SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: 'red' } : {}) : {}}>
+                {TEAM_A?.name || '---------- '}
+              </SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: 'red' } : {}) : {}}>
+                {TEAM_B?.name || '---------- '}
+              </SeedTeam>
             </div>
           </SeedItem>
         </Seed>
@@ -106,8 +116,12 @@ export default function CustomSeed(props) {
         <StyledSeed isTeamA={seed.isTeamA}>
           <SeedItem>
             <div onClick={handleOpen}>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: 'red' } : {}) : {}}>{TEAM_A?.name || '---------- '}</SeedTeam>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: 'red' } : {}) : {}}>{TEAM_B?.name || '---------- '}</SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: 'red' } : {}) : {}}>
+                {TEAM_A?.name || '---------- '}
+              </SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: 'red' } : {}) : {}}>
+                {TEAM_B?.name || '---------- '}
+              </SeedTeam>
             </div>
           </SeedItem>
         </StyledSeed>
@@ -115,8 +129,12 @@ export default function CustomSeed(props) {
         <SingleSeed isLastRound={isLastRound}>
           <SeedItem>
             <div onClick={handleOpen}>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: 'red' } : {}) : {}}>{TEAM_A?.name || '---------- '}</SeedTeam>
-              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: 'red' } : {}) : {}}>{TEAM_B?.name || '---------- '}</SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_A.id) ? { color: 'red' } : {}) : {}}>
+                {TEAM_A?.name || '---------- '}
+              </SeedTeam>
+              <SeedTeam style={seed.winner ? (seed.winner === parseInt(TEAM_B.id) ? { color: 'red' } : {}) : {}}>
+                {TEAM_B?.name || '---------- '}
+              </SeedTeam>
             </div>
           </SeedItem>
         </SingleSeed>
@@ -136,16 +154,38 @@ export default function CustomSeed(props) {
               p: 2,
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', height: '100%', width: '100%', flexDirection: isMobile ? 'column' : 'row' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', width: '100%', height: '100%' }}>
-                <Typography variant="body2" color="textSecondary">{`Submission ID: ${TEAM_A.submission ? TEAM_A.submission.id : 'TBD'}`}</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                height: '100%',
+                width: '100%',
+                flexDirection: isMobile ? 'column' : 'row',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                >{`Submission ID: ${TEAM_A.submission ? TEAM_A.submission.id : 'TBD'}`}</Typography>
                 {TEAM_A.submission && (
                   <>
-                    {contest.type === 'alert' && (TEAM_A.submission.video?.source === 'youtube' || !TEAM_A.submission.video.source) && (
-                      <Box sx={{ m: 1, height: '100%', width: isMobile ? '100%' : '60%' }}>
-                        <YoutubePlayer show={true} submission={TEAM_A.submission} />
-                      </Box>
-                    )}
+                    {contest.type === 'alert' &&
+                      (TEAM_A.submission.video?.source === 'youtube' || !TEAM_A.submission.video.source) && (
+                        <Box sx={{ m: 1, height: '100%', width: isMobile ? '100%' : '60%' }}>
+                          <YoutubePlayer show={true} submission={TEAM_A.submission} />
+                        </Box>
+                      )}
 
                     {contest.type === 'alert' && TEAM_A.submission.video?.source === 'tiktok' && (
                       <Box sx={{ m: 1, height: '100%', width: isMobile ? '100%' : '22%' }}>
@@ -194,11 +234,30 @@ export default function CustomSeed(props) {
                       </Box>
                     )}
 
-                    <Box sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    <Box
+                      sx={{
+                        m: 1,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                      }}
+                    >
                       <Typography variant="h6">{`${TEAM_A.submission ? TEAM_A.submission.title : ''}`}</Typography>
-                      <Typography variant="h6" color="primary">{`${TEAM_A.submission ? TEAM_A.submission.display_name : ''}`}</Typography>
-                      <CustomLink href={TEAM_A.submission ? TEAM_A.submission.video.link : ''} target="_blank" rel="noreferrer noopener" color="textSecondary">
-                        <Typography variant="caption" noWrap>{`${TEAM_A.submission ? TEAM_A.submission.video.link : ''}`}</Typography>
+                      <Typography
+                        variant="h6"
+                        color="primary"
+                      >{`${TEAM_A.submission ? TEAM_A.submission.display_name : ''}`}</Typography>
+                      <CustomLink
+                        href={TEAM_A.submission ? TEAM_A.submission.video.link : ''}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        color="textSecondary"
+                      >
+                        <Typography
+                          variant="caption"
+                          noWrap
+                        >{`${TEAM_A.submission ? TEAM_A.submission.video.link : ''}`}</Typography>
                       </CustomLink>
                       {!props.public && TEAM_A.submission && (
                         <Button
@@ -219,15 +278,27 @@ export default function CustomSeed(props) {
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', m: 1 }}>
                 <Typography variant="h4" color="error" sx={{ textTransform: 'uppercase' }}>{`Vs`}</Typography>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', width: '100%' }}>
-                <Typography variant="body2" color="textSecondary">{`Submission ID: ${TEAM_B.submission ? TEAM_B.submission.id : 'TBD'}`}</Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'column',
+                  width: '100%',
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                >{`Submission ID: ${TEAM_B.submission ? TEAM_B.submission.id : 'TBD'}`}</Typography>
                 {TEAM_B.submission && (
                   <>
-                    {contest.type === 'alert' && (TEAM_B.submission.video?.source === 'youtube' || !TEAM_B.submission.video.source) && (
-                      <Box sx={{ m: 1, height: '100%', width: isMobile ? '100%' : '60%' }}>
-                        <YoutubePlayer show={true} submission={TEAM_B.submission} />
-                      </Box>
-                    )}
+                    {contest.type === 'alert' &&
+                      (TEAM_B.submission.video?.source === 'youtube' || !TEAM_B.submission.video.source) && (
+                        <Box sx={{ m: 1, height: '100%', width: isMobile ? '100%' : '60%' }}>
+                          <YoutubePlayer show={true} submission={TEAM_B.submission} />
+                        </Box>
+                      )}
 
                     {contest.type === 'alert' && TEAM_B.submission.video?.source === 'tiktok' && (
                       <Box sx={{ m: 1, height: '100%', width: isMobile ? '100%' : '22%' }}>
@@ -276,11 +347,30 @@ export default function CustomSeed(props) {
                       </Box>
                     )}
 
-                    <Box sx={{ m: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    <Box
+                      sx={{
+                        m: 1,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
+                      }}
+                    >
                       <Typography variant="h6">{`${TEAM_B.submission ? TEAM_B.submission.title : ''}`}</Typography>
-                      <Typography variant="h6" color="primary">{`${TEAM_B.submission ? TEAM_B.submission.display_name : ''}`}</Typography>
-                      <CustomLink href={TEAM_B.submission ? TEAM_B.submission.video.link : ''} target="_blank" rel="noreferrer noopener" color="textSecondary">
-                        <Typography variant="caption" noWrap>{`${TEAM_B.submission ? TEAM_B.submission.video.link : ''}`}</Typography>
+                      <Typography
+                        variant="h6"
+                        color="primary"
+                      >{`${TEAM_B.submission ? TEAM_B.submission.display_name : ''}`}</Typography>
+                      <CustomLink
+                        href={TEAM_B.submission ? TEAM_B.submission.video.link : ''}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        color="textSecondary"
+                      >
+                        <Typography
+                          variant="caption"
+                          noWrap
+                        >{`${TEAM_B.submission ? TEAM_B.submission.video.link : ''}`}</Typography>
                       </CustomLink>
                       {!props.public && TEAM_B.submission && (
                         <Button

@@ -100,11 +100,23 @@ export default function Winners(props) {
       matches.forEach((match) => {
         if (parseInt(match.round) !== i) return;
         const nextMatch = match.challonge_match_id
-          ? matches[matches.findIndex((matchArg) => matchArg.previous_a_match === match.challonge_match_id || matchArg.previous_b_match === match.challonge_match_id)]
+          ? matches[
+              matches.findIndex(
+                (matchArg) =>
+                  matchArg.previous_a_match === match.challonge_match_id ||
+                  matchArg.previous_b_match === match.challonge_match_id
+              )
+            ]
           : null;
         const isTeamA = nextMatch?.previous_a_match === match.challonge_match_id;
         const pairedMatch =
-          matches[matches.findIndex((matchArg) => (isTeamA ? matchArg.challonge_match_id === nextMatch?.previous_b_match : matchArg.challonge_match_id === nextMatch?.previous_a_match))];
+          matches[
+            matches.findIndex((matchArg) =>
+              isTeamA
+                ? matchArg.challonge_match_id === nextMatch?.previous_b_match
+                : matchArg.challonge_match_id === nextMatch?.previous_a_match
+            )
+          ];
         const team_a = getSubmission(match.team_a_id);
         const team_b = getSubmission(match.team_b_id);
 
@@ -143,7 +155,11 @@ export default function Winners(props) {
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, flexDirection: 'column', alignItems: 'center' }}>
-        <Typography variant="h4" sx={{ textTransform: 'uppercase' }} color="primary">{`${submissions.length} Winners`}</Typography>
+        <Typography
+          variant="h4"
+          sx={{ textTransform: 'uppercase' }}
+          color="primary"
+        >{`${submissions.length} Winners`}</Typography>
         <Button sx={{ mt: 1 }} variant="contained" onClick={createMatches}>
           {matches.length === 0 ? 'Generate Bracket' : 'Regenerate Bracket'}
         </Button>
