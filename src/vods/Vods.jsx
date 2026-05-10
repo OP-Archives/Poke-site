@@ -20,7 +20,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import archiveClient from './client';
+import { listVods } from './client';
 import { useDebouncedSetter } from '../utils/debounceHelper';
 
 const FILTERS = ['Default', 'Date', 'Title', 'Game'];
@@ -50,6 +50,8 @@ export default function Vods() {
 
     const fetchVods = async () => {
       try {
+        const params = { limit, page, sort: 'created_at', order: 'desc' };
+
         switch (filter) {
           case 'Date':
             if (filterStartDate > filterEndDate) {
@@ -57,75 +59,28 @@ export default function Vods() {
               setLoading(false);
               return;
             }
-            const dateResponse = await archiveClient.service('vods').find({
-              query: {
-                createdAt: {
-                  $gte: filterStartDate.toISOString(),
-                  $lte: filterEndDate.toISOString(),
-                },
-                $limit: limit,
-                $skip: (page - 1) * limit,
-                $sort: {
-                  createdAt: -1,
-                },
-              },
-            });
-            setVods(dateResponse.data);
-            setTotalVods(dateResponse.total);
+            params.from = filterStartDate.toISOString();
+            params.to = filterEndDate.toISOString();
             break;
           case 'Title':
             if (filterTitle.length === 0) {
               setLoading(false);
               return;
             }
-            const titleResponse = await archiveClient.service('vods').find({
-              query: {
-                title: {
-                  $iLike: `%${filterTitle}%`,
-                },
-                $limit: limit,
-                $skip: (page - 1) * limit,
-                $sort: {
-                  createdAt: -1,
-                },
-              },
-            });
-            setVods(titleResponse.data);
-            setTotalVods(titleResponse.total);
+            params.title = filterTitle;
             break;
           case 'Game':
             if (filterGame.length === 0) {
               setLoading(false);
               return;
             }
-            const gameResponse = await archiveClient.service('vods').find({
-              query: {
-                chapters: {
-                  name: filterGame,
-                },
-                $limit: limit,
-                $skip: (page - 1) * limit,
-                $sort: {
-                  createdAt: -1,
-                },
-              },
-            });
-            setVods(gameResponse.data);
-            setTotalVods(gameResponse.total);
+            params.chapter = filterGame;
             break;
-          default:
-            const defaultResponse = await archiveClient.service('vods').find({
-              query: {
-                $limit: limit,
-                $skip: (page - 1) * limit,
-                $sort: {
-                  createdAt: -1,
-                },
-              },
-            });
-            setVods(defaultResponse.data);
-            setTotalVods(defaultResponse.total);
         }
+
+        const response = await listVods(params);
+        setVods(response.data);
+        setTotalVods(response.meta.total);
       } catch {
         setError('Failed to load VODs. Please try again later.');
       } finally {
@@ -138,7 +93,6 @@ export default function Vods() {
 
   const changeFilter = (evt) => {
     setFilter(evt.target.value);
-    //reset page to 1 when filter changes
     navigate(`${location.pathname}?page=1`);
   };
 
@@ -149,7 +103,6 @@ export default function Vods() {
     }
   };
 
-  // Debounce filter searches to reduce API calls while typing
   const handleTitleChange = useDebouncedSetter(setFilterTitle, 500);
   const handleGameChange = useDebouncedSetter(setFilterGame, 500);
 

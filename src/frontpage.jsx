@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import archiveClient from './vods/client';
+import { listVods } from './vods/client';
 
 const merchImages = [
   {
@@ -35,18 +35,11 @@ export default function Frontpage() {
 
   useEffect(() => {
     const fetchVods = async () => {
-      const response = await archiveClient.service('vods').find({
-        query: {
-          $limit: 10,
-          $sort: {
-            createdAt: -1,
-          },
-        },
-      });
+      const response = await listVods({ limit: 10, sort: 'created_at', order: 'desc' });
       setVods(
         response.data
           .filter((vod) => {
-            return vod.youtube.length !== 0;
+            return vod.vod_uploads.length !== 0;
           })
           .slice(0, 2)
       );
