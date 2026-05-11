@@ -6,6 +6,7 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
+    "@feathersjs/client": "^5.0.44",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.0.1",
