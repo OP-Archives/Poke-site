@@ -1,38 +1,36 @@
-const eslint = require('@eslint/js');
-const react = require('eslint-plugin-react');
-const reactHooks = require('eslint-plugin-react-hooks');
+const importX = require('eslint-plugin-import-x');
 const prettier = require('eslint-plugin-prettier');
+const tseslint = require('typescript-eslint');
+const reactCompiler = require('eslint-plugin-react-compiler');
 
 module.exports = [
-  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     plugins: {
-      react,
-      'react-hooks': reactHooks,
+      'import-x': importX,
       prettier,
+      'react-compiler': reactCompiler,
     },
     rules: {
-      'react/prop-types': 'off',
-      'react/react-in-jsx-scope': 'off',
-      'no-unused-vars': 'warn',
+      'react-compiler/react-compiler': 'error',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
       'no-case-declarations': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
       'prettier/prettier': 'error',
-      'no-restricted-imports': [
+      'import-x/no-duplicates': 'error',
+      'import-x/order': [
         'error',
         {
-          patterns: [{ regex: '^@mui/[^/]+$' }],
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'newlines-between': 'never',
+          alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
     },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
   },
   {
-    files: ['src/**/*.{js,jsx}'],
+    files: ['src/**/*.ts', 'src/**/*.tsx'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -61,6 +59,6 @@ module.exports = [
     },
   },
   {
-    ignores: ['build/', 'node_modules/'],
+    ignores: ['build/', 'node_modules/', '.yalc/'],
   },
 ];

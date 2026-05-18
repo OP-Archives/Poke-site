@@ -1,7 +1,10 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
 import { execSync } from 'child_process';
+import path from 'path';
+import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { compression } from 'vite-plugin-compression2';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
 const getGitInfo = (cmd, fallback = 'unknown') => {
   try {
@@ -11,16 +14,31 @@ const getGitInfo = (cmd, fallback = 'unknown') => {
   }
 };
 
-// https://vitejs.dev/config/
 export default defineConfig({
   define: {
     __GIT_HASH__: JSON.stringify(getGitInfo('git rev-parse --short HEAD')),
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', { target: '19' }]],
+      },
+    }),
+    ViteImageOptimizer({
+      test: /\.(jpe?g|png|gif|tiff|webp|svg)$/i,
+      jpg: { quality: 80 },
+      jpeg: { quality: 80 },
+      png: { quality: 80 },
+    }),
+    tailwindcss(),
+    compression({ algorithm: 'gzip', exclude: [/\.(br)$/, /\.(gz)$/] }),
+    compression({ algorithm: 'brotli', exclude: [/\.(br)$/, /\.(gz)$/] }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.jpg', '.jpeg', '.png', '.gif', '.webp'],
   },
   server: {
     port: 3000,
@@ -34,11 +52,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('@mui/x-date-pickers')) return 'muiX';
-          if (id.includes('@mui/material') || id.includes('@mui/system') || id.includes('@mui/icons-material')) return 'muiCore';
-          if (id.includes('@emotion/react') || id.includes('@emotion/styled')) return 'emotion';
-          if (id.includes('dayjs')) return 'date';
-          if (id.includes('react-router-dom') || id.includes('react-dom') || id.includes('node_modules/react/')) return 'react';
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/react-router/')
+          )
+            return 'react-vendor';
+          if (id.includes('@op-archives/vod-components')) return 'video-player';
+          if (id.includes('@tanstack/react-query')) return 'query-vendor';
         },
       },
     },

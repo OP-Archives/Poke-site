@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" style="background-color: #0e0e10">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
@@ -13,30 +13,40 @@
     <!-- Google / Search Engine Tags -->
     <meta itemprop="name" content="Pokelawls" />
     <meta itemprop="description" content="Watch all of Pokelawls's Vods with Chat Replay!" />
-    <meta itemprop="image" content="%PUBLIC_URL%/meta_image.jpg" />
+    <meta itemprop="image" content="/meta_image.jpg" />
 
     <!-- Facebook Meta Tags -->
     <meta property="og:url" content="https://poke.gg" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Pokelawls" />
     <meta property="og:description" content="Watch all of Pokelawls's Vods with Chat Replay!" />
-    <meta property="og:image" content="%PUBLIC_URL%/meta_image.jpg" />
+    <meta property="og:image" content="/meta_image.jpg" />
 
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Pokelawls" />
     <meta name="twitter:description" content="Watch all of Pokelawls's Vods with Chat Replay!" />
-    <meta name="twitter:image" content="%PUBLIC_URL%/meta_image.jpg" />
+    <meta name="twitter:image" content="/meta_image.jpg" />
 
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://static-cdn.jtvnw.net" />
+    <link rel="dns-prefetch" href="https://static-cdn.jtvnw.net" />
+
     <link rel="preconnect" href="https://cdn.frankerfacez.com" />
-    <link rel="preconnect" href="https://emotes.overpowered.tv" />
+    <link rel="dns-prefetch" href="https://cdn.frankerfacez.com" />
+
+    <link rel="preconnect" href="https://cdn.betterttv.net" />
+    <link rel="dns-prefetch" href="https://cdn.betterttv.net" />
+
     <link rel="preconnect" href="https://cdn.7tv.app" />
+    <link rel="dns-prefetch" href="https://cdn.7tv.app" />
+
+    <link rel="preconnect" href="%VITE_ARCHIVE_API_BASE%" crossorigin />
+    <link rel="dns-prefetch" href="%VITE_ARCHIVE_API_BASE%" />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run the app.</noscript>
     <div id="root"></div>
-    <script type="module" src="/src/index.jsx"></script>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

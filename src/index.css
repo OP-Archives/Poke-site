@@ -1,3 +1,28 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-dark: #0e0e10;
+  --color-dark-light: #1a1a1b;
+  --color-dark-hover: #292828;
+  --color-primary: #4ade80;
+  --animate-spin: spin 1s linear infinite;
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+body {
+  background-color: var(--color-dark);
+  margin: 0;
+  color: white;
+  scrollbar-gutter: stable;
+}
+
 ul {
   border: 0;
   font: inherit;
@@ -30,26 +55,17 @@ a:active {
   height: 100%;
 }
 
-.player {
-  height: 100%;
-  width: 100%;
-}
-
 *:focus {
   outline: none;
 }
 
-.hidden {
-  visibility: hidden;
+input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
 
-.twemoji {
-  height: 20px;
-  width: 20px;
-  vertical-align: middle;
-  border: none;
-}
-
-ins.adsbygoogle[data-ad-status='unfilled'] {
-  display: none !important;
+@media (max-width: 768px) {
+  .simplebar-content-wrapper {
+    overflow-x: hidden !important;
+  }
 }
