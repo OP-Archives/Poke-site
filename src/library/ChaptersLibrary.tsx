@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import X from 'lucide-react/dist/esm/icons/x.mjs';
+import { X } from 'lucide-react';
 import { useEffect, useState, useRef, startTransition } from 'react';
 import { type LoaderFunctionArgs, useSearchParams, useLocation } from 'react-router-dom';
 import type SimpleBarCore from 'simplebar-core';
@@ -130,7 +130,7 @@ export default function ChaptersLibrary() {
 
   const paginationParams = {
     ...(searchTerm ? { search: searchTerm } : {}),
-    ...(sort !== 'count' ? { sort } : {}),
+    sort,
   };
 
   useEffect(() => {
