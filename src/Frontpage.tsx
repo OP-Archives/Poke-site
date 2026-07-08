@@ -12,6 +12,12 @@ export default function Frontpage() {
   const isMobile = useMediaQuery('(max-width: 800px)');
   const [vods, setVods] = useState<VodData[]>([]);
   const [games, setGames] = useState<LibraryChapterItem[]>([]);
+  const [spotifyLoaded, setSpotifyLoaded] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSpotifyLoaded(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     listVods({ limit: 10, sort: 'created_at', order: 'desc' })
@@ -39,9 +45,10 @@ export default function Frontpage() {
         <div className="flex justify-center w-full">
           <div className={`flex flex-col ${isMobile ? 'w-full' : 'w-1/2'}`}>
             <div className="bg-dark-light border border-gray-700 rounded p-2 mt-1 w-full">
-              <div className="flex flex-wrap justify-center mb-3">
-                <CustomLink href="/vods">
-                  <h6 className="text-primary font-semibold hover:underline cursor-pointer">Recent Vods</h6>
+              <div className="flex items-center justify-between mb-3">
+                <h6 className="text-primary font-semibold">Recent Vods</h6>
+                <CustomLink href="/vods" className="text-primary text-sm hover:underline">
+                  See all →
                 </CustomLink>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2 justify-center">
@@ -58,9 +65,10 @@ export default function Frontpage() {
         <div className="flex justify-center w-full">
           <div className={`flex flex-col ${isMobile ? 'w-full' : 'w-1/2'}`}>
             <div className="bg-dark-light border border-gray-700 rounded p-2 w-full">
-              <div className="flex flex-wrap justify-center mb-3">
-                <CustomLink href="/vods?sort=count">
-                  <h6 className="text-primary font-semibold hover:underline cursor-pointer">Most Played Games</h6>
+              <div className="flex items-center justify-between mb-3">
+                <h6 className="text-primary font-semibold">Most Played Games</h6>
+                <CustomLink href="/library?sort=count" className="text-primary text-sm hover:underline">
+                  See all →
                 </CustomLink>
               </div>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-2 justify-center">
@@ -73,22 +81,24 @@ export default function Frontpage() {
         </div>
       </div>
 
-      <div className="p-2 md:p-4">
-        <div className="flex justify-center w-full">
-          <div className={`flex flex-col ${isMobile ? 'w-full' : 'w-1/2'}`}>
-            <iframe
-              data-testid="embed-iframe"
-              style={{ borderRadius: '12px' }}
-              src="https://open.spotify.com/embed/artist/0b6qCdAWpAMUYdLQLbmOip?utm_source=generator&si=0a802c103dd8470f"
-              width="100%"
-              height="450"
-              allowFullScreen
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-            />
+      {spotifyLoaded && (
+        <div className="p-2 md:p-4">
+          <div className="flex justify-center w-full">
+            <div className={`flex flex-col ${isMobile ? 'w-full' : 'w-1/2'}`}>
+              <iframe
+                data-testid="embed-iframe"
+                style={{ borderRadius: '12px' }}
+                src="https://open.spotify.com/embed/artist/0b6qCdAWpAMUYdLQLbmOip?utm_source=generator&si=0a802c103dd8470f"
+                width="100%"
+                height="450"
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <Footer />
     </SimpleBar>
   );
