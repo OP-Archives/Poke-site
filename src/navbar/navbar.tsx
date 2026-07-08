@@ -1,5 +1,5 @@
 import { Video, BookOpen, AlertCircle, Trophy } from 'lucide-react';
-import { RedditIcon, TwitterIcon, YouTubeIcon, TwitchIcon, SoundcloudIcon } from '../assets/icons';
+import { RedditIcon, TwitterIcon, YouTubeIcon, TwitchIcon, SpotifyIcon } from '../assets/icons';
 import CustomLink from '../utils/CustomLink';
 import { useMediaQuery } from '../utils/useMediaQuery';
 import Drawer from './drawer';
@@ -7,7 +7,7 @@ import Drawer from './drawer';
 const socials = [
   { path: `https://reddit.com/r/pokelawls`, icon: <RedditIcon className="text-primary" /> },
   { path: `https://youtube.com/c/pokelawls`, icon: <YouTubeIcon className="text-primary" /> },
-  { path: `https://soundcloud.com/pokelawls`, icon: <SoundcloudIcon className="text-primary" /> },
+  { path: `https://open.spotify.com/artist/0b6qCdAWpAMUYdLQLbmOip`, icon: <SpotifyIcon className="text-primary" /> },
   { path: `https://twitter.com/pokelawls`, icon: <TwitterIcon className="text-primary" /> },
   { path: `https://twitch.tv/pokelawls`, icon: <TwitchIcon className="text-primary" /> },
 ];

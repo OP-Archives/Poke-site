@@ -1,26 +1,30 @@
 import { useEffect, useState } from 'react';
 import SimpleBar from 'simplebar-react';
-import merch1 from './assets/merch/merch1.png';
-import merch2 from './assets/merch/merch2.png';
-import merch3 from './assets/merch/merch3.png';
-import merch4 from './assets/merch/merch4.png';
-import { listVods } from './utils/archive-client';
-import type { VodData } from './utils/archive-client';
+import { listVods, getChaptersLibrary } from './utils/archive-client';
+import type { VodData, LibraryChapterItem } from './utils/archive-client';
 import CustomLink from './utils/CustomLink';
 import Footer from './utils/Footer';
 import { useMediaQuery } from './utils/useMediaQuery';
 import Vod from './vods/Vod';
-
-const merchImages = [merch1, merch2, merch3, merch4];
+import GameCard from './library/GameCard';
 
 export default function Frontpage() {
   const isMobile = useMediaQuery('(max-width: 800px)');
   const [vods, setVods] = useState<VodData[]>([]);
+  const [games, setGames] = useState<LibraryChapterItem[]>([]);
 
   useEffect(() => {
     listVods({ limit: 10, sort: 'created_at', order: 'desc' })
       .then((response: { data: VodData[]; meta: { total: number } }) => {
         setVods(response.data.filter((vod: VodData) => vod.vod_uploads.length !== 0).slice(0, 3));
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    getChaptersLibrary({ sort: 'count', order: 'desc', limit: 6 })
+      .then((response: { data: LibraryChapterItem[]; meta: { total: number } }) => {
+        setGames(response.data);
       })
       .catch(console.error);
   }, []);
@@ -53,15 +57,15 @@ export default function Frontpage() {
       <div className="p-2 md:p-4">
         <div className="flex justify-center w-full">
           <div className={`flex flex-col ${isMobile ? 'w-full' : 'w-1/2'}`}>
-            <div className="bg-dark-light border border-gray-700 rounded p-2">
-              <div className="flex flex-wrap justify-center mb-2">
-                <h6 className="text-primary font-semibold">Merch</h6>
+            <div className="bg-dark-light border border-gray-700 rounded p-2 w-full">
+              <div className="flex flex-wrap justify-center mb-3">
+                <CustomLink href="/vods?sort=count">
+                  <h6 className="text-primary font-semibold hover:underline cursor-pointer">Most Played Games</h6>
+                </CustomLink>
               </div>
-              <div className="flex flex-nowrap gap-1">
-                {merchImages.map((src, i) => (
-                  <div key={i} className="overflow-hidden relative hover:shadow-[0_0_8px_#fff] transition-shadow">
-                    <img alt="" src={src} className="h-full w-full" />
-                  </div>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-2 justify-center">
+                {games.map((game: LibraryChapterItem) => (
+                  <GameCard key={game.game_id} game_id={game.game_id} name={game.name} image={game.image} count={game.count} />
                 ))}
               </div>
             </div>
@@ -73,13 +77,14 @@ export default function Frontpage() {
         <div className="flex justify-center w-full">
           <div className={`flex flex-col ${isMobile ? 'w-full' : 'w-1/2'}`}>
             <iframe
-              title="Player"
+              data-testid="embed-iframe"
+              style={{ borderRadius: '12px' }}
+              src="https://open.spotify.com/embed/artist/0b6qCdAWpAMUYdLQLbmOip?utm_source=generator&si=0a802c103dd8470f"
               width="100%"
-              height="160"
-              scrolling="no"
-              frameBorder="0"
-              allow="autoplay"
-              src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/910917202&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+              height="450"
+              allowFullScreen
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
             />
           </div>
         </div>
