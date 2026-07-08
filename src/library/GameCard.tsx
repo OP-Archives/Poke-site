@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import sadge from '../assets/sadge.jpg';
 import CustomWidthTooltip from '../utils/CustomToolTip';
@@ -10,37 +11,42 @@ interface GameCardProps {
   count: number;
 }
 
+const cardHoverVariants = {
+  initial: { scale: 1 },
+  whileHover: { scale: 1.02, transition: { duration: 0.2, ease: [0.25, 0.4, 0.25, 1] as const } },
+  whileTap: { scale: 0.98 },
+};
+
 export default function GameCard({ game_id, name, image, count }: GameCardProps) {
+  const displayImage = image || sadge;
+
   return (
     <Link
       to={`/vods?game_id=${game_id}`}
-      className="rounded cursor-pointer no-underline block hover:shadow-[0_0_8px_rgba(255,255,255,.6)] transition-shadow min-w-0"
+      className="block w-full min-w-0 cursor-pointer rounded no-underline"
     >
-      <div className="w-full relative overflow-hidden rounded-t aspect-[400/530] bg-dark-light">
-        {image ? (
-          <img
-            src={getImage(image, 400, 530)}
-            alt=""
-            width={400}
-            height={530}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <img
-            alt=""
-            src={sadge}
-            className="absolute inset-0 w-full h-full object-cover"
-            loading="lazy"
-          />
-        )}
-      </div>
-      <div className="px-1 py-0.5 text-center min-w-0 w-full">
-        <CustomWidthTooltip title={name}>
-          <span className="text-primary font-medium block text-xs truncate">{name}</span>
-        </CustomWidthTooltip>
-        <span className="text-primary text-xs">{count} EPs</span>
+      <motion.div variants={cardHoverVariants} initial="initial" whileHover="whileHover" whileTap="whileTap">
+        <div
+          className="relative w-full rounded-t bg-primary shadow-[0_8px_20px_rgba(74,222,128,0)]"
+          style={{ aspectRatio: '400/530' }}
+        >
+          <motion.div className="absolute inset-0 overflow-hidden rounded-t bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
+            <img
+              src={getImage(displayImage, 400, 530)}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+          </motion.div>
+        </div>
+      </motion.div>
+      <div className="w-full min-w-0 px-1 py-0.5 text-center flex flex-col gap-0.5">
+        <div className="flex justify-center">
+          <CustomWidthTooltip title={name}>
+            <span className="block truncate text-xs font-medium text-[#f0f0f5]">{name}</span>
+          </CustomWidthTooltip>
+        </div>
+        <span className="text-xs text-[#9ca3af]">{count || 0} EPs</span>
       </div>
     </Link>
   );

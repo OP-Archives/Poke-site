@@ -56,7 +56,7 @@ export default function Vod({ vod, priority }: VodProps) {
     <div className="mb-2 block w-full min-w-0">
       <div className="overflow-visible rounded-md border border-transparent bg-[#16161e]/80 p-3 transition-all hover:border-[#222230] hover:bg-[#16161e]">
         <motion.div
-          className="group relative flex aspect-video w-full overflow-hidden bg-[#6366f1] shadow-[0_8px_20px_rgba(99,102,241,0)]"
+          className="group relative flex aspect-video w-full overflow-hidden bg-primary shadow-[0_8px_20px_rgba(74,222,128,0)]"
           variants={cardHoverVariants}
           initial="initial"
           whileHover="whileHover"
