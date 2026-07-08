@@ -334,10 +334,12 @@ export default function Vods() {
 
         {vods && vods.length > 0 && (
           <div
-            className={`max-w-[1600px] mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mt-2 transition-opacity duration-200 ${isBackgroundFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}
+            className={`max-w-[1600px] mx-auto grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 mt-2 transition-opacity duration-200 ${isBackgroundFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}
           >
             {vods.map((vod, index) => (
-              <Vod key={vod.id} vod={vod} isMobile={isMobile} priority={index < (isMobile ? 4 : 10)} />
+              <div key={vod.id}>
+                <Vod vod={vod} isMobile={isMobile} priority={index < (isMobile ? 4 : 10)} />
+              </div>
             ))}
           </div>
         )}

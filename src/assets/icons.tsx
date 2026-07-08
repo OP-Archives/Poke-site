@@ -129,3 +129,19 @@ export function SpotifyIcon({ className = '', size = 24, ...props }: IconProps) 
     </svg>
   );
 }
+
+export const KickIcon = function KickIcon({ className = '', size = 24, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      {...props}
+    >
+      <path d="M2.71 3.29L9.12 19.71C9.39 20.5 10.17 21 11 21H16.17C16.42 21 16.66 20.91 16.88 20.74L21.58 17.24L23 16.17L3.5 2.29L2.71 3.29ZM19.5 15.5L17.5 17H13L6.5 3.5L19.5 15.5Z" />
+    </svg>
+  );
+}
