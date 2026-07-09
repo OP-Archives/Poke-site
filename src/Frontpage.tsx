@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import SimpleBar from 'simplebar-react';
+import GameCard from './library/GameCard';
 import { listVods, getChaptersLibrary } from './utils/archive-client';
 import type { VodData, LibraryChapterItem } from './utils/archive-client';
 import CustomLink from './utils/CustomLink';
 import Footer from './utils/Footer';
 import { useMediaQuery } from './utils/useMediaQuery';
 import Vod from './vods/Vod';
-import GameCard from './library/GameCard';
 
 export default function Frontpage() {
   const isMobile = useMediaQuery('(max-width: 800px)');
@@ -73,7 +73,13 @@ export default function Frontpage() {
               </div>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-2 justify-center">
                 {games.map((game: LibraryChapterItem) => (
-                  <GameCard key={game.game_id} game_id={game.game_id} name={game.name} image={game.image} count={game.count} />
+                  <GameCard
+                    key={game.game_id}
+                    game_id={game.game_id}
+                    name={game.name}
+                    image={game.image}
+                    count={game.count}
+                  />
                 ))}
               </div>
             </div>

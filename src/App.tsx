@@ -8,6 +8,7 @@ import {
   type LoaderFunctionArgs,
 } from 'react-router-dom';
 import { requestAuth, client } from './contests/client';
+import { chaptersLoader } from './library/ChaptersLibrary';
 import Navbar from './navbar/navbar';
 import type { ContestUser } from './types/contests';
 import { getVod } from './utils/archive-client';
@@ -15,7 +16,6 @@ import ErrorBoundary from './utils/ErrorBoundary';
 import Loading from './utils/Loading';
 import { queryClient } from './utils/queryClient';
 import { vodsLoader } from './vods/Vods';
-import { chaptersLoader } from './library/ChaptersLibrary';
 
 const Frontpage = lazy(() => import('./Frontpage'));
 const Vods = lazy(() => import('./vods/Vods'));

@@ -146,9 +146,7 @@ export default function Chapters({ vod }: ChaptersProps) {
         >
           <div>
             {visibleChapters.map((data) => (
-              <div
-                key={`${vod.id}${data?.game_id}${data?.start}`}
-              >
+              <div key={`${vod.id}${data?.game_id}${data?.start}`}>
                 <Link
                   to={`${DEFAULT_VOD}?t=${toHMS(data?.start as number)}`}
                   onClick={handleClose}
@@ -166,9 +164,7 @@ export default function Chapters({ vod }: ChaptersProps) {
                     />
                   </div>
                   <div className="flex min-w-0 flex-col">
-                    <span className="text-sm leading-snug break-words whitespace-normal text-primary">
-                      {data.name}
-                    </span>
+                    <span className="text-sm leading-snug break-words whitespace-normal text-primary">{data.name}</span>
                     {data.end !== undefined && data.duration !== undefined && (
                       <span className="mt-0.5 text-xs text-gray-400">
                         {humanize(data.duration * 1000, { largest: 2 })}

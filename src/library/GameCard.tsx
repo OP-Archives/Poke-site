@@ -17,7 +17,6 @@ const cardHoverVariants = {
 };
 
 export default function GameCard({ game_id, name, image, count }: GameCardProps) {
-
   return (
     <Link to={`/vods?game_id=${game_id}`} className="block w-full min-w-0 cursor-pointer rounded no-underline">
       <motion.div variants={cardHoverVariants} initial="initial" whileHover="whileHover" whileTap="whileTap">

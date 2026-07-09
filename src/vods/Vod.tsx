@@ -135,7 +135,11 @@ export default function Vod({ vod, priority }: VodProps) {
           <div className="flex min-w-0 flex-1 flex-col justify-center">
             <div className="w-full min-w-0">
               {DEFAULT_VOD ? (
-                <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline" onMouseEnter={prefetchPlayerChunk}>
+                <Link
+                  to={DEFAULT_VOD}
+                  className="inline-flex max-w-full min-w-0 no-underline"
+                  onMouseEnter={prefetchPlayerChunk}
+                >
                   <CustomWidthTooltip title={vod.title}>
                     <span className="truncate text-sm font-medium text-[#f0f0f5] transition-colors hover:text-primary">
                       {vod.title}
