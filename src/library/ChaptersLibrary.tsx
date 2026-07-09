@@ -1,20 +1,21 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { X } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
-import { type LoaderFunctionArgs, useSearchParams, useLocation } from 'react-router-dom';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import type SimpleBarCore from 'simplebar-core';
 import SimpleBar from 'simplebar-react';
 import { getChaptersLibrary } from '../utils/archive-client';
 import { useDebouncedSetter } from '../utils/debounceHelper';
+import FilterBar from '../utils/FilterBar';
 import Footer from '../utils/Footer';
 import Loading from '../utils/Loading';
 import PaginationControls from '../utils/PaginationControls';
 import { queryClient } from '../utils/queryClient';
 import { useChapters, prefetchNextPageChapters } from '../utils/useChapters';
+import { useListFilters } from '../utils/useListFilters';
 import { useMediaQuery } from '../utils/useMediaQuery';
 import GameCard from './GameCard';
 
-export const chaptersLoader = async ({ request }: LoaderFunctionArgs) => {
+export const chaptersLoader = async ({ request }: import('react-router-dom').LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const searchTerm = url.searchParams.get('search') || '';
   const sort = url.searchParams.get('sort') || 'recent';
@@ -39,29 +40,72 @@ export const chaptersLoader = async ({ request }: LoaderFunctionArgs) => {
   return null;
 };
 
-const SORTS = ['Recently Played', 'Most Played', 'Game Name'];
+const FILTERS = ['Recently Played', 'Most Played', 'Game Name'] as const;
 
 export default function ChaptersLibrary() {
   const queryClient = useQueryClient();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const isMobile = useMediaQuery('(max-width: 900px)');
   const location = useLocation();
 
   const scrollRef = useRef<SimpleBarCore | null>(null);
 
-  const searchTerm = searchParams.get('search') || '';
-  const sort = searchParams.get('sort') || 'recent';
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = 20;
+  const urlSort = searchParams.get('sort') || 'recent';
+  const apiSort = urlSort === 'recent' ? 'recent' : urlSort === 'chapter_name' ? 'chapter_name' : 'count';
+  const displaySort =
+    urlSort === 'recent' ? 'Recently Played' : urlSort === 'chapter_name' ? 'Game Name' : 'Most Played';
 
-  const [inputSearch, setInputSearch] = useState(searchTerm);
-  const isTypingRef = useRef(false);
+  const { state, updateParams } = useListFilters({
+    filterOptions: FILTERS,
+    searchParamKey: { search: 'search', from: 'from', to: 'to' },
+    defaultFilter: 'Recently Played',
+  });
+
+  const limit = isMobile ? 10 : 20;
+
+  const [inputSearch, setInputSearch] = useState(state.inputSearch);
 
   useEffect(() => {
-    if (!isTypingRef.current) {
-      setInputSearch(searchTerm);
+    setInputSearch(state.inputSearch);
+  }, [state.inputSearch]);
+
+  const debouncedSetSearch = useDebouncedSetter((val: string) => {
+    updateParams({ search: val, page: '1' });
+  }, 500);
+
+  const queryKeyParams = useMemo(
+    () => ({
+      page: state.page,
+      limit,
+      ...(state.inputSearch.length > 0 ? { chapter_name: state.inputSearch } : {}),
+      sort: apiSort,
+      order: urlSort === 'chapter_name' ? 'asc' : 'desc',
+    }),
+    [state.page, limit, state.inputSearch, apiSort, urlSort]
+  );
+
+  const { data, isLoading, isFetching } = useChapters(queryKeyParams);
+  const chapters = data?.data ?? null;
+  const totalChapters = data?.meta?.total ?? null;
+  const totalPages = Math.ceil((totalChapters || 0) / limit);
+  const isBackgroundFetching = isFetching && !isLoading;
+
+  const paginationParams = {
+    ...(state.inputSearch ? { search: state.inputSearch } : {}),
+    sort: urlSort,
+  };
+
+  useEffect(() => {
+    if (totalPages !== null && state.page < totalPages) {
+      prefetchNextPageChapters(queryClient, { ...queryKeyParams, page: state.page + 1 });
     }
-  }, [searchTerm]);
+  }, [state.page, totalPages, queryKeyParams, queryClient]);
+
+  const changeFilterSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSort = e.target.value;
+    const apiValue = newSort === 'Recently Played' ? 'recent' : newSort === 'Game Name' ? 'chapter_name' : 'count';
+    updateParams({ sort: apiValue, page: '1' });
+  };
 
   useEffect(() => {
     const el = scrollRef.current?.getScrollElement();
@@ -90,65 +134,7 @@ export default function ChaptersLibrary() {
       el.removeEventListener('scroll', handleScroll);
       if (scrollTimeout) window.clearTimeout(scrollTimeout);
     };
-  }, [page, location.key]);
-
-  const updateUrlParams = (updates: Record<string, string | null>) => {
-    setSearchParams(
-      (prev) => {
-        const nextParams = new URLSearchParams(prev);
-
-        for (const [key, val] of Object.entries(updates)) {
-          if (val) nextParams.set(key, val);
-          else nextParams.delete(key);
-        }
-        return nextParams;
-      },
-      { replace: true }
-    );
-  };
-
-  const debouncedSetSearchTerm = useDebouncedSetter((val: string) => {
-    updateUrlParams({ search: val, page: '1' });
-  }, 500);
-
-  const apiSort = sort === 'recent' ? 'recent' : sort === 'chapter_name' ? 'chapter_name' : 'count';
-  const displaySort = sort === 'recent' ? 'Recently Played' : sort === 'chapter_name' ? 'Game Name' : 'Most Played';
-
-  const queryKeyParams = {
-    page,
-    limit,
-    ...(searchTerm.length > 0 ? { chapter_name: searchTerm } : {}),
-    sort: apiSort,
-    order: sort === 'chapter_name' ? 'asc' : 'desc',
-  };
-
-  const { data, isLoading, isFetching } = useChapters(queryKeyParams);
-  const chapters = data?.data ?? null;
-  const totalChapters = data?.meta?.total ?? null;
-  const totalPages = Math.ceil((totalChapters || 0) / limit);
-  const isBackgroundFetching = isFetching && !isLoading;
-
-  const paginationParams = {
-    ...(searchTerm ? { search: searchTerm } : {}),
-    sort,
-  };
-
-  useEffect(() => {
-    if (totalPages !== null && page < totalPages) {
-      prefetchNextPageChapters(queryClient, { ...queryKeyParams, page: page + 1 });
-    }
-  }, [page, totalPages, queryKeyParams, queryClient]);
-
-  const changeSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSort = e.target.value;
-    const apiValue = newSort === 'Recently Played' ? 'recent' : newSort === 'Game Name' ? 'chapter_name' : 'count';
-    updateUrlParams({ sort: apiValue, page: '1' });
-  };
-
-  const handleClearSearch = () => {
-    setInputSearch('');
-    updateUrlParams({ search: null, page: '1' });
-  };
+  }, [state.page, location.key]);
 
   return (
     <SimpleBar ref={scrollRef} className="min-h-0 h-full overflow-x-hidden">
@@ -159,43 +145,35 @@ export default function ChaptersLibrary() {
           )}
         </div>
         <div className="max-w-[1100px] mx-auto">
-          <div className="flex justify-between items-center py-1 pb-2 gap-2">
-            <div className="w-52 relative">
-              <input
-                type="text"
-                placeholder="Search by Game"
-                onChange={(e) => {
-                  isTypingRef.current = true;
-                  setInputSearch(e.target.value);
-                  debouncedSetSearchTerm(e.target.value);
-                  setTimeout(() => {
-                    isTypingRef.current = false;
-                  }, 500);
-                }}
-                value={inputSearch}
-                className="w-full bg-dark-light border border-border rounded px-3 py-1.5 text-sm text-white placeholder-muted-dim pr-8"
-              />
-              {inputSearch && (
-                <button
-                  onClick={handleClearSearch}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-white transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-            <select
-              value={displaySort}
-              onChange={changeSort}
-              className="mt-1 sm:mt-0 bg-dark-light border border-border rounded px-3 py-1.5 text-sm w-max"
-            >
-              {SORTS.map((data) => (
-                <option key={data} value={data}>
-                  {data}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FilterBar
+            mode="library"
+            filterValue={displaySort}
+            onFilterChange={() => {}}
+            searchValue={inputSearch}
+            onSearchChange={setInputSearch}
+            debouncedOnSearchChange={debouncedSetSearch}
+            onSearchClear={() => {
+              setInputSearch('');
+              updateParams({ search: null, page: '1' });
+            }}
+            showSearch
+            searchPlaceholder="Search by Game"
+            showFilter={false}
+            filterOptions={FILTERS}
+            extraControls={
+              <select
+                value={displaySort}
+                onChange={changeFilterSelect}
+                className="bg-bg-surface text-text-primary focus:border-primary focus:ring-primary/30 h-9 w-max rounded-md px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none sm:ml-1"
+              >
+                {FILTERS.map((data) => (
+                  <option key={data} value={data}>
+                    {data}
+                  </option>
+                ))}
+              </select>
+            }
+          />
           {isLoading && <Loading />}
 
           {!isLoading && chapters && chapters.length === 0 && (
@@ -210,13 +188,19 @@ export default function ChaptersLibrary() {
               }}
             >
               {chapters.map((chapter) => (
-                <GameCard key={chapter.game_id} game_id={chapter.game_id} name={chapter.name} image={chapter.image} count={chapter.count} />
+                <GameCard
+                  key={chapter.game_id}
+                  game_id={chapter.game_id}
+                  name={chapter.name}
+                  image={chapter.image}
+                  count={chapter.count}
+                />
               ))}
             </div>
           )}
         </div>
         <PaginationControls
-          page={page}
+          page={state.page}
           totalPages={totalPages}
           preserveParams={paginationParams}
           onHoverPage={(targetPage) => prefetchNextPageChapters(queryClient, { ...queryKeyParams, page: targetPage })}
