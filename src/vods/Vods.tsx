@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { X } from 'lucide-react';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import type SimpleBarCore from 'simplebar-core';
@@ -195,10 +194,25 @@ export default function Vods() {
               const e = { target: { value: val } } as React.ChangeEvent<HTMLSelectElement>;
               changeFilter(e);
             }}
-            searchValue={inputTitle}
-            onSearchChange={setInputTitle}
-            debouncedOnSearchChange={debouncedSetTitle}
-            onSearchClear={handleClearTitle}
+            searchValue={state.filter === 'Title' ? inputTitle : inputGame}
+            onSearchChange={(val) => {
+              if (state.filter === 'Title') {
+                setInputTitle(val);
+              } else {
+                setInputGame(val);
+              }
+            }}
+            debouncedOnSearchChange={(val) => {
+              if (state.filter === 'Title') {
+                debouncedSetTitle(val);
+              } else {
+                debouncedSetGame(val);
+              }
+            }}
+            onSearchClear={() => {
+              if (state.filter === 'Title') handleClearTitle();
+              else handleClearGame();
+            }}
             dateStartValue={state.inputStartDate}
             dateEndValue={state.inputEndDate}
             onDateStartChange={(val) => updateParams({ from: val, page: '1' })}
@@ -206,36 +220,13 @@ export default function Vods() {
             maxDate={todayString}
             minDate={FORMATTED_START}
             showDateRange={state.filter === 'Date'}
-            showSearch={state.filter === 'Title'}
+            showSearch={state.filter === 'Title' || state.filter === 'Game'}
+            searchPlaceholder={state.filter === 'Game' ? 'Search by Game' : 'Search by Title'}
             disabled={!!state.gameId}
             gameId={state.gameId}
             onBack={() => navigate(-1)}
             hasBackButton={!!state.gameId}
             filterOptions={FILTERS}
-            extraControls={
-              state.filter === 'Game' && !state.gameId ? (
-                <div className="relative w-full sm:flex-1 sm:min-w-0 sm:w-auto">
-                  <input
-                    type="text"
-                    placeholder="Search by Game"
-                    onChange={(e) => {
-                      setInputGame(e.target.value);
-                      debouncedSetGame(e.target.value);
-                    }}
-                    value={inputGame}
-                    className="bg-bg-surface text-text-primary placeholder-text-secondary focus:border-primary focus:ring-primary/30 h-9 w-full rounded-md px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none sm:w-44"
-                  />
-                  {inputGame && (
-                    <button
-                      onClick={handleClearGame}
-                      className="text-text-secondary hover:text-text-primary absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  )}
-                </div>
-              ) : null
-            }
           />
         </div>
         {isLoading && <Loading />}

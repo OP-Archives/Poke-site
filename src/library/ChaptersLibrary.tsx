@@ -1,11 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { X } from 'lucide-react';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import type SimpleBarCore from 'simplebar-core';
 import SimpleBar from 'simplebar-react';
 import { getChaptersLibrary } from '../utils/archive-client';
 import { useDebouncedSetter } from '../utils/debounceHelper';
-import FilterBar from '../utils/FilterBar';
 import Footer from '../utils/Footer';
 import Loading from '../utils/Loading';
 import PaginationControls from '../utils/PaginationControls';
@@ -40,7 +40,7 @@ export const chaptersLoader = async ({ request }: import('react-router-dom').Loa
   return null;
 };
 
-const FILTERS = ['Recently Played', 'Most Played', 'Game Name'] as const;
+const SORTS = ['Recently Played', 'Most Played', 'Game Name'];
 
 export default function ChaptersLibrary() {
   const queryClient = useQueryClient();
@@ -52,11 +52,9 @@ export default function ChaptersLibrary() {
 
   const urlSort = searchParams.get('sort') || 'recent';
   const apiSort = urlSort === 'recent' ? 'recent' : urlSort === 'chapter_name' ? 'chapter_name' : 'count';
-  const displaySort =
-    urlSort === 'recent' ? 'Recently Played' : urlSort === 'chapter_name' ? 'Game Name' : 'Most Played';
 
   const { state, updateParams } = useListFilters({
-    filterOptions: FILTERS,
+    filterOptions: SORTS,
     searchParamKey: { search: 'search', from: 'from', to: 'to' },
     defaultFilter: 'Recently Played',
   });
@@ -101,10 +99,13 @@ export default function ChaptersLibrary() {
     }
   }, [state.page, totalPages, queryKeyParams, queryClient]);
 
-  const changeFilterSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSort = e.target.value;
-    const apiValue = newSort === 'Recently Played' ? 'recent' : newSort === 'Game Name' ? 'chapter_name' : 'count';
-    updateParams({ sort: apiValue, page: '1' });
+  const changeSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    updateParams({ sort: e.target.value, page: '1' });
+  };
+
+  const handleClearSearch = () => {
+    setInputSearch('');
+    updateParams({ search: null, page: '1' });
   };
 
   useEffect(() => {
@@ -138,42 +139,49 @@ export default function ChaptersLibrary() {
 
   return (
     <SimpleBar ref={scrollRef} className="min-h-0 h-full overflow-x-hidden">
-      <div className="px-2 md:px-0 py-1 max-w-full">
+      <div className="p-2 md:p-4 py-1 max-w-full">
         <div className="flex justify-center mt-2 flex-col items-center">
           {totalChapters !== null && (
             <h4 className="text-primary text-3xl uppercase font-medium">{`${totalChapters} Games`}</h4>
           )}
         </div>
         <div className="max-w-[1100px] mx-auto">
-          <FilterBar
-            mode="library"
-            filterValue={displaySort}
-            onFilterChange={() => {}}
-            searchValue={inputSearch}
-            onSearchChange={setInputSearch}
-            debouncedOnSearchChange={debouncedSetSearch}
-            onSearchClear={() => {
-              setInputSearch('');
-              updateParams({ search: null, page: '1' });
-            }}
-            showSearch
-            searchPlaceholder="Search by Game"
-            showFilter={false}
-            filterOptions={FILTERS}
-            extraControls={
-              <select
-                value={displaySort}
-                onChange={changeFilterSelect}
-                className="bg-bg-surface text-text-primary focus:border-primary focus:ring-primary/30 h-9 w-max rounded-md px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none sm:ml-1"
-              >
-                {FILTERS.map((data) => (
-                  <option key={data} value={data}>
-                    {data}
-                  </option>
-                ))}
-              </select>
-            }
-          />
+          <div className="flex flex-row flex-wrap items-center gap-2 pt-1">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by Game"
+                onChange={(e) => {
+                  setInputSearch(e.target.value);
+                  debouncedSetSearch(e.target.value);
+                }}
+                value={inputSearch}
+                className="bg-bg-surface text-text-primary placeholder-text-secondary focus:border-primary focus:ring-primary/30 h-9 w-44 rounded-md px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
+              />
+              {inputSearch && (
+                <button
+                  onClick={handleClearSearch}
+                  className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer text-[#9ca3af] transition-colors hover:text-[#f0f0f5]"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            <select
+              value={urlSort}
+              onChange={changeSort}
+              className="bg-bg-surface text-text-primary focus:border-primary focus:ring-primary/30 ml-auto h-9 w-max rounded-md px-3 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
+            >
+              {SORTS.map((data) => (
+                <option
+                  key={data}
+                  value={data === 'Recently Played' ? 'recent' : data === 'Game Name' ? 'chapter_name' : 'count'}
+                >
+                  {data}
+                </option>
+              ))}
+            </select>
+          </div>
           {isLoading && <Loading />}
 
           {!isLoading && chapters && chapters.length === 0 && (
@@ -181,22 +189,21 @@ export default function ChaptersLibrary() {
           )}
 
           {chapters && chapters.length > 0 && (
-            <div
-              className={`mt-2 grid gap-1.5 transition-opacity duration-200 ${isBackgroundFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}
-              style={{
-                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)',
-              }}
-            >
-              {chapters.map((chapter) => (
-                <GameCard
-                  key={chapter.game_id}
-                  game_id={chapter.game_id}
-                  name={chapter.name}
-                  image={chapter.image}
-                  count={chapter.count}
-                />
-              ))}
-            </div>
+            <>
+              <div
+                className={`mt-2 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1.5 transition-opacity duration-200 ${isBackgroundFetching ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}
+              >
+                {chapters.map((chapter) => (
+                  <GameCard
+                    key={chapter.game_id}
+                    game_id={chapter.game_id}
+                    name={chapter.name}
+                    image={chapter.image}
+                    count={chapter.count}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </div>
         <PaginationControls

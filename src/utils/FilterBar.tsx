@@ -78,6 +78,7 @@ export default function FilterBar({
             ))}
           </select>
         )}
+        <div className="sm:hidden">{extraControls}</div>
       </div>
       {showDateRange &&
         onDateStartChange &&
@@ -85,37 +86,34 @@ export default function FilterBar({
         dateStartValue !== undefined &&
         dateEndValue !== undefined &&
         !gameId && (
-          <div className="flex w-full items-center gap-2 sm:w-auto sm:gap-1">
+          <div className="flex w-full items-center gap-2 sm:ml-1 sm:w-auto sm:gap-1">
             <DatePicker value={dateStartValue} onChange={onDateStartChange} maxDate={maxDate} minDate={minDate} />
             <DatePicker value={dateEndValue} onChange={onDateEndChange} maxDate={maxDate} minDate={minDate} />
           </div>
         )}
       {showSearch && (
-        <div className="flex items-stretch gap-2 sm:gap-1 w-full">
-          <div className="relative w-44 shrink-0">
-            <input
-              type="text"
-              placeholder={searchPlaceholder ?? (mode === 'vods' ? 'Search by Title' : 'Search by Game')}
-              onChange={(e) => {
-                onSearchChange(e.target.value);
-                debouncedOnSearchChange?.(e.target.value);
-              }}
-              value={searchValue}
-              className="bg-bg-surface text-text-primary placeholder-text-secondary focus:border-primary focus:ring-primary/30 h-9 w-full rounded-md px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none"
-            />
-            {searchValue && (
-              <button
-                onClick={onSearchClear}
-                className="text-text-secondary hover:text-text-primary absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer transition-colors"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
-          <div className="flex-1" />
-          {extraControls && <div>{extraControls}</div>}
+        <div className="relative w-full sm:ml-1 sm:w-auto">
+          <input
+            type="text"
+            placeholder={searchPlaceholder ?? (mode === 'vods' ? 'Search by Title' : 'Search by Game')}
+            onChange={(e) => {
+              onSearchChange(e.target.value);
+              debouncedOnSearchChange?.(e.target.value);
+            }}
+            value={searchValue}
+            className="bg-bg-surface text-text-primary placeholder-text-secondary focus:border-primary focus:ring-primary/30 h-9 w-full rounded-md px-3 pr-8 text-sm transition-all duration-200 focus:ring-1 focus:outline-none sm:w-44"
+          />
+          {searchValue && (
+            <button
+              onClick={onSearchClear}
+              className="text-text-secondary hover:text-text-primary absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer transition-colors"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       )}
+      <div className="hidden sm:block">{extraControls}</div>
     </div>
   );
 }
