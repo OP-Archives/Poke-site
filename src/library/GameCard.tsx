@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import sadge from '../assets/sadge.jpg';
 import CustomWidthTooltip from '../utils/CustomToolTip';
 import { getImage } from '../utils/helpers';
 
@@ -18,21 +17,17 @@ const cardHoverVariants = {
 };
 
 export default function GameCard({ game_id, name, image, count }: GameCardProps) {
-  const displayImage = image || sadge;
 
   return (
-    <Link
-      to={`/vods?game_id=${game_id}`}
-      className="block w-full min-w-0 cursor-pointer rounded no-underline"
-    >
+    <Link to={`/vods?game_id=${game_id}`} className="block w-full min-w-0 cursor-pointer rounded no-underline">
       <motion.div variants={cardHoverVariants} initial="initial" whileHover="whileHover" whileTap="whileTap">
         <div
-          className="relative w-full rounded-t bg-primary shadow-[0_8px_20px_rgba(74,222,128,0)]"
+          className="relative w-full rounded-t bg-primary shadow-[0_8px_20px_rgba(59,130,246,0)]"
           style={{ aspectRatio: '400/530' }}
         >
           <motion.div className="absolute inset-0 overflow-hidden rounded-t bg-[#222230]" whileHover={{ x: -6, y: -6 }}>
             <img
-              src={getImage(displayImage, 400, 530)}
+              src={getImage(image, 400, 530)}
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
               loading="lazy"

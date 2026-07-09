@@ -10,7 +10,6 @@ import Footer from '../utils/Footer';
 import Loading from '../utils/Loading';
 import PaginationControls from '../utils/PaginationControls';
 import { queryClient } from '../utils/queryClient';
-import { useMediaQuery } from '../utils/useMediaQuery';
 import { useVods, prefetchNextPageVods } from '../utils/useVods';
 import Vod from './Vod';
 
@@ -67,7 +66,6 @@ export default function Vods() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const isMobile = useMediaQuery('(max-width: 900px)');
   const location = useLocation();
   const todayString = new Date().toISOString().split('T')[0];
 
@@ -80,7 +78,7 @@ export default function Vods() {
   const filterGame = searchParams.get('chapter') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
   const gameId = searchParams.get('game_id');
-  const limit = isMobile ? 10 : 20;
+  const limit = 20;
 
   const memoizedDateRange = (() => {
     if (filter !== 'Date' || !filterStartDate || !filterEndDate) return null;
@@ -338,7 +336,7 @@ export default function Vods() {
           >
             {vods.map((vod, index) => (
               <div key={vod.id}>
-                <Vod vod={vod} isMobile={isMobile} priority={index < (isMobile ? 4 : 10)} />
+                <Vod vod={vod} priority={index < 10} />
               </div>
             ))}
           </div>
