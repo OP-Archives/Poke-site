@@ -1,12 +1,11 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import sadge from '../assets/sadge.jpg';
+import { TwitchIcon, KickIcon } from '../assets/icons';
 import { type VodData } from '../utils/archive-client';
 import CustomWidthTooltip from '../utils/CustomToolTip';
 import { toHHMMSS, getImage } from '../utils/helpers';
 import Chapters from './ChaptersMenu';
 import WatchMenu from './WatchMenu';
-import { TwitchIcon, KickIcon } from '../assets/icons';
 
 interface VodProps {
   vod: VodData;
@@ -29,11 +28,11 @@ const cardHoverVariants = {
 const getVodLink = (vod: VodData) => {
   if (vod.vod_uploads?.length > 0) return `/youtube/${vod.id}`;
   if (vod.games?.length > 0) return `/games/${vod.id}`;
-  return `/manual/${vod.id}`;
+  return null;
 };
 
 const getThumbnail = (vod: VodData) => {
-  return vod.vod_uploads?.[0]?.thumbnail_url || vod.games?.[0]?.thumbnail_url || vod.thumbnail_url || sadge;
+  return vod.vod_uploads?.[0]?.thumbnail_url || vod.games?.[0]?.thumbnail_url || vod.thumbnail_url || null;
 };
 
 const getPlatform = (vod: VodData) => {
@@ -71,7 +70,7 @@ export default function Vod({ vod, priority }: VodProps) {
                 <img
                   className="thumbnail h-full w-full object-cover"
                   alt=""
-                  src={DEFAULT_THUMBNAIL}
+                  src={DEFAULT_THUMBNAIL || undefined}
                   width={640}
                   height={360}
                   loading={priority ? 'eager' : 'lazy'}
@@ -83,7 +82,7 @@ export default function Vod({ vod, priority }: VodProps) {
               <img
                 className="thumbnail h-full w-full object-cover"
                 alt=""
-                src={DEFAULT_THUMBNAIL}
+                src={DEFAULT_THUMBNAIL || undefined}
                 width={640}
                 height={360}
                 loading={priority ? 'eager' : 'lazy'}
@@ -106,7 +105,7 @@ export default function Vod({ vod, priority }: VodProps) {
             )}
             <div className="absolute bottom-0 left-0">
               <span className="bg-black/60 p-1.5 text-xs text-white">
-                {DATE_FORMATTER.format(new Date(vod.created_at)).replace(',', '')}
+                {DATE_FORMATTER.format(new Date(vod.created_at))}
               </span>
             </div>
             <div className="absolute right-0 bottom-0">
@@ -131,7 +130,7 @@ export default function Vod({ vod, priority }: VodProps) {
               {DEFAULT_VOD ? (
                 <Link to={DEFAULT_VOD} className="inline-flex max-w-full min-w-0 no-underline" onMouseEnter={prefetchPlayerChunk}>
                   <CustomWidthTooltip title={vod.title}>
-                    <span className="truncate text-sm font-medium text-[#f0f0f5] transition-colors hover:text-[#4ade80]/80">
+                    <span className="truncate text-sm font-medium text-[#f0f0f5] transition-colors hover:text-primary">
                       {vod.title}
                     </span>
                   </CustomWidthTooltip>
