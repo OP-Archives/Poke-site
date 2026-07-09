@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import humanize from 'humanize-duration';
 import { List } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
@@ -11,25 +10,6 @@ interface ChaptersProps {
 }
 
 const EMPTY_CHAPTERS: ChapterItem[] = [];
-
-const dropdownMenu = {
-  hidden: { opacity: 0, scale: 0.95, y: -8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { duration: 0.15, ease: [0.25, 0.4, 0.25, 1] as const },
-  },
-};
-
-const menuItem = {
-  hidden: { opacity: 0, x: -8 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.15, ease: [0.25, 0.4, 0.25, 1] as const },
-  },
-};
 
 export default function Chapters({ vod }: ChaptersProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
